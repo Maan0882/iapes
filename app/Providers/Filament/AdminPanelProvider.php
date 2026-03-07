@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandname('IAPES_TechStrota')
-            // ->brandLogo(asset('images/TsLogo.png'))
+            // ->brandLogo(asset('/images/TsLogo.png'))
             // ->brandLogoHeight('10.5rem')
             ->colors([
                 'primary' => Color::Purple,
