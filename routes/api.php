@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::post('/intern/apply', [AuthController::class, 'submitApplication']);
 //Route::post('/intern/login', [AuthController::class, 'loginIntern']);
-Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
+//Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
 
 // Protected Routes (Require Token)
 Route::middleware('auth:sanctum')->group(function () {

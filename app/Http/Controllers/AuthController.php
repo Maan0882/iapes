@@ -85,48 +85,6 @@ class AuthController extends Controller
 
     }
 
-
-    /**
-     * 2. Handle Admin Login (Public)
-     */
-    public function loginAdmin(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        $admin = User::where('email', $request->email)->first();
-
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid Admin Credentials'
-            ], 401);
-        }
-
-        $token = $admin->createToken('admin_token')->plainTextToken;
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Admin logged in successfully',
-            'access_token' => $token,
-        ], 200);
-    }
-
-    /**
-     * 4. Handle Logout (Protected)
-     * Works for whoever is currently authenticated (Admin or Intern)
-     */
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully logged out'
-        ], 200);
-    }
 }
 
 
