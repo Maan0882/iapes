@@ -58,7 +58,7 @@ class OfferLetterResource extends Resource
                 TextColumn::make('offer_letter_code')
                     ->label('Offer Code')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
                 TextColumn::make('application.name')
                     ->label('Intern'),
                 TextColumn::make('internship_role'),
