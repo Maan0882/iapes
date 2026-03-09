@@ -26,22 +26,20 @@ class InterviewAssignment extends Model
     {
         static::creating(function ($model) {
 
-            $date = now()->format('my');
-
-            $sequence = str_pad(
-                InterviewAssignment::whereDate('created_at', now())->count() + 1,
-                3,
-                '0',
-                STR_PAD_LEFT
-            );
-
-            $model->assignment_code = "ASSIGN/{$date}/{$sequence}";
-
             $batch = InterviewBatch::find($model->interview_batch_id);
 
-            if ($batch->capacity_status === 'full') {
+            if ($batch && $batch->capacity_status === 'full') {
                 throw new \Exception("Batch is already FULL.");
             }
+
+            $date = now()->format('dmy');
+
+            $lastNumber = (int) substr(
+                optional(InterviewAssignment::latest('id')->first())->assignment_code,
+                -3
+            );
+
+            $model->assignment_code = "ASSIGN/{$date}/" . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         });
 
         static::saving(function ($assignment) {
