@@ -12,15 +12,20 @@ use Filament\Forms\Components\{Select, DatePicker, TextInput};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\{Action, BulkAction};
+use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn};
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Blade;
+use Barryvdh\DomPDF\Facade\Pdf;
+use ZipArchive;
 
 class OfferLetterResource extends Resource
 {
     protected static ?string $model = OfferLetter::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-document-check';
+    protected static ?string $navigationGroup = 'Interview Management';
+    protected static ?int $navigationSort = 4;
     public static function form(Form $form): Form
     {
         return $form
@@ -28,7 +33,7 @@ class OfferLetterResource extends Resource
                 Select::make('application_id')
                     ->label('Select Intern')
                     ->options(
-                        Application::where('status', 'Selected')
+                        Application::where('status', 'Shortlisted')
                             ->pluck('name', 'id')
                     )
                     ->searchable()
@@ -42,11 +47,11 @@ class OfferLetterResource extends Resource
 
                 TextInput::make('internship_role')
                     ->label('Internship Role')
-                    ->placeholder('Web Developer / Full Stack Developer')
+                    ->placeholder('Web Developer / Full Stack Developer, etc..')
                     ->required(),
 
                 TextInput::make('working_hours')
-                    ->placeholder('10 AM - 6 PM')
+                    ->placeholder('Total hour per week')
                     ->required(),
             ]);
     }
@@ -72,19 +77,76 @@ class OfferLetterResource extends Resource
                 Tables\Actions\Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn ($record) => route('offer.download', $record->id))
-                    ->openUrlInNewTab(),
+                    ->action(function ($record) {
+                        $pdf = Pdf::loadView('offerletter.template', [
+                            'offer' => $record
+                        ]);
+                        $fileName = str_replace('/', '-', $record->offer_letter_code);
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            $fileName.'.pdf'
+                        );
+                    }),
 
                 Tables\Actions\Action::make('print')
                     ->label('Print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn ($record) => route('offer.print', $record->id))
-                    ->openUrlInNewTab(),
+                    ->action(function ($record) {
+                        $pdf = Pdf::loadView('offerletter.template', [
+                            'offer' => $record
+                        ]);
+                        $fileName = str_replace('/', '-', $record->offer_letter_code);
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            $fileName.'.pdf'
+                        );
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\BulkAction::make('bulk_download')
+                    ->label('Bulk Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function ($records) {
+
+                        $zipFileName = 'offer_letters.zip';
+                        $zipPath = storage_path($zipFileName);
+
+                        $zip = new ZipArchive;
+
+                        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+
+                            foreach ($records as $offer) {
+
+                                $pdf = Pdf::loadView('offerletter.template', [
+                                    'offer' => $offer
+                                ]);
+
+                                $fileName = str_replace('/', '-', $offer->offer_letter_code) . '.pdf';
+
+                                $zip->addFromString($fileName, $pdf->output());
+                            }
+
+                            $zip->close();
+                        }
+
+                        return response()->download($zipPath)->deleteFileAfterSend(true);
+                    })
+                    ->deselectRecordsAfterCompletion(),
+                Tables\Actions\BulkAction::make('bulk_print')
+                    ->label('Bulk Print')
+                    ->icon('heroicon-o-printer')
+                    ->action(function ($records) {
+
+                        $pdf = Pdf::loadView('offerletter.template', [
+                            'offers' => $records
+                        ]);
+
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            'offer_letters.pdf'
+                        );
+                    })
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 
