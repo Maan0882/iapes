@@ -12,7 +12,9 @@ class OfferLetter extends Model
         'joining_date',
         'completion_date',
         'internship_role',
-        'working_hours'
+        'working_hours',
+        'intern_id',
+        'template',
     ];
 
     protected static function boot()

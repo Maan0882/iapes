@@ -98,7 +98,7 @@
                     <strong>Email:</strong> info@techstrota.com 
                 </td>
                 <td style="text-align: center; width: 40%;">
-                    <img src="{{ public_path('storage/images/TsLogo.png') }}" class="header-logo" alt="TECHSTROTA">
+                    <img src="{{ public_path('storage/images/TsLogo.png') }}" class="header-logo" alt="Bachelor's Degree">
                 </td>
                 <td style="text-align: right; font-size: 13px; width: 30%;">
                     <strong>Tel:</strong> +91 81288 40055

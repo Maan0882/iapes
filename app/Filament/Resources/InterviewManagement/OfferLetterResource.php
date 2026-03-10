@@ -210,7 +210,7 @@ class OfferLetterResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->action(function ($records) {
 
-                            $pdf = Pdf::loadView('offerletters.bulk-template', [
+                            $pdf = Pdf::loadView('offerletter.$template', [
                                 'offers' => $records
                             ]);
 
