@@ -5,11 +5,17 @@ namespace App\Filament\Resources\InternManagement;
 use App\Filament\Resources\InternManagement\InternResource\Pages;
 use App\Filament\Resources\InternManagement\InternResource\RelationManagers;
 use App\Models\InternManagement\Intern;
+use App\Models\InterviewManagement\Application;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\{Action, BulkAction};
+use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Filters\SelectFilter;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -25,6 +31,7 @@ class InternResource extends Resource
         return $form
             ->schema([
                 //
+                
             ]);
     }
 
@@ -33,6 +40,50 @@ class InternResource extends Resource
         return $table
             ->columns([
                 //
+                Tables\Columns\TextColumn::make('intern_code')
+                    ->label('Intern ID')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('application.application_code')
+                    ->label('Application ID')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('application.name')
+                    ->label('Intern Name')
+                    //->description(fn ($record) => $record->application->name)
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('application.degree')
+                    ->label('Intern Course')
+                    ->searchable()
+                    ->sortable(),
+                
+                Tables\Columns\TextColumn::make('application.domain')
+                    ->label('Intern Domain')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('internship_duration')
+                    ->label('Internship Duration')
+                    ->getStateUsing(function ($record) {
+
+                        if (!$record->application) 
+                        {
+                            return 'No Application';
+                        }
+
+                        return $record->application->duration . ' ' . $record->application->duration_unit . '';
+                    }),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'primary' => 'active',
+                        //'warning' => 'active',
+                        'success' => 'completed',
+                        'danger' => 'dropped',
+                    ])
+                    ->formatStateUsing(fn ($state) => ucfirst($state)),
             ])
             ->filters([
                 //

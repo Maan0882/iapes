@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use app\Models\InterviewManagement\Application;
 
 class Intern extends Authenticatable implements FilamentUser
 {
@@ -35,5 +36,10 @@ class Intern extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $panel->getId() === 'intern';
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
     }
 }
