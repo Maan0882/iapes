@@ -6,6 +6,7 @@ use App\Filament\Resources\InterviewManagement\OfferLetterResource\Pages;
 use App\Filament\Resources\InterviewManagement\OfferLetterResource\RelationManagers;
 use App\Models\InterviewManagement\OfferLetter;
 use App\Models\InterviewManagement\Application;
+use App\Models\InternManagement\Intern;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\{Select, DatePicker, TextInput};
@@ -13,10 +14,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\{Action, BulkAction};
-use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use ZipArchive;
 
@@ -30,11 +34,17 @@ class OfferLetterResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('application_id')
-                    ->label('Select Intern')
-                    ->options(
+                Select::make('applications')
+                    ->label('Select Interns')
+                    ->multiple()
+                   ->options(
                         Application::where('status', 'Shortlisted')
-                            ->pluck('name', 'id')
+                            ->get()
+                            ->mapWithKeys(function ($app) {
+                                return [
+                                    $app->id => $app->name . ' - ' . $app->college
+                                ];
+                            })
                     )
                     ->searchable()
                     ->required(),
@@ -69,6 +79,50 @@ class OfferLetterResource extends Resource
                 TextColumn::make('internship_role'),
                 TextColumn::make('joining_date')->date(),
                 TextColumn::make('completion_date')->date(),
+                ToggleColumn::make('is_accepted')
+                    ->label('Offer Status')
+                    ->afterStateUpdated(function ($record, $state) {
+                        // We trigger creation if state is TRUE and there is no linked intern yet
+                        if ($state && !$record->intern_id) {
+                            
+                            // 1. Generate ID components
+                            $year = now()->format('y'); 
+                            $prefix = "TS{$year}/WD/";
+                            
+                            // Search for the last intern code to increment
+                            $lastIntern = Intern::where('intern_code', 'like', "{$prefix}%")
+                                ->latest('id')
+                                ->first();
+
+                            $sequence = $lastIntern 
+                                ? (int) str($lastIntern->intern_code)->afterLast('/') + 1 
+                                : 1;
+
+                            $paddedSequence = str_pad($sequence, 3, '0', STR_PAD_LEFT);
+                            $generatedCode = $prefix . $paddedSequence;
+                            $plainPassword = "ts" . $year . $paddedSequence;
+
+                            // 2. Create the Intern Record (Using full namespace to avoid 'Not Found' errors)
+                            $intern = Intern::create([
+                                'intern_code' => $generatedCode,
+                                'username'    => $generatedCode,
+                                'password'    => Hash::make($plainPassword),
+                                'name'        => $record->application->name ?? 'Intern ' . $sequence, // Adjusted for your application relationship
+                                'email'       => $record->application->email ?? "intern{$sequence}@example.com",
+                                'joining_date' => $record->joining_date ?? now(),
+                                'is_active'   => true,
+                            ]);
+
+                            // 3. Link the intern to the offer letter
+                            $record->update(['intern_id' => $intern->id]);
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Intern Account Created')
+                                ->body("ID: **{$generatedCode}** | Pass: **{$plainPassword}**")
+                                ->success()
+                                ->send();
+                        }
+                    }),
             ])
             ->filters([
                 //
@@ -101,6 +155,7 @@ class OfferLetterResource extends Resource
                             $fileName.'.pdf'
                         );
                     }),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('bulk_download')
@@ -147,6 +202,7 @@ class OfferLetterResource extends Resource
                         );
                     })
                     ->deselectRecordsAfterCompletion(),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
