@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\{Action, BulkAction};
-use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
 use Filament\Tables\Filters\SelectFilter;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -75,15 +75,16 @@ class InternResource extends Resource
 
                         return $record->application->duration . ' ' . $record->application->duration_unit . '';
                     }),
-
-                BadgeColumn::make('status')
-                    ->colors([
-                        'primary' => 'active',
-                        //'warning' => 'active',
-                        'success' => 'completed',
-                        'danger' => 'dropped',
-                    ])
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+               ToggleColumn::make('is_active')
+                    ->label('Intern Status'),
+                // BadgeColumn::make('is_active')
+                //     ->colors([
+                //         'primary' => 'active',
+                //         //'warning' => 'active',
+                //         'success' => 'completed',
+                //         'danger' => 'dropped',
+                //     ])
+                    //->formatStateUsing(fn ($state) => ucfirst($state)),
             ])
             ->filters([
                 //
