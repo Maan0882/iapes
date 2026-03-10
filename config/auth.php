@@ -40,6 +40,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Add this new guard for Interns
+        'intern' => [
+            'driver' => 'session',
+            'provider' => 'interns',
+        ],
     ],
 
     /*
@@ -69,6 +75,12 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        // Add this new provider pointing to your Intern model
+        'interns' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\InternManagement\Intern::class,
+        ],
     ],
 
     /*

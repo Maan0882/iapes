@@ -84,41 +84,37 @@ class OfferLetterResource extends Resource
                     ->afterStateUpdated(function ($record, $state) {
                         // We trigger creation if state is TRUE and there is no linked intern yet
                         if ($state && !$record->intern_id) {
-                            
-                            // 1. Generate ID components
+
                             $year = now()->format('y'); 
                             $prefix = "TS{$year}/WD/";
-                            
-                            // Search for the last intern code to increment
                             $lastIntern = Intern::where('intern_code', 'like', "{$prefix}%")
                                 ->latest('id')
                                 ->first();
-
                             $sequence = $lastIntern 
-                                ? (int) str($lastIntern->intern_code)->afterLast('/') + 1 
+                                ? (int) str($lastIntern->intern_code)->afterLast('/')->toString() + 1 
                                 : 1;
-
                             $paddedSequence = str_pad($sequence, 3, '0', STR_PAD_LEFT);
+                            // Intern ID
                             $generatedCode = $prefix . $paddedSequence;
-                            $plainPassword = "ts" . $year . $paddedSequence;
-
-                            // 2. Create the Intern Record (Using full namespace to avoid 'Not Found' errors)
+                            // Username
+                            $username = "ts{$year}{$paddedSequence}@user.com";
+                            // Password
+                            $plainPassword = "ts{$year}{$paddedSequence}";
                             $intern = Intern::create([
-                                'intern_code' => $generatedCode,
-                                'username'    => $generatedCode,
-                                'password'    => Hash::make($plainPassword),
-                                'name'        => $record->application->name ?? 'Intern ' . $sequence, // Adjusted for your application relationship
-                                'email'       => $record->application->email ?? "intern{$sequence}@example.com",
+                                'intern_code'  => $generatedCode,
+                                'username'     => $username,
+                                'password'     => \Illuminate\Support\Facades\Hash::make($plainPassword),
+                                'name'         => $record->application->name ?? 'Intern ' . $sequence,
+                                'email'        => $record->application->email ?? "intern{$sequence}@example.com",
                                 'joining_date' => $record->joining_date ?? now(),
-                                'is_active'   => true,
+                                'is_active'    => true,
                             ]);
 
-                            // 3. Link the intern to the offer letter
                             $record->update(['intern_id' => $intern->id]);
 
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Intern Account Created')
-                                ->body("ID: **{$generatedCode}** | Pass: **{$plainPassword}**")
+                                ->body("ID: **{$generatedCode}** | Username: **{$username}** | Pass: **{$plainPassword}**")
                                 ->success()
                                 ->send();
                         }
@@ -133,7 +129,7 @@ class OfferLetterResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function ($record) {
                         $pdf = Pdf::loadView('offerletter.template', [
-                            'offer' => $record
+                            'offers' => collect([$record])
                         ]);
                         $fileName = str_replace('/', '-', $record->offer_letter_code);
                         return response()->streamDownload(
@@ -147,7 +143,7 @@ class OfferLetterResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->action(function ($record) {
                         $pdf = Pdf::loadView('offerletter.template', [
-                            'offer' => $record
+                            'offers' => collect([$record])
                         ]);
                         $fileName = str_replace('/', '-', $record->offer_letter_code);
                         return response()->streamDownload(
@@ -173,7 +169,7 @@ class OfferLetterResource extends Resource
                             foreach ($records as $offer) {
 
                                 $pdf = Pdf::loadView('offerletter.template', [
-                                    'offer' => $offer
+                                    'offers' => collect([$offer])
                                 ]);
 
                                 $fileName = str_replace('/', '-', $offer->offer_letter_code) . '.pdf';

@@ -68,13 +68,6 @@
         <strong>Tel:</strong> +91 81288 40055
     </header>
 
-    <footer>
-        Techstrota<br>
-        www.techstrota.com<br><br>
-        156, 1st Floor, K10 Atlantis, C Tower, Near Genda Circle, Opp Honest Restaurant,<br>
-        Vadodara, Gujarat - 390007
-    </footer>
-
     <main>
         @if(isset($offers))
             @foreach($offers as $offer)
@@ -142,11 +135,18 @@
                     CEO
                 </div>
 
-                <div class="page-break"></div>
+                <!-- <div class="page-break"></div> -->
 
             @endforeach
         @endif
     </main>
+
+    <footer>
+        Techstrota<br>
+        www.techstrota.com<br><br>
+        156, 1st Floor, K10 Atlantis, C Tower, Near Genda Circle, Opp Honest Restaurant,<br>
+        Vadodara, Gujarat - 390007
+    </footer>
 
 </body>
 </html>
