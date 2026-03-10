@@ -8,13 +8,14 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-use app\Models\InterviewManagement\Application;
+use App\Models\InterviewManagement\Application;
 
 class Intern extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'application_id',
         'intern_code',
         'username',
         'password',
@@ -38,8 +39,8 @@ class Intern extends Authenticatable implements FilamentUser
         return $panel->getId() === 'intern';
     }
 
-    public function applications()
+    public function application()
     {
-        return $this->hasMany(Application::class);
+        return $this->belongsTo(Application::class);
     }
 }

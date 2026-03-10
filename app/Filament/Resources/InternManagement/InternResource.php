@@ -23,7 +23,7 @@ class InternResource extends Resource
 {
     protected static ?string $model = Intern::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'Intern Management';
 
     public static function form(Form $form): Form
@@ -40,31 +40,31 @@ class InternResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('intern_code')
+                TextColumn::make('intern_code')
                     ->label('Intern ID')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('application.application_code')
+                TextColumn::make('application.application_code')
                     ->label('Application ID')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('application.name')
+                TextColumn::make('application.name')
                     ->label('Intern Name')
                     //->description(fn ($record) => $record->application->name)
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('application.degree')
+                TextColumn::make('application.degree')
                     ->label('Intern Course')
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('application.domain')
+                TextColumn::make('application.domain')
                     ->label('Intern Domain')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('internship_duration')
+                TextColumn::make('internship_duration')
                     ->label('Internship Duration')
                     ->getStateUsing(function ($record) {
 
@@ -76,7 +76,7 @@ class InternResource extends Resource
                         return $record->application->duration . ' ' . $record->application->duration_unit . '';
                     }),
 
-                Tables\Columns\BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->colors([
                         'primary' => 'active',
                         //'warning' => 'active',

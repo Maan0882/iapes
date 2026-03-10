@@ -111,13 +111,14 @@ class OfferLetterResource extends Resource
                             // Password
                             $plainPassword = "ts{$year}{$paddedSequence}";
                             $intern = Intern::create([
-                                'intern_code'  => $generatedCode,
-                                'username'     => $username,
-                                'password'     => \Illuminate\Support\Facades\Hash::make($plainPassword),
-                                'name'         => $record->application->name ?? 'Intern ' . $sequence,
-                                'email'        => $record->application->email ?? "intern{$sequence}@example.com",
-                                'joining_date' => $record->joining_date ?? now(),
-                                'is_active'    => true,
+                                'application_id'=>$record->application->id,
+                                'intern_code'   => $generatedCode,
+                                'username'      => $username,
+                                'password'      => \Illuminate\Support\Facades\Hash::make($plainPassword),
+                                'name'          => $record->application->name ?? 'Intern ' . $sequence,
+                                'email'         => $record->application->email ?? "intern{$sequence}@example.com",
+                                'joining_date'  => $record->joining_date ?? now(),
+                                'is_active'     => true,
                             ]);
 
                             $record->update(['intern_id' => $intern->id]);

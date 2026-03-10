@@ -31,7 +31,7 @@ class InternPanelProvider extends PanelProvider
             // Tell the panel to use your custom Login class!
             ->login(Login::class)
             ->loginRouteSlug('login')
-            ->brandName('Intern Portal')
+            ->brandName('IAPES_Intern')
             ->colors([
                 'primary' => Color::Blue,
             ])
