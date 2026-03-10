@@ -94,6 +94,7 @@ class InterviewAssignmentResource extends Resource
     {
         return $table
             ->poll('3s') // ⬅ auto refresh
+            ->defaultSort('overall_score', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('assignment_code')
                     ->searchable(),
@@ -109,7 +110,8 @@ class InterviewAssignmentResource extends Resource
                     ->label('Batch'),
 
                 //Tables\Columns\TextColumn::make('slot_time'),
-                Tables\Columns\TextColumn::make('overall_score'),
+                Tables\Columns\TextColumn::make('overall_score')
+                    ->sortable(),
                 Tables\Columns\BadgeColumn::make('attendance'),
                 
                 Tables\Columns\BadgeColumn::make('result')
