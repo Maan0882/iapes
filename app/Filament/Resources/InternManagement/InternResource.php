@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Intern\Resources;
+namespace App\Filament\Resources\InternManagement;
 
-use App\Filament\Intern\Resources\InternResource\Pages;
-use App\Filament\Intern\Resources\InternResource\RelationManagers;
-use App\Models\Intern;
+use App\Filament\Resources\InternManagement\InternResource\Pages;
+use App\Filament\Resources\InternManagement\InternResource\RelationManagers;
+use App\Models\InternManagement\Intern;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,6 +18,7 @@ class InternResource extends Resource
     protected static ?string $model = Intern::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Intern Management';
 
     public static function form(Form $form): Form
     {

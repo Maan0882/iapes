@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Intern\Resources\InternResource\Pages;
+namespace App\Filament\Resources\InternManagement\InternResource\Pages;
 
-use App\Filament\Intern\Resources\InternResource;
+use App\Filament\Resources\InternManagement\InternResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

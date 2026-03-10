@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Intern\Pages\Auth\Login; // Make sure to import your custom login class
 
 class InternPanelProvider extends PanelProvider
 {
@@ -25,8 +26,10 @@ class InternPanelProvider extends PanelProvider
         return $panel
             ->id('intern')
             ->path('intern')
-            ->login()
+            //->login()
             ->authGuard('intern')
+            // Tell the panel to use your custom Login class!
+            ->login(Login::class)
             ->loginRouteSlug('login')
             ->brandName('Intern Portal')
             ->colors([

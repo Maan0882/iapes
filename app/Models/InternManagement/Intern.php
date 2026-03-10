@@ -27,10 +27,10 @@ class Intern extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
-    public function getAuthIdentifierName()
-    {
-        return 'intern_id';
-    }
+    // public function getAuthIdentifierName()
+    // {
+    //     return 'username';
+    // }
 
     public function canAccessPanel(Panel $panel): bool
     {
