@@ -63,6 +63,16 @@ class OfferLetterResource extends Resource
                 TextInput::make('working_hours')
                     ->placeholder('Total hour per week')
                     ->required(),
+
+                Select::make('template')
+                    ->label('Offer Letter Template')
+                    ->options([
+                        'bachelors' => 'Bachelors Internship',
+                        'masters' => 'Masters Internship',
+                        'one_month' => 'One Month Internship',
+                        'general' => 'General Internship',
+                    ])
+                    ->required(),
             ]);
     }
 
@@ -128,13 +138,18 @@ class OfferLetterResource extends Resource
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function ($record) {
-                        $pdf = Pdf::loadView('offerletter.template', [
+
+                        $template = $record->template ?? 'general';
+
+                        $pdf = Pdf::loadView("offerletter.$template", [
                             'offers' => collect([$record])
                         ]);
+
                         $fileName = str_replace('/', '-', $record->offer_letter_code);
+
                         return response()->streamDownload(
                             fn () => print($pdf->output()),
-                            $fileName.'.pdf'
+                            $fileName . '.pdf'
                         );
                     }),
 
@@ -142,13 +157,18 @@ class OfferLetterResource extends Resource
                     ->label('Print')
                     ->icon('heroicon-o-printer')
                     ->action(function ($record) {
-                        $pdf = Pdf::loadView('offerletter.template', [
+
+                        $template = $record->template ?? 'general';
+
+                        $pdf = Pdf::loadView("offerletter.$template", [
                             'offers' => collect([$record])
                         ]);
+
                         $fileName = str_replace('/', '-', $record->offer_letter_code);
+
                         return response()->streamDownload(
                             fn () => print($pdf->output()),
-                            $fileName.'.pdf'
+                            $fileName . '.pdf'
                         );
                     }),
                 Tables\Actions\EditAction::make(),
@@ -159,26 +179,28 @@ class OfferLetterResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function ($records) {
 
-                        $zipFileName = 'offer_letters.zip';
-                        $zipPath = storage_path($zipFileName);
+                            $zipFileName = 'offer_letters.zip';
+                            $zipPath = storage_path($zipFileName);
 
-                        $zip = new ZipArchive;
+                            $zip = new ZipArchive;
 
-                        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+                            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
 
-                            foreach ($records as $offer) {
+                                foreach ($records as $offer) {
 
-                                $pdf = Pdf::loadView('offerletter.template', [
-                                    'offers' => collect([$offer])
-                                ]);
+                                    $template = $offer->template ?? 'general';
 
-                                $fileName = str_replace('/', '-', $offer->offer_letter_code) . '.pdf';
+                                    $pdf = Pdf::loadView("offerletter.$template", [
+                                        'offers' => collect([$offer])
+                                    ]);
 
-                                $zip->addFromString($fileName, $pdf->output());
+                                    $fileName = str_replace('/', '-', $offer->offer_letter_code) . '.pdf';
+
+                                    $zip->addFromString($fileName, $pdf->output());
+                                }
+
+                                $zip->close();
                             }
-
-                            $zip->close();
-                        }
 
                         return response()->download($zipPath)->deleteFileAfterSend(true);
                     })
@@ -188,15 +210,15 @@ class OfferLetterResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->action(function ($records) {
 
-                        $pdf = Pdf::loadView('offerletter.template', [
-                            'offers' => $records
-                        ]);
+                            $pdf = Pdf::loadView('offerletters.bulk-template', [
+                                'offers' => $records
+                            ]);
 
-                        return response()->streamDownload(
-                            fn () => print($pdf->output()),
-                            'offer_letters.pdf'
-                        );
-                    })
+                            return response()->streamDownload(
+                                fn () => print($pdf->output()),
+                                'offer_letters.pdf'
+                            );
+                        })
                     ->deselectRecordsAfterCompletion(),
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
