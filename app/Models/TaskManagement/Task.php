@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Models\TaskManaement;
+namespace App\Models\TaskManagement;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\InternManagement\Intern;
+use App\Models\InternManagement\InternshipBatch;
+use App\Models\InternManagement\InternTeam;
 use App\Models\TaskManagement\TaskSubmission;
 use App\Models\TaskManagement\TaskAssignment;
 
@@ -30,5 +32,20 @@ class Task extends Model
     public function assignments()
     {
         return $this->hasMany(TaskAssignment::class,'task_id');
+    }
+
+    public function intern()
+    {
+        return $this->belongsTo(Intern::class,'intern_id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(InternTeam::class,'team_id');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(InternshipBatch::class,'batch_id');
     }
 }
