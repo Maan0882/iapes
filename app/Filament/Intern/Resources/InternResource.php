@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InternResource extends Resource
 {
     protected static ?string $model = Intern::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationLabel = 'My Profile';
 
     public static function form(Form $form): Form
     {
@@ -31,15 +31,23 @@ class InternResource extends Resource
     {
         return $table
             ->columns([
-                //
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('intern_code')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Name')->searchable(),
+                Tables\Columns\TextColumn::make('email')->label('Email'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'success' => 'Active',
+                        'warning' => 'Pending',
+                        'danger' => 'Terminated',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->label('View Profile')
                     ->icon('heroicon-o-identification'),
+            ])
+            ->filters([
+                //
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -53,6 +61,17 @@ class InternResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $currentUser = auth()->user();
+
+        return parent::getEloquentQuery()
+            ->where(function ($query) use ($currentUser) {
+                $query->where('username', $currentUser->email)
+                    ->orWhere('username', $currentUser->username);
+            });
     }
 
     public static function getPages(): array

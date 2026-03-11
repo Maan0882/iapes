@@ -9,4 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateIntern extends CreateRecord
 {
     protected static string $resource = InternResource::class;
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        // Automatically inject the logged-in user's ID into the data
+        $data['user_id'] = auth()->id();
+ 
+        return $data;
+    }
 }

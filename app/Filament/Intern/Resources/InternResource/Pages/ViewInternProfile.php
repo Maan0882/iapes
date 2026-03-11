@@ -41,19 +41,18 @@ class ViewInternProfile extends ViewRecord
                 ->url(fn() => InternResource::getUrl('edit', ['record' => $this->record])),
 
             Actions\Action::make('reset_password')
-                ->label('Reset Password')
+                ->label('Change Password')
                 ->icon('heroicon-o-key')
                 ->color('danger')
-                ->requiresConfirmation(false)
+                // Only show if the profile belongs to the logged-in user
+                ->visible(fn() => $this->record->user_id === auth()->id())
                 ->form([
                     Forms\Components\TextInput::make('new_password')
                         ->label('New Password')
                         ->password()
                         ->revealable()
                         ->required()
-                        ->minLength(8)
-                        ->helperText('Minimum 8 characters'),
-
+                        ->minLength(8),
                     Forms\Components\TextInput::make('confirm_password')
                         ->label('Confirm New Password')
                         ->password()
@@ -62,19 +61,19 @@ class ViewInternProfile extends ViewRecord
                         ->same('new_password'),
                 ])
                 ->action(function (array $data): void {
+                    // Since the Intern model likely uses the same authenticatable 
+                    // credentials, we update the record.
                     $this->record->update([
                         'password' => Hash::make($data['new_password']),
                     ]);
 
                     Notification::make()
-                        ->title('Password Reset Successfully')
-                        ->body("Password for {$this->record->name} has been updated.")
+                        ->title('Success')
+                        ->body("Your password has been updated.")
                         ->success()
                         ->send();
                 })
-                ->modalHeading('Reset Password for ' . $this->getRecord()?->name ?? 'Intern')
-                ->modalDescription('This will immediately change the login password.')
-                ->modalSubmitActionLabel('Reset Password')
+                ->modalHeading('Change Your Login Password')
                 ->modalWidth('md'),
         ];
     }
@@ -133,17 +132,9 @@ class ViewInternProfile extends ViewRecord
                     ->columnSpan(1)
                     ->schema([
                         TextEntry::make('offerletter.internship_role')
-                            ->label('Internship Type')
-                            ->badge()
-                            ->color(fn(string $state): string => match ($state) {
-                                'Full-Time' => 'success',
-                                'Part-Time' => 'warning',
-                                'Remote'    => 'info',
-                                'Hybrid'    => 'gray',
-                                default     => 'gray',
-                            }),
+                            ->label('Internship Type'),
 
-                        TextEntry::make('application.course')
+                        TextEntry::make('application.degree')
                             ->label('Course / Degree')
                             ->icon('heroicon-m-academic-cap'),
 
