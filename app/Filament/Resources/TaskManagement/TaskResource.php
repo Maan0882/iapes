@@ -82,6 +82,17 @@ class TaskResource extends Resource
         return $table
             ->columns([
                 //
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('priority'),
+
+                Tables\Columns\TextColumn::make('due_date')
+                    ->date(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime(),
+
             ])
             ->filters([
                 //
