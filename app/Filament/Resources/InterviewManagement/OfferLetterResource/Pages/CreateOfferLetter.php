@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreateOfferLetter extends CreateRecord
 {
+    // To redirect on the page in resource
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected static string $resource = OfferLetterResource::class;
     protected function handleRecordCreation(array $data): Model
     {

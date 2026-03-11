@@ -8,6 +8,12 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListOfferLetters extends ListRecords
 {
+     // To redirect on the page in resource
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+    
     protected static string $resource = OfferLetterResource::class;
 
     protected function getHeaderActions(): array

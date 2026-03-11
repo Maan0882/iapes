@@ -8,6 +8,12 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditOfferLetter extends EditRecord
 {
+     // To redirect on the page in resource
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+    
     protected static string $resource = OfferLetterResource::class;
 
     protected function getHeaderActions(): array

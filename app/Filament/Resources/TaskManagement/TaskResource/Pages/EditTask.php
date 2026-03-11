@@ -10,6 +10,7 @@ class EditTask extends EditRecord
 {
     protected static string $resource = TaskResource::class;
 
+    // To redirect on the page in resource
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

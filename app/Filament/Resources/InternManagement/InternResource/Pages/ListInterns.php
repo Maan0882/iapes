@@ -10,6 +10,12 @@ class ListInterns extends ListRecords
 {
     protected static string $resource = InternResource::class;
 
+     // To redirect on the page in resource
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
