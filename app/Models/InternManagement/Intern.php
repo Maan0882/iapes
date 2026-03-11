@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use App\Models\InterviewManagement\Application;
+use App\Models\InterviewManagement\OfferLetter;
 
 class Intern extends Authenticatable implements FilamentUser
 {
@@ -42,5 +43,10 @@ class Intern extends Authenticatable implements FilamentUser
     public function application()
     {
         return $this->belongsTo(Application::class);
+    }
+
+    public function offerletter()
+    {
+        return $this->belongsTo(OfferLetter::class);
     }
 }
