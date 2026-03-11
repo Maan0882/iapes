@@ -15,6 +15,9 @@ class OfferLetter extends Model
         'working_hours',
         'intern_id',
         'template',
+
+        'project_name',
+        'project_description',
     ];
 
     protected static function boot()
