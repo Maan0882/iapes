@@ -4,6 +4,7 @@ namespace App\Models\TaskManagement;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\TaskManagement\Task;
+use App\Models\InternManagement\InternTeam;
 
 class TaskAssignment extends Model
 {
@@ -21,6 +22,11 @@ class TaskAssignment extends Model
     public function task()
     {
         return $this->belongsTo(Task::class,'task_id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(InternTeam::class, 'team_id');
     }
 
 }

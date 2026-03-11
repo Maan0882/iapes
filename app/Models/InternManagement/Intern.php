@@ -11,6 +11,9 @@ use Filament\Panel;
 use App\Models\InterviewManagement\Application;
 use App\Models\InterviewManagement\OfferLetter;
 use App\Models\User;
+use App\Models\InternManagement\InternshipBatch;
+use App\Models\InternManagement\InternTeam;
+use App\Models\TaskManagement\TaskSubmission;
 
 class Intern extends Authenticatable implements FilamentUser
 {
@@ -56,5 +59,21 @@ class Intern extends Authenticatable implements FilamentUser
     {
         // Intern 'username' matches User 'email'
         return $this->belongsTo(User::class, 'username', 'email');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(InternshipBatch::class, 'internship_batch_id');
+    }
+
+    public function team()
+    {
+        // Note: This assumes you added 'team_id' to your interns table
+        return $this->belongsTo(InternTeam::class, 'team_id');
+    }
+
+    public function submissions()
+    {
+        return $this->hasMany(TaskSubmission::class, 'intern_id');
     }
 }
