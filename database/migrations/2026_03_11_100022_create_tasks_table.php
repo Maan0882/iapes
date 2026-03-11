@@ -12,19 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id('task_id');
-            
-            $table->string('title');
-            $table->text('description');
-            $table->enum('assigned_to', ['intern', 'team', 'batch']);
-             // 👇 THIS is where intern_id belongs
-            $table->foreignId('intern_id')
-                ->constrained('interns')
-                ->onDelete('cascade');
+             $table->id('task_id');
 
-            $table->date('due_date');
-            
-           
+            $table->string('title');
+            $table->text('description')->nullable();
+
+            $table->date('due_date')->nullable();
+            $table->string('attachment')->nullable();
+
+            $table->enum('priority', ['low','medium','high'])->default('medium');
+
             $table->timestamps();
         });
     }
