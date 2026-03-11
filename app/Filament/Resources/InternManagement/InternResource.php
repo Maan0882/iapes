@@ -23,9 +23,9 @@ class InternResource extends Resource
 {
     protected static ?string $model = Intern::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $navigationGroup = 'Intern Management';
-
+    protected static ?int $navigationSort = 5;
     public static function form(Form $form): Form
     {
         return $form
