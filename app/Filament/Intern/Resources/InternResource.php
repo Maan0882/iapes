@@ -24,36 +24,8 @@ class InternResource extends Resource
     {
         return $form
              ->schema([
-            Forms\Components\Section::make('Security')
-                ->description('Update your account password here.')
-                ->schema([
-                    Forms\Components\TextInput::make('password')
-                        ->label('New Password')
-                        ->password()
-                        ->revealable()
-                        ->required(fn (string $context): bool => $context === 'create') // Only required on create, optional on edit
-                        ->minLength(8)
-                        ->dehydrated(fn ($state) => filled($state)) // Only save if the field is filled
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state)), // Hash it before saving
-
-                    Forms\Components\TextInput::make('password_confirmation')
-                        ->label('Confirm New Password')
-                        ->password()
-                        ->revealable()
-                        ->requiredWith('password')
-                        ->same('password')
-                        ->dehydrated(false), // Don't save this field to the database
-                ])->columns(2),
-                
-            Forms\Components\Section::make('Personal Details')
-                ->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->disabled(), // Keep this disabled so they can't change their name
-                    
-                    Forms\Components\TextInput::make('email')
-                        ->disabled(), // Keep this disabled for security
-                ])->columns(2),
-        ]);
+                //
+            ]);
     }
 
     public static function table(Table $table): Table

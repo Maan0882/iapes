@@ -30,6 +30,52 @@ class ViewInternProfile extends ViewRecord
         return $this->record->name . ' — Profile';
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('updatePassword')
+                ->label('Reset Password')
+                ->icon('heroicon-o-key')
+                ->color('warning')
+                // This is the modal popup
+                ->form([
+                    Forms\Components\Section::make('Security')
+                        ->description('Update your account password here.')
+                        ->schema([
+                            Forms\Components\TextInput::make('password')
+                                ->label('New Password')
+                                ->password()
+                                ->revealable()
+                                ->required() // Required in this specific modal
+                                ->minLength(8)
+                                ->same('password_confirmation')
+                                ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
+
+                            Forms\Components\TextInput::make('password_confirmation')
+                                ->label('Confirm New Password')
+                                ->password()
+                                ->revealable()
+                                ->required()
+                                ->dehydrated(false),
+                        ])->columns(2),
+                ])
+                ->action(function (array $data, $record) {
+                    // This logic saves the hashed password to the database
+                    $record->update([
+                        'password' => $data['password'],
+                    ]);
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('Password Reset Successfully')
+                        ->success()
+                        ->send();
+                })
+                ->modalWidth('lg')
+                ->modalHeading('Reset Your Password')
+                ->modalSubmitActionLabel('Update Password'),
+        ];
+    }
+    
     // ── Infolist ─────────────────────────────────────────────────────
     public function infolist(Infolist $infolist): Infolist
     {
