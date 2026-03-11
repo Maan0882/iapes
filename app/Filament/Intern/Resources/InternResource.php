@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Hash;
 class InternResource extends Resource
 {
     protected static ?string $model = Intern::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+    protected static ?string $navigationIcon = 'heroicon-s-user-circle';
     protected static ?string $navigationLabel = 'My Profile';
-
+    //protected static ?int $navigationSort = ;
     public static function form(Form $form): Form
     {
         return $form

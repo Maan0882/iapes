@@ -35,6 +35,12 @@ class InternPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
+            // ✅ COLLAPSIBLE SIDEBAR
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('16rem')
+            ->collapsedSidebarWidth('4.5rem')
+             // ✅ FULL WIDTH CONTENT
+            ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Intern/Resources'), for: 'App\\Filament\\Intern\\Resources')
             ->discoverPages(in: app_path('Filament/Intern/Pages'), for: 'App\\Filament\\Intern\\Pages')
             ->pages([
@@ -42,8 +48,8 @@ class InternPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Intern/Widgets'), for: 'App\\Filament\\Intern\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
