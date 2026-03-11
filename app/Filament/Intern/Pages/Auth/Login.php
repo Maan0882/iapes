@@ -14,7 +14,7 @@ class Login extends BaseLogin
         return $form
             ->schema([
                 TextInput::make('username')
-                    ->label('Intern ID / Username')
+                    ->label('Username')
                     ->required()
                     ->autofocus(),
                 

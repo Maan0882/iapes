@@ -77,14 +77,6 @@ class InternResource extends Resource
                     }),
 
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'primary' => 'active',
-                        //'warning' => 'active',
-                        'success' => 'completed',
-                        'danger' => 'dropped',
-                    ])
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
 
                ToggleColumn::make('is_active')
                     ->label('Intern Status'),
