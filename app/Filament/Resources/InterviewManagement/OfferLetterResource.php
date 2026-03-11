@@ -9,7 +9,7 @@ use App\Models\InterviewManagement\Application;
 use App\Models\InternManagement\Intern;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{Select, DatePicker, TextInput};
+use Filament\Forms\Components\{Select, DatePicker, TextInput, Textarea};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -73,6 +73,14 @@ class OfferLetterResource extends Resource
                         'general' => 'General Internship',
                     ])
                     ->required(),
+                
+                TextInput::make('project_name')
+                    ->placeholder('Project Name'),
+                    
+
+                Textarea::make('project_description')
+                    ->placeholder('Project Description'),
+                    
             ]);
     }
 
