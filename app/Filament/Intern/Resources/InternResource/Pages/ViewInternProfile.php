@@ -30,54 +30,6 @@ class ViewInternProfile extends ViewRecord
         return $this->record->name . ' — Profile';
     }
 
-    // ── Header Actions ───────────────────────────────────────────────
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\Action::make('edit')
-                ->label('Edit Profile')
-                ->icon('heroicon-o-pencil-square')
-                ->color('gray')
-                ->url(fn() => InternResource::getUrl('edit', ['record' => $this->record])),
-
-            Actions\Action::make('reset_password')
-                ->label('Change Password')
-                ->icon('heroicon-o-key')
-                ->color('danger')
-                // Only show if the profile belongs to the logged-in user
-                ->visible(fn() => $this->record->user_id === auth()->id())
-                ->form([
-                    Forms\Components\TextInput::make('new_password')
-                        ->label('New Password')
-                        ->password()
-                        ->revealable()
-                        ->required()
-                        ->minLength(8),
-                    Forms\Components\TextInput::make('confirm_password')
-                        ->label('Confirm New Password')
-                        ->password()
-                        ->revealable()
-                        ->required()
-                        ->same('new_password'),
-                ])
-                ->action(function (array $data): void {
-                    // Since the Intern model likely uses the same authenticatable 
-                    // credentials, we update the record.
-                    $this->record->update([
-                        'password' => Hash::make($data['new_password']),
-                    ]);
-
-                    Notification::make()
-                        ->title('Success')
-                        ->body("Your password has been updated.")
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Change Your Login Password')
-                ->modalWidth('md'),
-        ];
-    }
-
     // ── Infolist ─────────────────────────────────────────────────────
     public function infolist(Infolist $infolist): Infolist
     {
@@ -115,7 +67,7 @@ class ViewInternProfile extends ViewRecord
                             ->icon('heroicon-m-phone')
                             ->default('Not provided'),
 
-                        TextEntry::make('status')
+                        TextEntry::make('is_active')
                             ->label('Current Status')
                             ->badge()
                             ->color(fn(string $state): string => match ($state) {
@@ -132,7 +84,9 @@ class ViewInternProfile extends ViewRecord
                     ->columnSpan(1)
                     ->schema([
                         TextEntry::make('offerletter.internship_role')
-                            ->label('Internship Type'),
+                            ->label('Internship Type')
+                            ->default('No Role Found') // If you see this, the relationship is failing
+                            ->badge(),
 
                         TextEntry::make('application.degree')
                             ->label('Course / Degree')

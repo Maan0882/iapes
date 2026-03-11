@@ -10,6 +10,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use App\Models\InterviewManagement\Application;
 use App\Models\InterviewManagement\OfferLetter;
+use App\Models\User;
 
 class Intern extends Authenticatable implements FilamentUser
 {
@@ -47,6 +48,13 @@ class Intern extends Authenticatable implements FilamentUser
 
     public function offerletter()
     {
-        return $this->belongsTo(OfferLetter::class);
+        // Make sure the method name 'offerletter' matches what you wrote in the Infolist
+        return $this->hasOne(OfferLetter::class, 'intern_id'); 
+    }
+
+    public function user(): BelongsTo
+    {
+        // Intern 'username' matches User 'email'
+        return $this->belongsTo(User::class, 'username', 'email');
     }
 }

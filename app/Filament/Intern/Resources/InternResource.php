@@ -12,47 +12,66 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class InternResource extends Resource
 {
     protected static ?string $model = Intern::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
     protected static ?string $navigationLabel = 'My Profile';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                //
-            ]);
+             ->schema([
+            Forms\Components\Section::make('Security')
+                ->description('Update your account password here.')
+                ->schema([
+                    Forms\Components\TextInput::make('password')
+                        ->label('New Password')
+                        ->password()
+                        ->revealable()
+                        ->required(fn (string $context): bool => $context === 'create') // Only required on create, optional on edit
+                        ->minLength(8)
+                        ->dehydrated(fn ($state) => filled($state)) // Only save if the field is filled
+                        ->dehydrateStateUsing(fn ($state) => Hash::make($state)), // Hash it before saving
+
+                    Forms\Components\TextInput::make('password_confirmation')
+                        ->label('Confirm New Password')
+                        ->password()
+                        ->revealable()
+                        ->requiredWith('password')
+                        ->same('password')
+                        ->dehydrated(false), // Don't save this field to the database
+                ])->columns(2),
+                
+            Forms\Components\Section::make('Personal Details')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->disabled(), // Keep this disabled so they can't change their name
+                    
+                    Forms\Components\TextInput::make('email')
+                        ->disabled(), // Keep this disabled for security
+                ])->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('intern_code')->label('ID')->sortable(),
-                Tables\Columns\TextColumn::make('name')->label('Name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->label('Email'),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'success' => 'Active',
-                        'warning' => 'Pending',
-                        'danger' => 'Terminated',
-                    ]),
+                //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->label('View Profile')
-                    ->icon('heroicon-o-identification'),
+                //
             ])
             ->filters([
                 //
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -82,5 +101,15 @@ class InternResource extends Resource
             'view'    => Pages\ViewInternProfile::route('/{record}'),
             'edit' => Pages\EditIntern::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false; // Hides the "New Intern" button
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false; // Prevents bulk deletion
     }
 }
