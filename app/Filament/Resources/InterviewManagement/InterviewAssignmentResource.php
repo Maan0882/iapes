@@ -201,6 +201,12 @@ class InterviewAssignmentResource extends Resource
         ];
     }
 
+    // 1. Add this method to disable the "Create" button globally for this resource
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+    
     public static function getPages(): array
     {
         return [
