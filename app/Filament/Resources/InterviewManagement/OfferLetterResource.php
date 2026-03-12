@@ -42,7 +42,7 @@ class OfferLetterResource extends Resource
                             ->get()
                             ->mapWithKeys(function ($app) {
                                 return [
-                                    $app->id => $app->name . ' - ' . $app->college
+                                    $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
                                 ];
                             })
                     )
