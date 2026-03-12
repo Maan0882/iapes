@@ -63,7 +63,7 @@ class TaskResource extends Resource
 
             Select::make('intern_id')
                 ->label('Select Intern')
-                ->multiple()
+                //->multiple()
                 // Use options instead of relationship to avoid the SQL save error
                 ->options(\App\Models\InternManagement\Intern::pluck('name', 'id'))
                 ->visible(fn ($get) => $get('assigned_type') === 'intern')
