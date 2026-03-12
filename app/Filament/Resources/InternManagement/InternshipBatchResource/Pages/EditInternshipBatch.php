@@ -16,22 +16,30 @@ class EditInternshipBatch extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['batch_timing'] = $data['start_time'] . ' - ' . $data['end_time'];
-        
+        return $this->formatBatchTiming($data);
+    }
+
+    protected function formatBatchTiming(array $data): array
+    {
+        if (!empty($data['start_time']) && !empty($data['end_time'])) {
+            // Parse the times and format as 12-hour with AM/PM
+            $start = Carbon::parse($data['start_time'])->format('g:i A');
+            $end = Carbon::parse($data['end_time'])->format('g:i A');
+
+            $data['batch_timing'] = "{$start} To {$end}";
+        }
+
         return $data;
     }
 
     protected function afterSave(): void
     {
         $internIds = $this->data['interns'] ?? [];
-
-        // 1. Remove current interns from this batch first
         \App\Models\InternManagement\Intern::where('internship_batch_id', $this->record->id)
             ->update(['internship_batch_id' => null]);
 
-        // 2. Assign the newly selected interns to this batch
         if (!empty($internIds)) {
             \App\Models\InternManagement\Intern::whereIn('id', $internIds)
                 ->update(['internship_batch_id' => $this->record->id]);

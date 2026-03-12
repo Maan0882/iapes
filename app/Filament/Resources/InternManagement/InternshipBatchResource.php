@@ -52,21 +52,56 @@ class InternshipBatchResource extends Resource
                     ->relationship('interns', 'name', modifyQueryUsing: function ($query, $record) {
                         return $query->where(function ($q) use ($record) {
                             $q->whereNull('internship_batch_id');
-                            if ($record) {
-                                $q->orWhere('internship_batch_id', $record->id);
-                            }
-                        })->with('application');
+                            if ($record) $q->orWhere('internship_batch_id', $record->id);
+                        });
                     })
                     ->getOptionLabelFromRecordUsing(function ($record) {
-                        $college = $record->application?->college ?? 'N/A';
+                        $college = ($record->application?->college) ?? 'N/A';
                         return "{$record->name} ({$college})";
                     })
-                    // ->dehydrated(false) // REMOVE THIS LINE
-                    ->live() // Added so it can trigger other field updates
-                    ->afterStateUpdated(fn ($state, $set) => $set('no_of_interns', count($state))) // Auto-update count
-                    ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->live()
+                    ->afterStateUpdated(fn ($state, $set) => $set('no_of_interns', count($state)))
+                    ->required()
+                    ->rules([
+                        static function (Forms\Get $get, $record): \Closure {
+                            return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                $newStart = $get('start_time');
+                                $newEnd = $get('end_time');
+                                $newCount = count($value);
+
+                                if (!$newStart || !$newEnd) return;
+
+                                // 1. Fetch all batches to check for timing overlaps
+                                $allBatches = \App\Models\InternManagement\InternshipBatch::query()
+                                    ->when($record, fn($q) => $q->where('id', '!=', $record->id))
+                                    ->get();
+
+                                $currentOccupancy = 0;
+
+                                foreach ($allBatches as $batch) {
+                                    // 2. Parse the string "10:00 AM - 02:00 PM" back into start/end times
+                                    if (!$batch->batch_timing) continue;
+                                    
+                                    $times = explode(' - ', $batch->batch_timing);
+                                    if (count($times) !== 2) continue;
+
+                                    $existingStart = \Illuminate\Support\Carbon::parse($times[0])->format('H:i');
+                                    $existingEnd = \Illuminate\Support\Carbon::parse($times[1])->format('H:i');
+                                    
+                                    // 3. Check if this batch overlaps with the one we are creating
+                                    // Logic: (StartA < EndB) and (EndA > StartB)
+                                    if ($existingStart < $newEnd && $existingEnd > $newStart) {
+                                        $currentOccupancy += $batch->no_of_interns;
+                                    }
+                                }
+
+                                // 4. Final Capacity Check
+                                if (($currentOccupancy + $newCount) > 10) {
+                                    $fail("Capacity Exceeded! The overlapping batches already have {$currentOccupancy} interns. You can only add " . (10 - $currentOccupancy) . " more.");
+                                }
+                            };
+                        },
+                    ]),
                 Section::make('Batch Schedule')
                     ->schema([
                         Grid::make(2)->schema([
@@ -74,25 +109,14 @@ class InternshipBatchResource extends Resource
                                 ->label('Batch Start')
                                 ->withoutSeconds()
                                 ->required()
-                                // Use afterStateHydrated to fill the UI when editing
-                                ->afterStateHydrated(function ($set, $record) {
-                                    if ($record && $record->batch_timing) {
-                                        // Assuming format "HH:mm - HH:mm"
-                                        $times = explode(' - ', $record->batch_timing);
-                                        $set('start_time', $times[0] ?? null);
-                                    }
-                                }),
+                                ->live(), // Keep live() for validation and sync
 
                             TimePicker::make('end_time')
                                 ->label('Batch End')
                                 ->withoutSeconds()
                                 ->required()
-                                ->afterStateHydrated(function ($set, $record) {
-                                    if ($record && $record->batch_timing) {
-                                        $times = explode(' - ', $record->batch_timing);
-                                        $set('end_time', $times[1] ?? null);
-                                    }
-                                }),
+                                ->after('start_time')
+                                ->live(),
                         ]),
                     ]),
 
@@ -128,11 +152,15 @@ class InternshipBatchResource extends Resource
                     ->label('Batch Duration')
                     ->icon('heroicon-m-calendar-days')
                     ->formatStateUsing(function ($record) {
-                        // This checks if the data exists before trying to show it
-                        if (!$record->start_time || !$record->end_time) {
-                            return $record->batch_timing ?? 'N/A'; 
+                        // If start_time/end_time columns exist separately, format them here
+                        if ($record->start_time && $record->end_time) {
+                            $start = Carbon::parse($record->start_time)->format('g:i A');
+                            $end = Carbon::parse($record->end_time)->format('g:i A');
+                            return "{$start} To {$end}";
                         }
-                        return "{$record->start_time} to {$record->end_time}";
+                        
+                        // Otherwise, return the already formatted string from the database
+                        return $record->batch_timing ?? 'N/A';
                     }),
                 TextColumn::make('created_at')
                     ->dateTime()
