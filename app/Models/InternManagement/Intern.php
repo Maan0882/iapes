@@ -22,6 +22,7 @@ class Intern extends Authenticatable implements FilamentUser
     protected $fillable = [
         'application_id',
         'internship_batch_id',
+        'intern_team_id',
         'intern_code',
         'username',
         'password',
@@ -70,7 +71,7 @@ class Intern extends Authenticatable implements FilamentUser
     public function team()
     {
         // Note: This assumes you added 'team_id' to your interns table
-        return $this->belongsTo(InternTeam::class, 'team_id');
+        return $this->belongsTo(InternTeam::class, 'intern_team_id');
     }
 
     public function teammates()

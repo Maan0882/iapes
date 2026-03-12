@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->foreignId('internship_batch_id')->constrained();
             $table->string('team_name');
-            $table->foreignId('team_leader_id')->nullable()->constrained('interns');
+            // $table->foreignId('team_leader_id')->nullable()->constrained('interns');
 
             $table->timestamps();
         });
