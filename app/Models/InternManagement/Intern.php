@@ -72,6 +72,13 @@ class Intern extends Authenticatable implements FilamentUser
         return $this->belongsTo(InternTeam::class, 'team_id');
     }
 
+    public function teammates()
+    {
+        // Gets other interns in the same team, excluding the current intern
+        return $this->hasMany(Intern::class, 'intern_team_id', 'intern_team_id')
+            ->where('id', '!=', $this->id);
+    }
+
     public function submissions()
     {
         return $this->hasMany(TaskSubmission::class, 'intern_id');

@@ -154,6 +154,42 @@ class ViewInternProfile extends ViewRecord
                             ->badge()
                             ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
                     ]),
+
+                // ── NEW Card 3: Batch & Team Data ──
+                Section::make('Batch & Team')
+                    ->icon('heroicon-o-users')
+                    ->columnSpan(1)
+                    ->schema([
+                        // Batch Name & Timing
+                        TextEntry::make('batch.batch_name') // Adjust 'batch_name' to your actual column name
+                            ->label('Current Batch')
+                            ->weight(FontWeight::Bold)
+                            ->color('info'),
+
+                        TextEntry::make('batch.batch_timing') // Adjust to your actual column name
+                            ->label('Batch Timing')
+                            ->icon('heroicon-m-clock')
+                            ->default('Not Set'),
+
+                        TextEntry::make('team.team_name') // Adjust to your actual column name
+                            ->label('Team Name')
+                            ->badge()
+                            ->color('success')
+                            ->separator(', '),
+
+                        // Teammates List
+                        RepeatableEntry::make('teammates')
+                            ->label('My Teammates')
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->label(null) // Keeps it clean
+                                    ->icon('heroicon-m-user')
+                                    ->size(TextEntrySize::Small),
+                            ])
+                            ->columns(1)
+                            ->grid(1)
+                            ->visible(fn ($record) => $record->intern_team_id !== null),
+                    ]),
             ]),
         ]);
     }

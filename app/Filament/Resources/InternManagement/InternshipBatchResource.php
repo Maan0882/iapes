@@ -18,9 +18,21 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InternshipBatchResource extends Resource
 {
     protected static ?string $model = InternshipBatch::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    // This changes the text in the Sidebar
+    protected static ?string $navigationLabel = 'Intern Batches';
+    // This changes the Heading on the List page
+    public static function getPluralLabel(): ?string
+    {
+        return 'Intern Batches';
+    }
+    // This changes "New Internship Batch" button to "New Intern Batch"
+    public static function getModelLabel(): string
+    {
+        return 'Intern Batch';
+    }
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
+    protected static ?string $navigationGroup = 'Intern Management';
+    protected static ?int $navigationSort = 6;
     public static function form(Form $form): Form
     {
         return $form
