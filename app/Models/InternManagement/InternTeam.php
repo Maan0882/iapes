@@ -25,8 +25,9 @@ class InternTeam extends Model
     }
 
     // To get the students in this team
-    public function members()
+    public function interns()
     {
-        return $this->hasMany(Intern::class, 'team_id');
+        // Use 'intern_team_id' to match the column in your Intern model
+        return $this->hasMany(Intern::class, 'intern_team_id');
     }
 }

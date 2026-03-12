@@ -29,41 +29,29 @@ class InternTeamResource extends Resource
                 Forms\Components\Section::make('Team Identity')
                     ->schema([
                         Forms\Components\TextInput::make('team_name')
-                            ->required()
+                            ->required() //
                             ->maxLength(255),
                         
                         Forms\Components\Select::make('internship_batch_id')
                             ->label('Internship Batch')
                             ->relationship('batch', 'batch_name')
-                            ->live() // Triggers refresh for the intern list
+                            ->live() //
                             ->required(),
                     ]),
 
-                Forms\Components\Section::make('Team Composition')
+                Forms\Components\Section::make('Team Members')
                     ->schema([
-                        Forms\Components\Select::make('interns') // Matches relation in InternTeam model
-                            ->label('Select Team Members')
-                            ->multiple()
-                            ->minItems(2) // Minimum 2 members
-                            ->maxItems(3) // Maximum 3 members
+                        Forms\Components\Select::make('interns')
+                            ->label('Select Interns (2-3)')
+                            ->multiple() //
+                            ->minItems(2) //
+                            ->maxItems(3) //
                             ->relationship('interns', 'name', function ($query, Get $get) {
                                 $batchId = $get('internship_batch_id');
                                 
-                                // Only show interns from the chosen batch without a team
+                                // Only show interns from the chosen batch who don't have a team yet
                                 return $query->where('internship_batch_id', $batchId)
-                                             ->whereNull('team_id'); 
-                            })
-                            ->live() // Required to update the Team Leader options below
-                            ->required(),
-
-                        Forms\Components\Select::make('team_leader_id')
-                            ->label('Team Leader')
-                            ->options(function (Get $get) {
-                                $selectedIds = $get('interns');
-                                if (!$selectedIds) return [];
-
-                                // Leader must be one of the selected members
-                                return Intern::whereIn('id', $selectedIds)->pluck('name', 'id');
+                                            ->whereNull('intern_team_id'); 
                             })
                             ->required(),
                     ]),
@@ -74,12 +62,12 @@ class InternTeamResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('team_name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('batch.batch_name')->label('Batch'),
-                Tables\Columns\TextColumn::make('teamLeader.name')->label('Leader')->badge(),
+                Tables\Columns\TextColumn::make('team_name')->searchable()->sortable(), //
+                Tables\Columns\TextColumn::make('batch.batch_name')->label('Batch'), //
                 Tables\Columns\TextColumn::make('interns_count')
-                    ->counts('interns')
-                    ->label('Members'),
+                    ->counts('interns') //
+                    ->label('Total Members')
+                    ->badge(),
             ])
             ->filters([
                 //
