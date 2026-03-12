@@ -15,4 +15,16 @@ class CreateInternshipBatch extends CreateRecord
         
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        // Get the intern IDs from the form data
+        $internIds = $this->data['interns'] ?? [];
+
+        if (!empty($internIds)) {
+            // Update the interns to point to this new batch
+            \App\Models\InternManagement\Intern::whereIn('id', $internIds)
+                ->update(['internship_batch_id' => $this->record->id]);
+        }
+    }
 }

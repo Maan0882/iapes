@@ -13,8 +13,13 @@ use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePick
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\{Action, BulkAction};
+use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class InternshipBatchResource extends Resource
 {
@@ -38,23 +43,29 @@ class InternshipBatchResource extends Resource
     {
         return $form
             ->schema([
-                //
-               Select::make('interns')
+                TextInput::make('batch_name')
+                    ->required() // This ensures the user fills it out
+                    ->maxLength(255),
+                Select::make('interns')
                     ->label('Select Interns')
                     ->multiple()
-                    ->options(function () {
-                        return Intern::whereNull('internship_batch_id')
-                            ->with('application') // Eager load the relationship for speed
-                            ->get()
-                            ->mapWithKeys(function ($intern) {
-                                // Get the college name or show 'N/A' if it's missing
-                                $college = $intern->application?->college ?? 'No College Info';
-                                
-                                // Return: [ID => "Name (College)"]
-                                return [$intern->id => "{$intern->name} ({$college})"];
-                            });
+                    ->relationship('interns', 'name', modifyQueryUsing: function ($query, $record) {
+                        return $query->where(function ($q) use ($record) {
+                            $q->whereNull('internship_batch_id');
+                            if ($record) {
+                                $q->orWhere('internship_batch_id', $record->id);
+                            }
+                        })->with('application');
                     })
+                    ->getOptionLabelFromRecordUsing(function ($record) {
+                        $college = $record->application?->college ?? 'N/A';
+                        return "{$record->name} ({$college})";
+                    })
+                    // ->dehydrated(false) // REMOVE THIS LINE
+                    ->live() // Added so it can trigger other field updates
+                    ->afterStateUpdated(fn ($state, $set) => $set('no_of_interns', count($state))) // Auto-update count
                     ->searchable()
+                    ->preload()
                     ->required(),
                 Section::make('Batch Schedule')
                     ->schema([
@@ -87,7 +98,8 @@ class InternshipBatchResource extends Resource
 
                 TextInput::make('no_of_interns')
                     ->numeric()
-                    ->label('Number of Interns'),
+                    ->label('Number of Interns')
+                    ->readonly(),
 
                 Select::make('team_id')
                     ->label('Associated Team')
@@ -100,11 +112,38 @@ class InternshipBatchResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('15s')
             ->columns([
-                //
+                TextColumn::make('batch_name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('team.team_name')
+                    ->label('Team Name')
+                    ->badge()
+                    ->color('info'),
+                TextColumn::make('no_of_interns')
+                    ->numeric()
+                    ->summarize(Sum::make()->label('Total Interns')),
+                TextColumn::make('batch_timing')
+                    ->label('Batch Duration')
+                    ->icon('heroicon-m-calendar-days')
+                    ->formatStateUsing(function ($record) {
+                        // This checks if the data exists before trying to show it
+                        if (!$record->start_time || !$record->end_time) {
+                            return $record->batch_timing ?? 'N/A'; 
+                        }
+                        return "{$record->start_time} to {$record->end_time}";
+                    }),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('team_id')
+                    ->relationship('team', 'team_name') // Assumes Team model has a 'name' column
+                    ->label('Filter by Team')
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

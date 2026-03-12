@@ -14,15 +14,16 @@ class InternshipBatch extends Model
         'batch_timing',
         'no_of_interns',
         'team_id',
-        'intern_id',
+        // 'intern_id',
        
     ];  
 
 
 
-    public function intern()
+    public function interns(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Intern::class,'intern_id');
+        // The first argument is the class, the second is the foreign key ON the interns table
+        return $this->hasMany(Intern::class, 'internship_batch_id');
     }
     
     public function team()

@@ -21,6 +21,7 @@ class Intern extends Authenticatable implements FilamentUser
 
     protected $fillable = [
         'application_id',
+        'internship_batch_id',
         'intern_code',
         'username',
         'password',

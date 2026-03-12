@@ -22,4 +22,19 @@ class EditInternshipBatch extends EditRecord
         
         return $data;
     }
+
+    protected function afterSave(): void
+    {
+        $internIds = $this->data['interns'] ?? [];
+
+        // 1. Remove current interns from this batch first
+        \App\Models\InternManagement\Intern::where('internship_batch_id', $this->record->id)
+            ->update(['internship_batch_id' => null]);
+
+        // 2. Assign the newly selected interns to this batch
+        if (!empty($internIds)) {
+            \App\Models\InternManagement\Intern::whereIn('id', $internIds)
+                ->update(['internship_batch_id' => $this->record->id]);
+        }
+    }
 }
