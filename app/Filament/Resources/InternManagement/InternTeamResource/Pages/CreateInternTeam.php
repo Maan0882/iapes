@@ -19,9 +19,11 @@ class CreateInternTeam extends CreateRecord
     protected function afterCreate(): void
     {
         $internIds = $this->data['interns'] ?? [];
+
         if (!empty($internIds)) {
+            // Change 'team_id' to 'intern_team_id'
             \App\Models\InternManagement\Intern::whereIn('id', $internIds)
-                ->update(['team_id' => $this->record->id]);
+                ->update(['intern_team_id' => $this->record->id]);
         }
     }
 }

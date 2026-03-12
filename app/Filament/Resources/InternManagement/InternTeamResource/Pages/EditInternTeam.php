@@ -26,15 +26,15 @@ class EditInternTeam extends EditRecord
     protected function afterSave(): void
     {
         $internIds = $this->data['interns'] ?? [];
-        
-        // Clear old team assignments for this specific team
-        \App\Models\InternManagement\Intern::where('team_id', $this->record->id)
-            ->update(['team_id' => null]);
 
-        // Assign new members
+        // 1. Remove current interns from this team using 'intern_team_id'
+        \App\Models\InternManagement\Intern::where('intern_team_id', $this->record->id)
+            ->update(['intern_team_id' => null]);
+
+        // 2. Assign the newly selected interns
         if (!empty($internIds)) {
             \App\Models\InternManagement\Intern::whereIn('id', $internIds)
-                ->update(['team_id' => $this->record->id]);
+                ->update(['intern_team_id' => $this->record->id]);
         }
     }
 }
