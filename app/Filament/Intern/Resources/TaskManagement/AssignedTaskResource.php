@@ -27,11 +27,6 @@ class AssignedTaskResource extends Resource
     {
         return 'Assigned Tasks';
     }
-    // This changes "New Internship Batch" button to "New Intern Batch"
-    public static function getModelLabel(): string
-    {
-        return 'Assigned Task';
-    }
 
     protected static ?string $navigationIcon = 'heroicon-s-list-bullet';
     protected static ?string $navigationGroup = 'Task Management';
@@ -41,7 +36,7 @@ class AssignedTaskResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('intern_id', auth()->id()); // Assumes 'user_id' is the foreign key in TaskAssignment
+            ->where('intern_id', auth()->id()); // Assumes 'intern_id' is the foreign key in TaskAssignment
     }
 
     public static function form(Form $form): Form
@@ -50,16 +45,54 @@ class AssignedTaskResource extends Resource
             ->schema([
                 //
                 // Assuming TaskAssignment belongsTo a 'Task' model
-                        Placeholder::make('task_name')
-                            ->content(fn ($record) => $record?->task?->title),
-                        Textarea::make('notes')
-                            ->disabled(), // Tasks are usually read-only for interns
-                        Select::make('status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'in_progress' => 'In Progress',
-                                'completed' => 'Completed',
-                            ])->required(),
+                Section::make('Task Information')
+                    ->description('Details of the task assigned to you.')
+                    ->schema([
+                    Grid::make(2) // Creates a 2-column layout
+                        ->schema([
+                            Placeholder::make('task_name')
+                                ->label('Task Title')
+                                ->content(fn ($record) => $record?->task?->title),
+
+                            Placeholder::make('priority')
+                                ->label('Priority')
+                                ->content(fn ($record) => strtoupper($record?->task?->priority ?? 'N/A')),
+                            
+                            Placeholder::make('due_date')
+                                ->label('Deadline')
+                                ->content(fn ($record) => $record?->task?->due_date 
+                                    ? (\Illuminate\Support\Carbon::parse($record->task->due_date)->format('M d, Y')) 
+                                    : 'No deadline'),
+
+                            Placeholder::make('status')
+                                ->label('Current Status')
+                                ->content(fn ($record) => ucfirst($record->status)),
+
+
+                                
+                        ]),
+
+                    // Full width for description
+                    Placeholder::make('description')
+                        ->label('Task Description')
+                        ->content(fn ($record) => $record?->task?->description ?? 'No description provided.'),
+
+                    // --- ADD THIS ATTACHMENT FIELD ---
+                   Placeholder::make('view_attachment')
+                        ->label('Attachment')
+                        ->content(function ($record) {
+                            if (!$record?->task?->attachment) return 'No attachment';
+                            
+                            return new \Illuminate\Support\HtmlString('
+                                <a href="'.asset('storage/'.$record->task->attachment).'" 
+                                target="_blank" 
+                                style="color: #fbbf24; text-decoration: underline; font-weight: bold;">
+                                Click here to view attachment
+                                </a>
+                            ');
+                        }),
+                        
+                ]),
             ]);
     }
 
@@ -107,12 +140,14 @@ class AssignedTaskResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading('Task Details'), // This makes it open in a modal automatically if the View Page isn't used
+
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                //    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -124,12 +159,18 @@ class AssignedTaskResource extends Resource
         ];
     }
 
+    // 1. Add this method to disable the "Create" button globally for this resource
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListAssignedTasks::route('/'),
-            'create' => Pages\CreateAssignedTask::route('/create'),
-            'view' => Pages\ViewAssignedTask::route('/{record}'),
+            //'create' => Pages\CreateAssignedTask::route('/create'),
+            //'view' => Pages\ViewAssignedTask::route('/{record}'),
             'edit' => Pages\EditAssignedTask::route('/{record}/edit'),
         ];
     }

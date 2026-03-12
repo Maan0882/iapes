@@ -27,9 +27,12 @@ class EditTask extends EditRecord
     // 1. Fill the form with existing assignment data
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $assignment = $this->record->assignment;
+        // Get the first assignment (or modify if you use multiple)
+        $assignment = $this->record->assignments()->first();
+        //$assignment = $this->record->assignment;
 
-        if ($assignment) {
+        if ($assignment) 
+        {
             $data['assigned_type'] = $assignment->assigned_type;
             $data['intern_id'] = $assignment->intern_id;
             $data['team_id'] = $assignment->team_id;
@@ -44,14 +47,15 @@ class EditTask extends EditRecord
     {
         $data = $this->form->getRawState();
         
-
+        // updateOrCreate ensures we don't duplicate rows for the same task_id
         $this->record->assignments()->updateOrCreate(
-            ['task_id' => $this->record->id], // Match condition
+            ['task_id' => $this->record->task_id], // Look for this task
             [
                 'assigned_type' => $data['assigned_type'],
-                'intern_id'     => $data['intern_id'] ?? null,
-                'team_id'       => $data['team_id'] ?? null,
-                'batch_id'      => $data['batch_id'] ?? null,
+                // Set the specific ID and nullify others to maintain data integrity
+                'intern_id'     => $data['assigned_type'] === 'intern' ? $data['intern_id'] : null,
+                'team_id'       => $data['assigned_type'] === 'team'   ? $data['team_id']   : null,
+                'batch_id'      => $data['assigned_type'] === 'batch'  ? $data['batch_id']  : null,
             ]
         );
     }

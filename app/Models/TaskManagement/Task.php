@@ -24,6 +24,10 @@ class Task extends Model
         'priority'
     ];  
 
+    protected $casts = [
+        'due_date' => 'date', // or 'datetime'
+    ];
+
     public function submissions()
     {
         return $this->hasMany(TaskSubmission::class,'task_id');

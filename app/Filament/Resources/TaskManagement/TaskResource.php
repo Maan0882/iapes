@@ -19,6 +19,9 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
@@ -48,7 +51,21 @@ class TaskResource extends Resource
                 ->default('medium'),
 
             FileUpload::make('attachment')
-                ->directory('task-files'),
+                ->directory('task-files')
+                ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, callable $get): string {
+                        $title = $get('title');
+                        $slugifiedTitle = filled($title) ? Str::slug($title) : 'task';
+                        
+                        // Get original filename without the extension
+                        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                        
+                        // Get original extension
+                        $extension = $file->getClientOriginalExtension();
+
+                        // Format: title-originalfilename.extension
+                        // Example: my-task-document123.pdf
+                        return (string) str($slugifiedTitle . '-' . Str::slug($originalName) . '-' . str()->random(4) . '.' . $extension);
+                    }),
 
             Select::make('assigned_type')
                 ->label('Assign To')
@@ -58,8 +75,9 @@ class TaskResource extends Resource
                     'batch' => 'Batch',
                 ])
                 ->live()
-                ->dehydrated(false) // Add this
-                ->required(),
+                ->required()
+                ->dehydrated(false), // Add this
+                
 
             Select::make('intern_id')
                 ->label('Select Intern')
