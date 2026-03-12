@@ -16,4 +16,10 @@ class EditInternshipBatch extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['batch_timing'] = $data['start_time'] . ' - ' . $data['end_time'];
+        
+        return $data;
+    }
 }

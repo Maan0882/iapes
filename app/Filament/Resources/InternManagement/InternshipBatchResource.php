@@ -6,6 +6,7 @@ use App\Filament\Resources\InternManagement\InternshipBatchResource\Pages;
 use App\Filament\Resources\InternManagement\InternshipBatchResource\RelationManagers;
 use App\Models\InternManagement\InternshipBatch;
 use App\Models\InternManagement\Intern;
+use App\Models\InterviewManagement\Application;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid};
@@ -41,14 +42,48 @@ class InternshipBatchResource extends Resource
                Select::make('interns')
                     ->label('Select Interns')
                     ->multiple()
-                    ->options(
-                        Intern::whereNull('internship_batch_id')
-                            ->pluck('name')
-                    )
+                    ->options(function () {
+                        return Intern::whereNull('internship_batch_id')
+                            ->with('application') // Eager load the relationship for speed
+                            ->get()
+                            ->mapWithKeys(function ($intern) {
+                                // Get the college name or show 'N/A' if it's missing
+                                $college = $intern->application?->college ?? 'No College Info';
+                                
+                                // Return: [ID => "Name (College)"]
+                                return [$intern->id => "{$intern->name} ({$college})"];
+                            });
+                    })
                     ->searchable()
                     ->required(),
-                TimePicker::make('batch_timing')
-                    ->withoutSeconds(),
+                Section::make('Batch Schedule')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TimePicker::make('start_time')
+                                ->label('Batch Start')
+                                ->withoutSeconds()
+                                ->required()
+                                // Use afterStateHydrated to fill the UI when editing
+                                ->afterStateHydrated(function ($set, $record) {
+                                    if ($record && $record->batch_timing) {
+                                        // Assuming format "HH:mm - HH:mm"
+                                        $times = explode(' - ', $record->batch_timing);
+                                        $set('start_time', $times[0] ?? null);
+                                    }
+                                }),
+
+                            TimePicker::make('end_time')
+                                ->label('Batch End')
+                                ->withoutSeconds()
+                                ->required()
+                                ->afterStateHydrated(function ($set, $record) {
+                                    if ($record && $record->batch_timing) {
+                                        $times = explode(' - ', $record->batch_timing);
+                                        $set('end_time', $times[1] ?? null);
+                                    }
+                                }),
+                        ]),
+                    ]),
 
                 TextInput::make('no_of_interns')
                     ->numeric()
@@ -59,7 +94,7 @@ class InternshipBatchResource extends Resource
                     ->relationship('team', 'team_name') // Ensure 'team' relation is defined in model
                     ->searchable()
                     ->preload(),
-                ]);
+            ]);
     }
 
     public static function table(Table $table): Table
