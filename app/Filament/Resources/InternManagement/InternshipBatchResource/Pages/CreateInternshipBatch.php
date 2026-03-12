@@ -9,6 +9,14 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateInternshipBatch extends CreateRecord
 {
     protected static string $resource = InternshipBatchResource::class;
+
+    // To redirect on the page in resource
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if (!empty($data['start_time']) && !empty($data['end_time'])) {

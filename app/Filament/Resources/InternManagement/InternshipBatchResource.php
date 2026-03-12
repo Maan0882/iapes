@@ -77,7 +77,7 @@ class InternshipBatchResource extends Resource
                                     ->get();
 
                                 $currentOccupancy = 0;
-
+                                $totalCapacity = 3;
                                 foreach ($allBatches as $batch) {
                                     // 2. Parse the string "10:00 AM - 02:00 PM" back into start/end times
                                     if (!$batch->batch_timing) continue;
@@ -96,8 +96,8 @@ class InternshipBatchResource extends Resource
                                 }
 
                                 // 4. Final Capacity Check
-                                if (($currentOccupancy + $newCount) > 10) {
-                                    $fail("Capacity Exceeded! The overlapping batches already have {$currentOccupancy} interns. You can only add " . (10 - $currentOccupancy) . " more.");
+                                if (($currentOccupancy + $newCount) > $totalCapacity) {
+                                    $fail("Capacity Exceeded! The overlapping batches already have {$currentOccupancy} interns. You can only add " . ($totalCapacity - $currentOccupancy) . " more.");
                                 }
                             };
                         },
