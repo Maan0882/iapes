@@ -4,7 +4,7 @@ namespace App\Filament\Intern\Resources\TaskManagement;
 
 use App\Filament\Intern\Resources\TaskManagement\AssignedTaskResource\Pages;
 use App\Filament\Intern\Resources\TaskManagement\AssignedTaskResource\RelationManagers;
-use App\Models\TaskManagement\AssignedTask;
+use App\Models\TaskManagement\TaskAssignment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AssignedTaskResource extends Resource
 {
-    protected static ?string $model = AssignedTask::class;
+    protected static ?string $model = TaskAssignment::class;
     protected static ?string $navigationIcon = 'heroicon-s-list-bullet';
     protected static ?string $navigationGroup = 'Task Management';
     protected static ?int $navigationSort = 6;

@@ -15,4 +15,18 @@ class CreateTask extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+
+    protected function afterCreate(): void
+    {
+        $data = $this->form->getRawState();
+        
+        // Create the assignment record
+        $this->record->assignmentS()->create([
+            'assigned_type' => $data['assigned_type'],
+            'intern_id'     => $data['intern_id'] ?? null,
+            'team_id'       => $data['team_id'] ?? null,
+            'batch_id'      => $data['batch_id'] ?? null,
+        ]);
+    }
 }

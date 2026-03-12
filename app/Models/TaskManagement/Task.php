@@ -34,18 +34,18 @@ class Task extends Model
         return $this->hasMany(TaskAssignment::class,'task_id');
     }
 
-    public function intern()
-    {
-        return $this->belongsTo(Intern::class,'intern_id');
-    }
+    // public function intern()
+    // {
+    //     return $this->belongsTo(Intern::class,'intern_id');
+    // }
 
-    public function team()
-    {
-        return $this->belongsTo(InternTeam::class,'team_id');
-    }
+    // public function team()
+    // {
+    //     return $this->belongsTo(InternTeam::class,'team_id');
+    // }
 
-    public function batch()
-    {
-        return $this->belongsTo(InternshipBatch::class,'batch_id');
-    }
+    // public function batch()
+    // {
+    //     return $this->belongsTo(InternshipBatch::class,'batch_id');
+    // }
 }

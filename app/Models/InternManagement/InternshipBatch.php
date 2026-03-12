@@ -9,9 +9,14 @@ use App\Models\InternManagement\Intern;
 class InternshipBatch extends Model
 {
     //
-    //  protected $fillable = [
+     protected $fillable = [
+        'batch_name',
+        'batch_timing',
+        'no_of_interns',
+        'team_id',
+        'intern_id',
        
-    // ];  
+    ];  
 
 
 
@@ -20,4 +25,8 @@ class InternshipBatch extends Model
         return $this->belongsTo(Intern::class,'intern_id');
     }
     
+    public function team()
+    {
+        return $this->belongsTo(InternTeam::class, 'team_id');
+    }
 }

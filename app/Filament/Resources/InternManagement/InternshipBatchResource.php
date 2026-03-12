@@ -47,7 +47,19 @@ class InternshipBatchResource extends Resource
                     )
                     ->searchable()
                     ->required(),
-            ]);
+                TimePicker::make('batch_timing')
+                    ->withoutSeconds(),
+
+                TextInput::make('no_of_interns')
+                    ->numeric()
+                    ->label('Number of Interns'),
+
+                Select::make('team_id')
+                    ->label('Associated Team')
+                    ->relationship('team', 'team_name') // Ensure 'team' relation is defined in model
+                    ->searchable()
+                    ->preload(),
+                ]);
     }
 
     public static function table(Table $table): Table

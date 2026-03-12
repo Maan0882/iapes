@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TaskManagement;
 use App\Filament\Resources\TaskManagement\TaskResource\Pages;
 use App\Filament\Resources\TaskManagement\TaskResource\RelationManagers;
 use App\Models\TaskManagement\Task;
+use App\Models\TaskManagement\TaskAssignment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid};
@@ -57,22 +58,28 @@ class TaskResource extends Resource
                     'batch' => 'Batch',
                 ])
                 ->live()
+                ->dehydrated(false) // Add this
                 ->required(),
 
             Select::make('intern_id')
                 ->label('Select Intern')
-                ->relationship('intern','name')
-                ->visible(fn ($get) => $get('assigned_type') === 'intern'),
+                ->multiple()
+                // Use options instead of relationship to avoid the SQL save error
+                ->options(\App\Models\InternManagement\Intern::pluck('name', 'id'))
+                ->visible(fn ($get) => $get('assigned_type') === 'intern')
+                ->dehydrated(false), // Add this
 
             Select::make('team_id')
                 ->label('Select Team')
-                ->relationship('team','team_name')
-                ->visible(fn ($get) => $get('assigned_type') === 'team'),
+                ->options(\App\Models\InternManagement\InternTeam::pluck('team_name', 'id'))
+                ->visible(fn ($get) => $get('assigned_type') === 'team')
+                ->dehydrated(false), // Add this
 
             Select::make('batch_id')
                 ->label('Select Batch')
-                ->relationship('batch','batch_name')
-                ->visible(fn ($get) => $get('assigned_type') === 'batch'),
+                ->options(\App\Models\InternManagement\InternshipBatch::pluck('batch_name', 'id'))
+                ->visible(fn ($get) => $get('assigned_type') === 'batch')
+                ->dehydrated(false), // Add this
 
             ]);
     }
@@ -89,6 +96,23 @@ class TaskResource extends Resource
 
                 Tables\Columns\TextColumn::make('due_date')
                     ->date(),
+
+
+                Tables\Columns\TextColumn::make('assignments')
+                        ->label('Assigned To')
+                        ->formatStateUsing(function ($record) {
+                            // Map through assignments to find the relevant name
+                            return $record->assignments->map(function ($assignment) {
+                                return match ($assignment->assigned_type) {
+                                    'intern' => "Intern: " . ($assignment->intern?->name ?? 'N/A'),
+                                    'team'   => "Team: " . ($assignment->team?->team_name ?? 'N/A'),
+                                    'batch'  => "Batch: " . ($assignment->batch?->batch_name ?? 'N/A'),
+                                    default  => 'Unassigned',
+                                };
+                            })->implode(', '); // Useful if a task has multiple assignments
+                        })
+                        ->wrap(), // Good for readability if there are multiple names
+
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
