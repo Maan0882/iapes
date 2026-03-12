@@ -9,6 +9,11 @@ use App\Models\InternManagement\Intern;
 
 class InternTeam extends Model
 {
+    protected $fillable = [
+        'internship_batch_id', //
+        'team_name',          //
+        //'team_leader_id',      //
+    ];
     public function batch()
     {
         return $this->belongsTo(InternshipBatch::class, 'internship_batch_id');
