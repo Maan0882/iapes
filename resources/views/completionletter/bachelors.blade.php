@@ -78,13 +78,13 @@
                 <table class="header-table">
                     <tr>
                         <td style="text-align: left; width: 35%; font-size: 13px;">
-                            <strong>Email:</strong> info@techstrota.com
+                            <strong>Email: info@techstrota.com </strong>
                         </td>
                         <td style="text-align: center; width: 30%;">
-                            <img src="{{ public_path('storage/images/TsLogo.png') }}" class="header-logo" alt="Logo">
+                            <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Logo">
                         </td>
                         <td style="text-align: right; width: 35%; font-size: 13px;">
-                            <strong>Tel:</strong> +91 90334 76660
+                            <strong>Tel: +91 90334 76660 </strong>
                         </td>
                     </tr>
                 </table>

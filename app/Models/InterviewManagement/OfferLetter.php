@@ -3,6 +3,7 @@
 namespace App\Models\InterviewManagement;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\InternManagement\Intern;
 
 class OfferLetter extends Model
 {
@@ -46,5 +47,10 @@ class OfferLetter extends Model
     public function application()
     {
         return $this->belongsTo(Application::class);
+    }
+
+    public function intern()
+    {
+        return $this->belongsTo(Intern::class, 'intern_id');
     }
 }
