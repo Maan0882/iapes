@@ -95,36 +95,18 @@ class InternResource extends Resource
             ])
             ->actions([
                 
-            Tables\Actions\Action::make('download_certificate')
-    ->label('Completion Letter')
-    ->icon('heroicon-o-academic-cap')
-    ->color('success')
-    // Check if the related OfferLetter is accepted
-    ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false) 
-    ->action(function ($record) {
-        // Load the offerLetter and its application
-        $record->load(['offerLetter', 'application']);
-        
-        $offer = $record->offerLetter;
-
-        if (!$offer) {
-            return; // Or show a notification
-        }
-
-        $template = $offer->template ?? 'general';
-
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView("completionletter.$template", [
-            // We pass the offer letter object because your Blade expects @foreach($offers)
-            'offers' => collect([$offer]),
-        ]); 
-
-        $fileName = 'Complettion_Letter_' . str_replace('/', '-', $offer->intern->intern_code);
-
-        return response()->streamDownload(
-            fn () => print($pdf->output()),
-            $fileName . '.pdf'
-        );
-    }),
+            Tables\Actions\Action::make('view_completion_letter')
+                ->label('Completion Letter')
+                ->icon('heroicon-o-academic-cap')
+                ->color('success')
+                // Check the relationship to the OfferLetter model
+                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                ->url(function ($record) {
+                    // Points to the new route we will define below
+                    return route('view-completion-pdf', ['id' => $record->id]);
+                })
+                ->openUrlInNewTab(),
+                
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
