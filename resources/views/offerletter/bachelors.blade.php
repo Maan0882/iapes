@@ -17,17 +17,18 @@
 
     header {
         position: fixed;
-        top: -45px;
+        top: -55px;
         left: 0;
         right: 0;
-        height: 80px;
+        height: 50px;
         text-align: center;
+        font-weight: bold;
         /* border-bottom: 0.2px solid #000;
         padding-bottom: 0.1px; */
     }
 
     .header-logo {
-        height: 65px; /* Adjusted to match PDF proportion  */
+        height: 50px; /* Adjusted to match PDF proportion  */
         vertical-align: middle;
     }
 
@@ -41,7 +42,7 @@
         font-size: 15px;
         padding-top: 10px;
     }
-
+    
     main {
         margin-left: 50px;  /* Increase this value to make the section narrower */
         margin-right: 50px; /* Keep these balanced for a centered look */
@@ -94,13 +95,13 @@
     <header>
         <table style="width: 100%; border: none;">
             <tr>
-                <td style="text-align: left; font-size: 13px; width: 30%;">
+                <td style="text-align: left; font-size: 15px; width: 30%; vertical-align: bottom">
                     <strong>Email:</strong> info@techstrota.com 
                 </td>
                 <td style="text-align: center; width: 40%;">
-                    <img src="{{ public_path('storage/images/TsLogo.png') }}" class="header-logo" alt="Bachelor's Degree">
+                    <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Bachelor's Degree">
                 </td>
-                <td style="text-align: right; font-size: 13px; width: 30%;">
+                <td style="text-align: right; font-size: 15px; width: 30%; vertical-align: bottom">
                     <strong>Tel:</strong> +91 81288 40055
                 </td>
             </tr>

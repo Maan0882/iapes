@@ -162,24 +162,15 @@ class OfferLetterResource extends Resource
                         );
                     }),
 
-                Tables\Actions\Action::make('print')
-                    ->label('Print')
-                    ->icon('heroicon-o-printer')
-                    ->action(function ($record) {
-
-                        $template = $record->template ?? 'general';
-
-                        $pdf = Pdf::loadView("offerletter.$template", [
-                            'offers' => collect([$record])
-                        ]);
-
-                        $fileName = str_replace('/', '-', $record->offer_letter_code);
-
-                        return response()->streamDownload(
-                            fn () => print($pdf->output()),
-                            $fileName . '.pdf'
-                        );
-                    }),
+                Tables\Actions\Action::make('view_offer')
+                    ->label('View Offer')
+                    ->icon('heroicon-o-eye')
+                    ->color('success')
+                    ->url(function ($record) {
+                        // We generate a unique URL for this specific PDF stream
+                        return route('view-offer-pdf', ['offer_letter_code' => $record->offer_letter_code]);
+                    })
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
