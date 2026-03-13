@@ -19,6 +19,9 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Intern\Pages\Auth\Login; // Make sure to import your custom login class
 
+use App\Filament\Intern\Widgets\InternStatsOverview;
+use App\Filament\Intern\Widgets\RecentSubmissions;
+
 class InternPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -50,6 +53,9 @@ class InternPanelProvider extends PanelProvider
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
+                InternStatsOverview::class,
+                RecentSubmissions::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

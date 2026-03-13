@@ -69,11 +69,4 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-
-    public function boot(): void
-    {
-        // Sets the execution time to 300 seconds (5 minutes) 
-        // for all requests in this panel
-        set_time_limit(300);
-    }
 }
