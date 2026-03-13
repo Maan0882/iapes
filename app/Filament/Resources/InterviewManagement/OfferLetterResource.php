@@ -162,14 +162,11 @@ class OfferLetterResource extends Resource
                         );
                     }),
 
-                Tables\Actions\Action::make('view_offer')
+                Tables\Actions\Action::make('print')
                     ->label('View Offer')
                     ->icon('heroicon-o-eye')
                     ->color('success')
-                    ->url(function ($record) {
-                        // We generate a unique URL for this specific PDF stream
-                        return route('view-offer-pdf', ['offer_letter_code' => $record->offer_letter_code]);
-                    })
+                    ->url(fn ($record) => route('view-offer-pdf', ['id' => $record->id]))
                     ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])

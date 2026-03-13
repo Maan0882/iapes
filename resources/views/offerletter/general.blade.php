@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <style>
     @page {
-        margin: 100px 60px 120px 60px; /* Precise margins matching Techstrota standard */
+        margin: 10mm 25mm 20mm 25mm; /* Precise margins matching Techstrota standard */
     }
 
     body {
-        font-family: 'Times New Roman', Times, serif; /* Standard formal font  */
-        font-size: 15px; /* Slightly larger for better readability */
-        line-height: 1.5;
+        font-family: 'Arial', sans-serif;
+        font-size: 13px; /* Standard business letter size */
+        line-height: 1.6;
         color: #000;
-        text-align: justify;
+        margin: 0;
+        padding: 0;
     }
 
     header {
