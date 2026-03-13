@@ -50,3 +50,28 @@ Route::get('/view-completion-pdf/{id}', function ($id) {
     $fileName = 'Completion_Certificate_' . str_replace('/', '-', $offer->offer_letter_code) . '.pdf';
     return $pdf->stream($fileName);
 })->name('view-completion-pdf')->middleware(['auth']);
+
+//---------------------------------------------------------
+
+
+Route::get('/view-certificate-pdf/{id}', function ($id) {
+    // Find intern with relationships
+    $intern = Intern::with(['offerLetter', 'application'])->findOrFail($id);
+    
+    $offer = $intern->offerLetter;
+
+    if (!$offer) {
+        abort(404, 'Offer letter details not found for this intern.');
+    }
+
+    // Pass BOTH the collection for the loop AND individual variables for the title/header
+    $pdf = Pdf::loadView("certificate.certificate", [
+        'offers' => collect([$offer]),
+        'offer' => $offer, // Add this line to fix the "Undefined variable $offer" error
+        'qr_code' => '', // Add QR logic here
+    ])->setPaper('a4', 'landscape');
+
+    return $pdf->stream('Internship_Certificate_' . $intern->id . '.pdf');
+})->name('view-certificate-pdf')->middleware(['auth']);
+
+

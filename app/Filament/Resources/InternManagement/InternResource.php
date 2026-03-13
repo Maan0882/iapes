@@ -107,6 +107,18 @@ class InternResource extends Resource
                 })
                 ->openUrlInNewTab(),
                 
+             Tables\Actions\Action::make('view_certificate')
+                ->label('Certificate')
+                ->icon('heroicon-o-academic-cap')
+                ->color('success')
+                // Check the relationship to the OfferLetter model
+                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                ->url(function ($record) {
+                    // Points to the new route we will define below
+                    return route('view-certificate-pdf', ['id' => $record->id]);
+                })
+                ->openUrlInNewTab(),
+
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
