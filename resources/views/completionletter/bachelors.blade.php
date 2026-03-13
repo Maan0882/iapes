@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <style>
         @page {
-            /* Optimized margins for single-page fit */
-            margin: 0.4in 0.5in 0.8in 0.5in;
+            /* Standard page margins */
+            margin: 0.4in 0.5in 0.6in 0.5in;
         }
 
         body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 14.5px; /* Slightly reduced for better spatial distribution */
-            line-height: 1.5;
-            color: #1a1a1a;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #000000; 
             margin: 0;
             padding: 0;
             width: 100%;
@@ -21,24 +21,19 @@
         /* --- Sophisticated Watermark --- */
         .watermark {
             position: fixed;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 75%;
+            width: 70%;
             z-index: -1000;
-            opacity: 0.08;
-        }
-
-        .watermark img {
-            width: 100%;
-            height: auto;
+            opacity: 0.05;
         }
 
         header {
             width: 100%;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #1a2a6c; 
+            padding-bottom: 12px;
         }
 
         .header-table {
@@ -46,42 +41,54 @@
             border-collapse: collapse;
         }
 
-        .content-container {
-            width: 100%;
-            margin: 0;
-            padding: 0;
+        /* --- Increased Main Content Margins --- */
+        main {
+            padding: 0 40px; /* Increased horizontal margin for main tag only */
+            margin-top: 10px;
         }
 
-        /* --- Modern Title Design --- */
         .subject {
-            margin: 15px 0 25px 0;
+            margin: 10px 0 25px 0;
             text-align: center;
-            font-size: 20px;
-            font-family: Arial, Helvetica, sans-serif;
+            font-size: 24px;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            color: #000000;
             text-transform: uppercase;
-            color: #000;
         }
 
         .meta-section {
-            margin-bottom: 15px;
-            line-height: 1.4;
-            text-align: left;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #000000;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
         }
 
         .content-p {
-            margin-bottom: 12px;
+            margin-bottom: 18px;
             text-align: justify;
-            text-justify: inter-word;
         }
 
-        /* --- Professional Tech Grid (Saves space) --- */
+        /* --- Premium Competency Box --- */
         .tech-section {
-            background: #fcfcfc;
-            border: 1px solid #f0f0f0;
-            padding: 10px 15px;
-            margin: 15px 0;
+            background: #f8f9fa; 
+            border-left: 5px solid #f39200; 
+            border-top: 1px solid #e1e1e1;
+            border-right: 1px solid #e1e1e1;
+            border-bottom: 1px solid #e1e1e1;
+            border-radius: 0 8px 8px 0;
+            padding: 18px 25px;
+            margin: 25px 0;
+        }
+
+        .tech-title {
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .tech-list {
@@ -92,63 +99,54 @@
         }
 
         .tech-list li {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
-        /* --- Clean Signature Section --- */
-        .signature-section {
-            margin-top: 40px;
-            text-align: left;
-            width: 200px;
+        /* --- Refined Signature Area --- */
+        .signature-container {
+            margin-top: 50px;
+            width: 100%;
+        }
+
+        .sig-block {
+            text-align: center;
+            width: 250px;
         }
 
         .sig-line {
-            border-top: 1px solid #000;
-            margin-bottom: 5px;
-            width: 100%;
+            border-top: 2px solid #1a2a6c;
+            margin-bottom: 8px;
         }
 
-        /* --- Footer Alignment --- */
+        /* --- Footer --- */
         footer {
             position: fixed;
-            bottom: -40px;
+            bottom: -20px;
             left: 0;
             right: 0;
             width: 100%;
-            line-height: 1.3;
-            font-size: 11px;
-            color: #444;
-            border-top: 1px solid #eee;
-            padding-top: 8px;
-        }
-
-        .msme-logo {
-            height: 30px;
-            margin-bottom: 5px;
+            font-size: 10.5px;
+            color: #000000;
+            border-top: 1px solid #dee2e6;
+            padding-top: 12px;
         }
 
         .system-remark {
-            margin-top: 5px;
             font-style: italic;
-            font-size: 10px;
-            color: #888;
+            font-size: 9px;
+            color: #c0392b; 
             text-align: right;
         }
 
-        .page-break {
-            page-break-after: always;
-        }
-
         strong {
-            font-weight: bold;
-            color: #000;
+            color: #000000;
         }
     </style>
 </head>
 
 <body>
     <div class="watermark">
-        <img src="{{ public_path('images/TsLogo.png') }}" alt="Watermark">
+        <img src="{{ public_path('images/TsLogo.png') }}" style="width: 100%;">
     </div>
 
     @if(isset($offers))
@@ -156,89 +154,103 @@
             <header>
                 <table class="header-table">
                     <tr>
-                        <td style="text-align: left; width: 35%; font-size: 13px;">
-                            <strong>Email: info@techstrota.com</strong>
+                        <td style="text-align: left; width: 33%; font-size: 12px; font-weight: bold;">
+                            Email: info@techstrota.com
                         </td>
-                        <td style="text-align: center; width: 30%;">
-                            <img src="{{ public_path('images/TsLogo.png') }}" style="height: 55px;" alt="Logo">
+                        <td style="text-align: center; width: 34%;">
+                            <img src="{{ public_path('images/TsLogo.png') }}" style="height: 60px;">
                         </td>
-                        <td style="text-align: right; width: 35%; font-size: 13px;">
-                            <strong>Tel: +91 90334 76660</strong>
+                        <td style="text-align: right; width: 33%; font-size: 12px; font-weight: bold;">
+                            Tel: +91 90334 76660
                         </td>
                     </tr>
                 </table>
             </header>
 
-            <main class="content-container">
+            <main>
                 <div class="subject">
                     Internship Completion Certificate
                 </div>
 
                 <div class="meta-section">
-                    <strong>Issued on:</strong> {{ \Carbon\Carbon::parse($offer->completion_date ?? now())->format('d/m/Y') }} [cite: 5]<br>
-                    <strong>Certificate ID:</strong> {{ $offer->intern?->intern_code ?? 'TS25/WD/01' }} [cite: 6]
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="text-align: left;"><strong>Issued on:</strong> {{ \Carbon\Carbon::parse($offer->completion_date ?? '03/12/2025')->format('d/m/Y') }}</td>
+                            <td style="text-align: right;"><strong>Certificate ID No:</strong> {{ $offer->intern?->intern_code ?? 'TS25/WD/01' }}</td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="content-p">
-                    This is to certify that <strong>Mr./Ms. {{ $offer->application?->name }}</strong>, a student of 
-                    <strong>{{ strtoupper($offer->application?->degree) }}</strong>, has successfully completed a 
-                    <strong>{{ $offer->duration_days ?? '27' }} Days ({{ $offer->total_hours ?? '135' }} Hours)</strong> 
-                    intensive internship with an overall performance <strong>Grade of {{ $offer->grade ?? 'A' }}</strong>. 
-                    The program was specialized in <strong>“{{ $offer->internship_role }}”</strong>, 
-                    conducted by <strong>Techstrota</strong> and facilitated by 
-                    <strong>{{ strtoupper($offer->application?->college) }}</strong>[cite: 7, 8]. 
-                    The internship was held from 
-                    <strong>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }}</strong> 
-                    at our Vadodara office[cite: 9].
+                    This is to certify that <strong>{{ $offer->application?->name ?? 'Ms. Kajalben Bharatbhai Vanazara' }}</strong>, a student of 
+                    <strong>{{ strtoupper($offer->application?->degree ?? 'BCA') }}</strong>, has successfully completed the 
+                    <strong>27 Days (135 Hours)</strong> intensive internship with an overall performance <strong>Grade A</strong>. 
+                    The internship was carried out for the course titled <strong>"Web Development"</strong>, conducted by <strong>Techstrota</strong> 
+                    and facilitated by <strong>Shree P.M. Patel College of Computer Science & Technology, Anand</strong>. 
+                    The internship duration was from <strong>03/11/2025 to 03/12/2025</strong> at Techstrota.
                 </div>
 
                 <div class="content-p">
-                    <strong>Project Engagement:</strong> As a core part of the curriculum, the intern contributed to the 
-                    <strong>{{ $offer->project_name ?? 'Financial Service Intro Website project' }}</strong>[cite: 10]. 
-                    Responsibilities included the development of <strong>About</strong>, <strong>Service</strong>, and <strong>Contact</strong> modules[cite: 10]. 
-                    This engagement focused on translating client requirements into technical workflows, applying practical front-end skills, and 
-                    building a custom <strong>Admin Backend</strong> for content management[cite: 11, 12].
+                    <strong>Project Work:</strong> As part of the internship, the student worked on a 
+                    <strong>Financial Service Intro Website project</strong>, which involved developing the 
+                    <strong>About, Service and Contact modules</strong>. This real-world assignment helped the student understand 
+                    client requirements, gain exposure to industry-level workflows, and apply practical front-end development skills effectively. 
+                    Also built an <strong>Admin Backend for Blogs and Contacts</strong> with content management features.
                 </div>
 
                 <div class="tech-section">
-                    <div style="font-weight: bold; margin-bottom: 5px; font-size: 14px;">Technical Competencies Acquired:</div>
+                    <div class="tech-title">Technical Competencies Acquired</div>
                     <ul class="tech-list">
-                        <li><strong>Languages & Frameworks:</strong> JavaScript, PHP, Laravel, Filament [cite: 14]</li>
-                        <li><strong>Libraries:</strong> React, React Hook Form, Framer-motion [cite: 15]</li>
-                        <li><strong>Tools:</strong> GitHub, XAMPP, Tailwind CSS, Bootstrap, VS Code [cite: 16]</li>
-                        <li><strong>Industry Exposure:</strong> Git Collaboration, App Testing (Play Console) [cite: 16]</li>
+                        <li><strong>Language & Framework:</strong> JavaScript, PHP, Laravel, Filament</li>
+                        <li><strong>Library:</strong> React, React hook form, framer-motion</li>
+                        <li><strong>Tools & Technology:</strong> Github, Xampp, Tailwind, bootstrap, API Key, VS Code</li>
+                        <li><strong>Extra Activity:</strong> Git Collab, APP Tester (Play Console)</li>
                     </ul>
                 </div>
 
-                <div class="content-p" style="font-size: 13.5px;">
-                    The student demonstrated exceptional dedication under the mentorship of <strong>{{ $offer->mentor_name ?? 'Ms. Vidhi Patel' }}</strong>[cite: 13]. 
-                    We wish them the very best in their future professional endeavors.
+                <div class="content-p">
+                    During the internship, the student worked under the guidance of <strong>Ms. Vidhi Patel</strong>. 
+                    We acknowledge their dedication and wish them the very best in their future professional endeavors.
                 </div>
 
-                <div class="signature-section">
-                    <br><br>
-                    <div class="sig-line"></div>
-                    <strong>Badal Jamod</strong> [cite: 19]<br>
-                    CEO/CTO, Techstrota [cite: 18, 17]
+                <div class="signature-container">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%;">
+                                <div class="sig-block">
+                                    <div style="height: 60px;"></div> <div class="sig-line"></div>
+                                    <strong>Badal Jamod</strong><br>
+                                    <span style="font-size: 11px;">CEO/CTO, Techstrota</span>
+                                </div>
+                            </td>
+                            <!-- <td style="width: 50%; text-align: right;">
+                                <div class="sig-block" style="display: inline-block;">
+                                    <div style="height: 60px;"></div>
+                                    <div class="sig-line"></div>
+                                    <strong>Candidate Signature</strong>
+                                </div>
+                            </td> -->
+                        </tr>
+                    </table>
                 </div>
             </main>
 
             @if(!$loop->last)
-                <div class="page-break"></div>
+                <div style="page-break-after: always;"></div>
             @endif
         @endforeach
     @endif
 
     <footer>
-        <table style="width: 100%;">
+        <table style="width: 100%; border-collapse: collapse;">
             <tr>
-                <td style="width: 70%;">
-                    <img src="{{ public_path('images/msme_logo.png') }}" class="msme-logo" alt="MSME Logo"><br>
-                    <strong>Techstrota</strong> [cite: 20] | <span style="color: #0000EE;">www.techstrota.com</span> [cite: 21]<br>
-                    156, K10 Atlantis, C tower, Near Genda Circle, Vadodara, Gujarat - 390007 [cite: 22]
+                <td style="width: 75%; text-align: left;">
+                    <strong>Techstrota</strong> | <span style="color: #000000;">www.techstrota.com</span><br>
+                    156, 1st Floor, K10 Atlantis, C tower, Near Genda Circle, Opp Honest Restaurant,<br>
+                    Vadodara, Gujarat-390007 | CIN: GJ240114897
                 </td>
-                <td style="width: 30%; vertical-align: bottom;">
-                    <div class="system-remark">This is a system generated document.</div>
+                <td style="width: 25%; vertical-align: bottom;">
+                    <div class="system-remark">This is a system-generated document.</div>
                 </td>
             </tr>
         </table>
