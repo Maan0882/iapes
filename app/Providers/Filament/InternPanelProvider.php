@@ -19,9 +19,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Intern\Pages\Auth\Login; // Make sure to import your custom login class
 
-use App\Filament\Intern\Widgets\InternStatsOverview;
-use App\Filament\Intern\Widgets\RecentSubmissions;
-
 class InternPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -36,8 +33,10 @@ class InternPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->brandName('Intern Portal')
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => '#1d70b8', // The Blue from your logo
             ])
+            ->brandLogo(asset('images/TsLogo.png'))
+            ->brandLogoHeight('3rem')
             // ✅ COLLAPSIBLE SIDEBAR
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
@@ -53,9 +52,6 @@ class InternPanelProvider extends PanelProvider
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
-                InternStatsOverview::class,
-                RecentSubmissions::class,
-
             ])
             ->middleware([
                 EncryptCookies::class,

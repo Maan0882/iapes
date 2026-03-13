@@ -28,11 +28,11 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandname('IAPES_Admin')
-            // ->brandLogo(asset('/images/TsLogo.png'))
-            // ->brandLogoHeight('10.5rem')
             ->colors([
-                'primary' => Color::Purple,
+            'primary' => '#f7a93b', // The Orange/Gold from your logo
             ])
+            ->brandLogo(asset('images/TsLogo.png'))
+            ->brandLogoHeight('3rem')
             // ✅ COLLAPSIBLE SIDEBAR
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
@@ -69,4 +69,11 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
+
+    public function boot(): void
+    {
+        // Sets the execution time to 300 seconds (5 minutes) 
+        // for all requests in this panel
+        set_time_limit(300);
+    }
 }
