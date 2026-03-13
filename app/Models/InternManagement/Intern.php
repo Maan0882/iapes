@@ -54,8 +54,9 @@ class Intern extends Authenticatable implements FilamentUser
     public function offerletter()
     {
         // Make sure the method name 'offerletter' matches what you wrote in the Infolist
-        return $this->hasOne(OfferLetter::class, 'intern_id'); 
-    }
+        return $this->hasOne(\App\Models\InterviewManagement\OfferLetter::class, 'intern_id');
+    } 
+    
 
     public function user(): BelongsTo
     {

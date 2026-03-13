@@ -97,17 +97,17 @@
 
                 <div class="meta-section">
                     <strong>Issued on: {{ \Carbon\Carbon::parse($offer->completion_date ?? now())->format('d/m/Y') }}</strong><br>
-                    <strong>Certificate ID No.: {{ $offer->intern_code }}</strong>
+                    <strong>Certificate ID No.: {{ $offer->intern->intern_code }}</strong>
                 </div>
 
                 <div class="content-p">
-                    This is to certify that <strong>Ms. {{ $offer->application->name }}</strong>, a student of 
+                    This is to certify that <strong>Mr./Ms.{{ $offer->application->name }}</strong>, a student of 
                     <strong>{{ strtoupper($offer->application->degree) }}</strong>, has successfully completed the 
                     <strong>{{ $offer->duration_days ?? '27' }} Days ({{ $offer->total_hours ?? '135' }} Hours)</strong> 
                     with <strong>Grade {{ $offer->grade ?? 'A' }}</strong>. 
-                    The internship was carried out for the course titled <strong>“Web Development”</strong>, 
+                    The internship was carried out for the course titled <strong>“{{ $offer->internship_role }}”</strong>, 
                     conducted by <strong>Techstrota</strong> and facilitated by 
-                    <strong>Shree P.M. Patel College of Computer Science & Technology, Anand.</strong> 
+                    <strong>{{ strtoupper($offer->application->college) }}.</strong> 
                     The internship duration was from 
                     <strong>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }}</strong> 
                     at <strong>Techstrota</strong>. 156, K-10 Atlantis, Near Genda Circle, Vadodara, Gujarat – 390007
