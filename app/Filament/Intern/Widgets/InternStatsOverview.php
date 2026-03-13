@@ -37,7 +37,10 @@ class InternStatsOverview extends BaseWidget
         return [
             Stat::make('Total Assigned Tasks', $totalAssigned)
                 ->icon('heroicon-m-clipboard-document-list')
-                ->color('info'),
+                ->color('info')
+                // Link to the full list
+                ->url(route('filament.intern.resources.task-management.assigned-tasks.index'))
+                ->openUrlInNewTab(),
 
             Stat::make('Pending Tasks', $pendingCount)
                 ->description($pendingCount > 0 ? 'Action required' : 'All caught up!')

@@ -25,12 +25,11 @@ class RecentSubmissions extends BaseWidget
             )
             ->columns([
                 // ...
-                Tables\Columns\TextColumn::make('task.task_title') // Assumes a 'task' relationship exists
+                Tables\Columns\TextColumn::make('task.title') // Assumes a 'task' relationship exists
                     ->label('Task Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
 
-                Tables\Columns\TextColumn::make('submitted_at')
+                Tables\Columns\TextColumn::make('task_submission.submitted_at')
                     ->label('Date Submitted')
                     ->dateTime('d M, Y h:i A')
                     ->sortable(),

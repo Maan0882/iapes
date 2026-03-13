@@ -5,6 +5,7 @@ namespace App\Filament\Intern\Resources\TaskManagement;
 use App\Filament\Intern\Resources\TaskManagement\AssignedTaskResource\Pages;
 use App\Filament\Intern\Resources\TaskManagement\AssignedTaskResource\RelationManagers;
 use App\Models\TaskManagement\TaskAssignment;
+use App\Models\TaskManagement\TaskSubmission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid, Placeholder};
@@ -117,12 +118,12 @@ class AssignedTaskResource extends Resource
                         //default => 'primary',
                     }),
                 
-                TextColumn::make('status')
+                TextColumn::make('task_submission.status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'gray',
-                        'in_progress' => 'warning',
-                        'completed' => 'success',
+                        'reviewed' => 'gray',
+                        'rejected' => 'warning',
+                        'approved' => 'success',
                         default => 'primary',
                     }),
 
@@ -138,13 +139,70 @@ class AssignedTaskResource extends Resource
             ])
             ->filters([
                 //
+                SelectFilter::make('status')
+                ->options([
+                    'submitted' => 'Submitted',
+                    'reviewed'=> 'Reviewed',
+                    'approved' => 'Approved',
+                    'rejected' => 'Rejected',
+                ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->modalHeading('Task Details'), // This makes it open in a modal automatically if the View Page isn't used
 
                 //Tables\Actions\EditAction::make(),
+
+
+                Action::make('submit_task')
+                    ->label('Submit Task')
+                    ->icon('heroicon-m-paper-airplane')
+                    ->color('success')
+                    // Only show if the task hasn't been submitted yet or was rejected
+                    ->visible(fn (TaskAssignment $record) => 
+                        !$record->task_submission || $record->task_submission?->status === 'rejected'
+                    )
+                    ->form([
+                        FileUpload::make('attachment')
+                            ->label('Upload File (ZIP/PDF/Image)')
+                            ->directory('submissions')
+                            ->visibility('public'),
+                        
+                        TextInput::make('link')
+                            ->label('Or Submission Link (GitHub/Drive)')
+                            ->url()
+                            ->placeholder('https://github.com/...'),
+                            
+                        TextArea::make('notes')
+                            ->label('Additional Notes')
+                            ->rows(3),
+                    ])
+                    ->action(function (TaskAssignment $record, array $data): void {
+                        // Logic to create the submission
+                        TaskSubmission::updateOrCreate(
+                            ['task_id' => $record->task_id, 'intern_id' => auth()->id()],
+                            [
+                                'submission_file' => $data['attachment'],
+                                'submission_text' => $data['link'],
+                                'notes' => $data['notes'],
+                                'status' => 'submitted', // Reset status to pending on (re)submission
+                            ]
+                        );
+
+                        // Optional: Update status on the Assignment record if you have a status column there too
+                        $record->update(['status' => 'submitted']);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Task submitted successfully!')
+                            ->success()
+                            ->send();
+                    })
+                    ->modalWidth('lg')
+                    ->requiresConfirmation()
+                    ->modalHeading('Submit Your Work'),
             ])
+
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                 //    Tables\Actions\DeleteBulkAction::make(),
