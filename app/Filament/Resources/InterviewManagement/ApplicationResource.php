@@ -24,8 +24,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
+// 1. IMPORT THE TRAIT
+use App\Traits\HasInterviewActions;
+
 class ApplicationResource extends Resource
 {
+    // 2. TELL THE CLASS TO USE THE TRAIT
+    use HasInterviewActions;
+    
     protected static ?string $model = Application::class;
     protected static ?string $navigationGroup = 'Interview Management';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -198,85 +204,8 @@ class ApplicationResource extends Resource
             ])
             ->bulkActions([
                Tables\Actions\DeleteBulkAction::make(),
-               Tables\Actions\BulkAction::make('scheduleInterview')
-                ->label('Schedule Interview')
-                ->icon('heroicon-o-calendar')
-                ->form([
-                    Forms\Components\Select::make('interview_batch_id')
-                        ->label('Select Interview Batch')
-                        ->options(
-                            \App\Models\InterviewManagement\InterviewBatch::where('capacity_status', 'open')
-                                ->pluck('interview_batch_name', 'id')
-                        )
-                        ->required()
-                ])
-                ->requiresConfirmation()
-                ->action(function ($records, $data) {
-
-                    $batch = \App\Models\InterviewManagement\InterviewBatch::find($data['interview_batch_id']);
-
-                    if (!$batch) {
-                        return;
-                    }
-
-                    $currentCount = $batch->assignments()->count();
-                    $remainingSlots = $batch->batch_size - $currentCount;
-
-                    if ($remainingSlots <= 0) {
-                        \Filament\Notifications\Notification::make()
-                            ->title('Batch is already FULL')
-                            ->danger()
-                            ->send();
-                        return;
-                    }
-
-                    $scheduledCount = 0;
-
-                    foreach ($records as $record) {
-
-                        if ($scheduledCount >= $remainingSlots) {
-                            break;
-                        }
-
-                        // Prevent duplicate scheduling
-                        $exists = \App\Models\InterviewManagement\InterviewAssignment::where('application_id', $record->id)
-                            ->where('interview_batch_id', $batch->id)
-                            ->exists();
-
-                        if (!$exists) {
-
-                            \App\Models\InterviewManagement\InterviewAssignment::create([
-                                'application_id' => $record->id,
-                                'interview_batch_id' => $batch->id,
-                                // 'assignment_code' => $code,
-                            ]);
-                            
-                            $record->update([
-                                'status' => 'interview_scheduled'
-                            ]);
-                            Mail::to($record->email)
-                                ->send(new InterviewScheduledMail(
-                                    $batch,      // first parameter
-                                    $record      // second parameter
-                                ));
-                            $scheduledCount++;
-                        }
-                    }
-
-                    // Auto mark batch FULL
-                    if ($batch->assignments()->count() >= $batch->batch_size) {
-                        $batch->update([
-                            'capacity_status' => 'full'
-                        ]);
-                    }
-                    
-                    \Filament\Notifications\Notification::make()
-                        ->title("{$scheduledCount} Applicants Scheduled Successfully")
-                        ->success()
-                        ->send();
-
-                })
-
+              // 3. CALL THE TRAIT METHOD HERE
+                    static::getScheduleInterviewBulkAction(),
             ]);
     }
 

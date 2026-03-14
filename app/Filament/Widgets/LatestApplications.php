@@ -5,11 +5,21 @@ namespace App\Filament\Widgets;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
 
 use App\Models\InterviewManagement\Application;
 
+// 1. IMPORT THE TRAIT
+use App\Traits\HasInterviewActions;
+
+
 class LatestApplications extends BaseWidget
 {
+    // 2. TELL THE CLASS TO USE THE TRAIT
+    use HasInterviewActions;
+
     protected static ?string $heading = 'Latest Pending Applications';
 
     protected int | string | array $columnSpan = 'full'; // optional (makes it full width)
@@ -36,10 +46,20 @@ class LatestApplications extends BaseWidget
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
 
+                Tables\Columns\TextColumn::make('domain')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Applied On')
-                    ->dateTime()
+                    ->date()
                     ->sortable(),
+            ])
+
+            ->actions([
+
+                // Individual row button
+            static::getScheduleInterviewAction(),
+            
             ]);
     }
 }
