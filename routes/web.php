@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\InterviewManagement\OfferLetter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InternManagement\Intern;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/view-offer-pdf/{id}', function ($id) {
     // Find by ID - this is much more reliable
@@ -92,6 +93,7 @@ Route::get('/view-certificate-print/{id}', function ($id) {
 })->name('view-certificate-print')->middleware(['auth:web,intern']);
 
 //-------------- I - Card -----------------------------
+
 Route::get('/intern-id-card/{id}', function ($id) {
     $intern = Intern::with('application')->findOrFail($id);
 
@@ -104,7 +106,23 @@ if (!file_exists($idCardPath)) {
 $imageData = base64_encode(file_get_contents($idCardPath));
 $base64Image = 'data:image/jpeg;base64,' . $imageData;
 
-$pdf = Pdf::loadView('i-card.intern-id-card', compact('intern', 'base64Image'))
+$internImageBase64 = null;
+
+if ($intern->intern_image && Storage::disk('public')->exists($intern->intern_image)) {
+    $path = storage_path('app/public/' . $intern->intern_image);
+    $type = pathinfo($path, PATHINFO_EXTENSION);
+    $data = file_get_contents($path);
+    $internImageBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+} else {
+    // Fallback to a placeholder image if needed
+    $internImageBase64 = "path_to_default_avatar_base64_or_null";
+}
+
+$pdf = Pdf::loadView('i-card.intern-id-card',[
+    'intern' => $intern,
+        'base64Image' => $base64Image,
+        'internImageBase64' => $internImageBase64, // This solves the "Undefined variable" error
+])
           ->setPaper([0, 0, 153, 243])
                 ->setWarnings(false)
                 ->setOptions([
