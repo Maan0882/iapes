@@ -73,7 +73,7 @@
 
     /* Signature UI */
     .signature-container {
-        margin-top: 80px;
+        margin-top: 180px;
         width: 100%;
     }
 
