@@ -69,6 +69,7 @@ class OfferLetterResource extends Resource
                     ->options([
                         '3_month_offer_letter' => '3 Month Offer Letter',
                         '4_month_offer_letter' => '4 Month Offer Letter',
+                        '6_month_offer_letter' => '6 Month Offer Letter',
                         'one_month' => 'One Month Internship',
                         'general' => 'General Internship',
                     ])
