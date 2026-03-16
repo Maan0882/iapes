@@ -98,6 +98,22 @@ class OfferLetterResource extends Resource
                 TextColumn::make('internship_role'),
                 TextColumn::make('joining_date')->date(),
                 TextColumn::make('completion_date')->date(),
+                TextColumn::make('duration')
+                    ->label('Duration')
+                    ->state(function ($record): string {
+                        if (!$record->joining_date || !$record->completion_date) {
+                            return 'N/A';
+                        }
+
+                        $start = \Carbon\Carbon::parse($record->joining_date);
+                        $end = \Carbon\Carbon::parse($record->completion_date);
+
+                        // This returns a human-friendly string like "3 months" or "12 weeks"
+                        return $start->diffInMonths($end) . ' Months';
+                        
+                        // Alternatively, for more precision:
+                        // return $start->shortAbsoluteDiffForHumans($end, 2); 
+                    }),
                 ToggleColumn::make('is_accepted')
                     ->label('Offer Status')
                     ->afterStateUpdated(function ($record, $state) {
