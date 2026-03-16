@@ -55,23 +55,40 @@ Route::get('/view-completion-pdf/{id}', function ($id) {
 
 
 Route::get('/view-certificate-pdf/{id}', function ($id) {
-    // Find intern with relationships
     $intern = Intern::with(['offerLetter', 'application'])->findOrFail($id);
-    
     $offer = $intern->offerLetter;
 
     if (!$offer) {
-        abort(404, 'Offer letter details not found for this intern.');
+        abort(404, 'Certificate details not found.');
     }
 
-    // Pass BOTH the collection for the loop AND individual variables for the title/header
     $pdf = Pdf::loadView("certificate.certificate", [
         'offers' => collect([$offer]),
-        'offer' => $offer, // Add this line to fix the "Undefined variable $offer" error
-        'qr_code' => '', // Add QR logic here
     ])->setPaper('a4', 'landscape');
 
-    return $pdf->stream('Internship_Certificate_' . $intern->id . '.pdf');
+    return $pdf->stream('Certificate_' . $id . '.pdf');
 })->name('view-certificate-pdf')->middleware(['auth']);
+
+
+Route::get('/view-certificate-print/{id}', function ($id) {
+    // Support single or multiple comma-separated IDs
+    $ids = explode(',', $id);
+    
+    $interns = Intern::with(['offerLetter', 'application'])->whereIn('id', $ids)->get();
+    
+    // Maintain the order of IDs as passed
+    $interns = $interns->sortBy(fn($intern) => array_search($intern->id, $ids));
+    
+    $offers = $interns->map(fn($intern) => $intern->offerLetter)->filter();
+
+    if ($offers->isEmpty()) {
+        abort(404, 'Certificate details not found.');
+    }
+
+    return view('certificate.certificate', [
+        'offers' => $offers,
+        'isPdf' => false,
+    ]);
+})->name('view-certificate-print')->middleware(['auth']);
 
 

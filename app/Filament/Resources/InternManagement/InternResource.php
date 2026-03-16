@@ -12,7 +12,7 @@ use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePick
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\{Action, BulkAction};
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
 use Filament\Tables\Filters\SelectFilter;
 
@@ -107,22 +107,26 @@ class InternResource extends Resource
                 })
                 ->openUrlInNewTab(),
                 
-             Tables\Actions\Action::make('view_certificate')
-                ->label('Certificate')
-                ->icon('heroicon-o-academic-cap')
-                ->color('success')
-                // Check the relationship to the OfferLetter model
+            Tables\Actions\Action::make('print_certificate')
+                ->label('Print Certificate')
+                ->icon('heroicon-o-printer')
+                ->color('info')
                 ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(function ($record) {
-                    // Points to the new route we will define below
-                    return route('view-certificate-pdf', ['id' => $record->id]);
-                })
+                ->url(fn (Intern $record): string => route('view-certificate-print', ['id' => $record->id, 'print' => true]))
                 ->openUrlInNewTab(),
 
-                Tables\Actions\EditAction::make(),
+            Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('bulk_print_certificate')
+                        ->label('Bulk Print')
+                        ->icon('heroicon-o-printer')
+                        ->color('info')
+                        ->action(function ($records) {
+                            $ids = $records->pluck('id')->implode(',');
+                            return redirect()->route('view-certificate-print', ['id' => $ids, 'print' => true]);
+                        }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
@@ -141,6 +145,7 @@ class InternResource extends Resource
             'index' => Pages\ListInterns::route('/'),
             'create' => Pages\CreateIntern::route('/create'),
             'edit' => Pages\EditIntern::route('/{record}/edit'),
+            'certificate' => Pages\ViewCertificate::route('/{record}/certificate'),
         ];
     }
 }

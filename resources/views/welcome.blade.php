@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>IAPES Portal — Tech स्त्रोत</title>
+        <title>IAPES Portal — TechStrota</title>
         
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|jetbrains-mono:400,500,700" rel="stylesheet" />
@@ -74,7 +74,7 @@
                         IAPES <span class="text-[#f7a93b] dark:text-[#f7a93b]">PORTAL</span>
                     </h1>
                     <p class="text-[10px] md:text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.4em] mt-4">
-                        Powered by Tech स्त्रोत &bull; Enterprise
+                        Powered by TechStrota &bull; Enterprise
                     </p>
                 </div>
 
