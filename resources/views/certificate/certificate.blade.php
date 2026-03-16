@@ -129,14 +129,14 @@
             .main-title { 
                 font-family: 'Cormorant Garamond', serif;
                 font-size: 36pt; font-weight: 700; color: #0e72b4; 
-                text-transform: uppercase; letter-spacing: 2pt; margin-top: -2mm; 
+                text-transform: uppercase; letter-spacing: 2pt; margin-top: 1mm; 
             }
             .recipient { 
                 font-family: 'Cormorant Garamond', serif; font-size: 48pt; font-weight: 600; 
                 color: #1a202c; margin: 3mm 0 1mm; font-style: italic; 
             }
             .underline { width: 80%; height: 2pt; background: linear-gradient(90deg, transparent, #f4a243, transparent); margin-bottom: 15mm; }
-            .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -8mm;}
+            .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -6mm;}
 
             .footer {
                 position: absolute; bottom: 25mm; left: 35mm; right: 35mm;
@@ -212,7 +212,7 @@
                     <div class="content-wrapper">
                         <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height: 80px; margin-bottom: 6mm; margin-top:-7mm;">
                         <div class="main-title">Certificate of Internship</div>
-                        <p style="font-size: 14pt; color: #718096; margin: -2mm 0;">This is to certify that</p>
+                        <p style="font-size: 14pt; color: #718096; margin: 2mm 0;">This is to certify that</p>
                         <div class="recipient">{{ $offer->application?->name ?? 'Student Name' }}</div>
                         <div class="underline"></div>
                         <div class="body-text">
@@ -232,7 +232,7 @@
                             <div class="sig-box" style="display: @if($isPdf) inline-block @else flex @endif; flex-direction: column; align-items: center;">
                                 <div style="width: 22mm; height: 22mm; border: 1pt solid #edf2f7; background: #f7fafc; border-radius: 4px; display: @if($isPdf) block @else flex @endif; align-items: center; justify-content: center; font-size: 7pt; color: #a0aec0; @if($isPdf) line-height: 22mm; text-align: center; @endif">QR CODE</div>
                                 <span style="font-size: 8pt; color: #4a5568; margin-top: 3mm; font-family: monospace; letter-spacing: 0.5pt;">
-                                    ID: TS-{{ date('Y') }}-{{ $offer->id ?? '000' }}
+                                    ID: {{ $offer->intern->intern_code ?? '000' }}
                                 </span>
                             </div>
                             @if($isPdf)<div style="clear: both;"></div>@endif
