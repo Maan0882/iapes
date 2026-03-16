@@ -68,7 +68,7 @@ class OfferLetterResource extends Resource
                     ->label('Offer Letter Template')
                     ->options([
                         '3_month_offer_letter' => '3 Month Offer Letter',
-                        'masters' => 'Masters Internship',
+                        '4_month_offer_letter' => '4 Month Offer Letter',
                         'one_month' => 'One Month Internship',
                         'general' => 'General Internship',
                     ])

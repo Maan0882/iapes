@@ -4,84 +4,113 @@
 <meta charset="utf-8">
 <style>
     @page {
-        margin: 100px 60px 120px 60px; /* Precise margins matching Techstrota standard */
+        margin: 100px 60px 120px 60px;
     }
 
     body {
-        font-family: 'Times New Roman', Times, serif; /* Standard formal font  */
-        font-size: 15px; /* Slightly larger for better readability */
-        line-height: 1.5;
-        color: #000;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #000; /* Text strictly black */
         text-align: justify;
     }
 
+    /* Professional Header UI with Techstrota Branding */
     header {
         position: fixed;
-        top: -55px;
+        top: -70px;
         left: 0;
         right: 0;
-        height: 50px;
-        text-align: center;
-        font-weight: bold;
-        /* border-bottom: 0.2px solid #000;
-        padding-bottom: 0.1px; */
+        height: 65px;
+        border-bottom: 2.5px solid #f39200; /* Techstrota Orange */
     }
 
     .header-logo {
-        height: 50px; /* Adjusted to match PDF proportion  */
-        vertical-align: middle;
+        height: 55px;
+        width: auto;
     }
 
-    footer {
-        position: fixed;
-        bottom: -90px;
-        margin-left: 50px;  /* Increase this value to make the section narrower */
-        margin-right: 50px;
-        height: 100px;
-        text-align: left;
-        font-size: 15px;
-        padding-top: 10px;
-    }
-    
+    /* Main Content Layout */
     main {
-        margin-left: 50px;  /* Increase this value to make the section narrower */
-        margin-right: 50px; /* Keep these balanced for a centered look */
-        margin-top: 10px;
-    }
-    .address-section {
-        margin-top: 100px;
-        line-height: 1.3;
+        margin-left: 50px;
+        margin-right: 50px;
+        margin-top: 20px;
     }
 
-    .subject {
-        margin: 25px 0;
-        text-decoration: none;
-        text-align: center;
+    .address-section {
+        margin-top: 40px;
+        line-height: 1.4;
     }
 
     .date-section {
-        margin-top: 80px;
+        margin-top: 30px;
         text-align: right;
+        font-weight: bold;
     }
 
+    /* Modern Subject block utilizing company colors */
+    .subject {
+        margin: 40px 0;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 8px 0;
+        border-top: 1.5px solid #0e72b4; /* Techstrota Blue */
+        border-bottom: 1.5px solid #f39200; /* Techstrota Orange */
+        background-color: #fdfdfd;
+    }
+
+    /* List styling for modern readability */
     ul {
         margin-left: 20px;
         padding-left: 0;
+        list-style-type: square;
     }
 
     li {
         margin-bottom: 8px;
     }
 
+    /* Signature UI */
     .signature-container {
-        margin-top: 300px;
+        margin-top: 80px;
         width: 100%;
     }
 
-    .company-stamp {
-        width: 110px; /* Matches the Techstrota Vadodara seal  */
-        float: left;
-        margin-right: 20px;
+    .signature-line {
+        border-top: 1px solid #000;
+        margin-top: 60px;
+        padding-top: 5px;
+        width: 180px;
+    }
+
+    /* Clean Footer matching header aesthetic */
+    footer {
+        position: fixed;
+        bottom: -90px;
+        left: 50px;
+        right: 50px;
+        height: 100px;
+        text-align: center;
+        font-size: 11px;
+        border-top: 1px solid #808080ff;
+        padding-top: 15px;
+    }
+
+    .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.3;
+        z-index: -1000;
+        width: 100%;
+        text-align: center;
+    }
+
+    .watermark img {
+        width: 500px;
+        height: auto;
     }
 
     .page-break {
@@ -92,16 +121,20 @@
 
 <body>
 
+    <div class="watermark">
+        <img src="{{ public_path('images/TsLogo.png') }}" alt="Techstrota">
+    </div>
+
     <header>
-        <table style="width: 100%; border: none;">
+        <table style="width: 100%; border: none; border-collapse: collapse;">
             <tr>
-                <td style="text-align: left; font-size: 15px; width: 30%; vertical-align: bottom">
+                <td style="text-align: left; font-size: 12px; width: 30%; vertical-align: middle;">
                     <strong>Email:</strong> info@techstrota.com 
                 </td>
-                <td style="text-align: center; width: 40%;">
-                    <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Bachelor's Degree">
+                <td style="text-align: center; width: 40%; vertical-align: middle;">
+                    <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Techstrota">
                 </td>
-                <td style="text-align: right; font-size: 15px; width: 30%; vertical-align: bottom">
+                <td style="text-align: right; font-size: 12px; width: 30%; vertical-align: middle;">
                     <strong>Tel:</strong> +91 81288 40055
                 </td>
             </tr>
@@ -121,18 +154,18 @@
                 </div>
 
                 <div class="date-section">
-                    <strong>Date:</strong> {{ \Carbon\Carbon::parse($offer->created_at ?? now())->format('d/m/Y') }} 
+                    Date: {{ \Carbon\Carbon::parse($offer->created_at ?? now())->format('d/m/Y') }} 
                 </div>
 
                 <div class="subject">
                     <strong>Subject: Intern Offer / Appointment Letter</strong> 
                 </div>
-                <br>
+
                 <p>Dear <strong>{{ strtoupper($offer->application->name) }}</strong>,</p>
 
                 <p>
                     We are pleased to offer you an internship position at Techstrota for the role of 
-                    <strong>{{ $offer->internship_role }}</strong>.  
+                    <strong>{{ $offer->internship_role }} (3-Month Duration)</strong>.  
                     This internship presents an excellent opportunity for you to gain valuable experience and enhance your skills in software development by working with a talented and dynamic team. 
                 </p>
                 
@@ -170,27 +203,30 @@
                 <div class="signature-container">
                     <div style="float: left; width: 60%;">
                         For, <strong>TECHSTROTA</strong><br>
-                        Yours Sincerely, <br><br><br>
+                        Yours Sincerely, <br><br><br><br>
                         <strong>Jamod Badal</strong><br>
                         CEO 
                     </div>
-                    <div style="float: right; width: 30%; text-align: center; margin-top: 80px;">
-                        <div style="border-top: 1px solid #000; padding-top: 5px;">
+                    <div style="float: right; width: 30%; text-align: center;">
+                        <div class="signature-line">
                             Intern Signature
                         </div>
                     </div>
                     <div style="clear: both;"></div>
                 </div>
 
+                @if(!$loop->last)
+                    <div class="page-break"></div>
+                @endif
             @endforeach
         @endif
     </main>
 
     <footer>
-        <strong>Techstrota</strong> <br>
-        <u>www.techstrota.com</u> <br>
-        <strong>156, 1st Floor, K10 Atlantis, C Tower, Near Genda Circle, Opp Honest Restaurant,<br>
-        Vadodara, Gujarat - 390007 Tel: +91 81288 40055, CIN: GJ240114897</strong> 
+        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">TECHSTROTA</div>
+        <div style="text-decoration: underline; margin-bottom: 5px;">www.techstrota.com</div>
+        <div>156, 1st Floor, K10 Atlantis, C Tower, Near Genda Circle, Opp Honest Restaurant,</div>
+        <div>Vadodara, Gujarat - 390007 | Tel: +91 81288 40055 | CIN: GJ240114897</div>
     </footer>
 
 </body>
