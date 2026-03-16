@@ -67,7 +67,7 @@ Route::get('/view-certificate-pdf/{id}', function ($id) {
     ])->setPaper('a4', 'landscape');
 
     return $pdf->stream('Certificate_' . $id . '.pdf');
-})->name('view-certificate-pdf')->middleware(['auth']);
+})->name('view-certificate-pdf')->middleware(['auth:web,intern']);
 
 
 Route::get('/view-certificate-print/{id}', function ($id) {
@@ -89,7 +89,7 @@ Route::get('/view-certificate-print/{id}', function ($id) {
         'offers' => $offers,
         'isPdf' => false,
     ]);
-})->name('view-certificate-print')->middleware(['auth']);
+})->name('view-certificate-print')->middleware(['auth:web,intern']);
 
 //-------------- I - Card -----------------------------
 Route::get('/intern-id-card/{id}', function ($id) {
@@ -116,5 +116,5 @@ $pdf = Pdf::loadView('i-card.intern-id-card', compact('intern', 'base64Image'))
                 ]);
 
     return $pdf->stream('intern-id-card.pdf');
-})->name('view-id-card');
+})->name('view-id-card')->middleware(['auth:web,intern']);
 

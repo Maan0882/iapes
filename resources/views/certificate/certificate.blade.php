@@ -8,7 +8,7 @@
 <body style="margin: 0; padding: 0;">
 @endif
 <div id="certificate-wrapper">
-    @if(!$isPdf)
+    @if(!$isPdf && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
     <header class="preview-header no-print">
         <div class="header-content">
             <div class="header-left">
@@ -28,6 +28,27 @@
     <div id="certificate-container">
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
+            @media print {
+                @page { size: A4 landscape; margin: 0; }
+                
+                @if(!auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
+                body, #certificate-wrapper, .cert-stack, .cert { display: none !important; }
+                @endif
+
+                body { margin: 0; padding: 0; background: white; }
+                .no-print { display: none !important; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                body * { visibility: hidden !important; }
+                #certificate-wrapper, #certificate-wrapper * { visibility: visible !important; }
+                #certificate-wrapper { position: absolute; left: 0; top: 0; padding: 0 !important; }
+                
+                #certificate-container {
+                    position: absolute !important; left: 0 !important; top: 0 !important;
+                    width: 297mm !important; margin: 0 !important; padding: 0 !important;
+                }
+                html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+                .cert { margin: 0 !important; page-break-after: always !important; display: block !important; box-shadow: none !important; }
+            }
 
             @media screen {
                 #certificate-wrapper { 
@@ -43,7 +64,7 @@
                     padding: 100px 0 60px 0; 
                     font-family: 'Outfit', sans-serif;
                 }
-                
+
                 .preview-header {
                     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
                     background: rgba(15, 23, 42, 0.8);
@@ -59,20 +80,20 @@
                 .preview-badge {
                     display: inline-block; padding: 2px 8px; border-radius: 4px;
                     background: rgba(14, 114, 180, 0.2); color: #3b82f6;
-                    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-                    margin-bottom: 4px; letter-spacing: 0.05em;
+                    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+                    margin-bottom: 4px; border: 1px solid rgba(59, 130, 246, 0.2);
                 }
 
                 .print-btn {
-                    background: linear-gradient(135deg, #0e72b4, #1e40af);
-                    color: white; border: none; padding: 12px 24px; border-radius: 8px;
-                    cursor: pointer; display: flex; align-items: center; gap: 10px;
-                    font-weight: 600; font-size: 0.95rem;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    box-shadow: 0 4px 15px rgba(14, 114, 180, 0.3);
+                    background: linear-gradient(135deg, #0e72b4 0%, #0a4f7c 100%);
+                    color: white; border: none; padding: 0.6rem 1.25rem;
+                    border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+                    cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 4px 12px rgba(14, 114, 180, 0.3);
                 }
-                .print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 114, 180, 0.4); }
-                .print-btn svg { width: 20px; height: 20px; }
+                .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 114, 180, 0.4); filter: brightness(1.1); }
+                .print-btn svg { width: 1.2rem; height: 1.2rem; }
 
                 #certificate-container { 
                     display: flex; flex-direction: column; align-items: center; gap: 60px; 
@@ -253,12 +274,22 @@
 </body>
 </html>
 @endif
-@if(request()->query('print') === 'true')
+@if(request()->query('print') === 'true' && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
 <script>
     window.addEventListener('load', function() {
         setTimeout(function() {
             window.print();
         }, 500);
+    });
+</script>
+@endif
+@if(!auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
+<script>
+    window.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            alert('Printing is disabled for this document.');
+        }
     });
 </script>
 @endif

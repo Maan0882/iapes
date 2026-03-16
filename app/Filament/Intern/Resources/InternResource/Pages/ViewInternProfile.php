@@ -33,6 +33,21 @@ class ViewInternProfile extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('viewCertificate')
+                ->label('View Certificate')
+                ->icon('heroicon-o-academic-cap')
+                ->color('success')
+                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                ->url(fn ($record) => route('view-certificate-print', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+
+            Actions\Action::make('viewIdCard')
+                ->label('View ID Card')
+                ->icon('heroicon-o-identification')
+                ->color('primary')
+                ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+
             Actions\Action::make('updatePassword')
                 ->label('Reset Password')
                 ->icon('heroicon-o-key')
