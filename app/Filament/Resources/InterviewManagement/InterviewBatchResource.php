@@ -45,7 +45,10 @@ class InterviewBatchResource extends Resource
                     ->maxLength(255),
 
                 Forms\Components\DatePicker::make('interview_date')
-                    ->required(),
+                    ->required()
+                    ->native(false)
+                    ->minDate(now()->startOfDay())
+                    ->displayFormat('d M, Y'),
 
                 Forms\Components\TimePicker::make('start_time')
                     ->required(),

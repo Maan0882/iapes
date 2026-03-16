@@ -86,4 +86,9 @@ class Intern extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(TaskSubmission::class, 'intern_id');
     }
+
+    public function offer_letters() // For accessing dates in i-card
+    {
+        return $this->hasOne(OfferLetter::class, 'intern_id');
+    }
 }

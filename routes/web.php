@@ -91,4 +91,30 @@ Route::get('/view-certificate-print/{id}', function ($id) {
     ]);
 })->name('view-certificate-print')->middleware(['auth']);
 
+//-------------- I - Card -----------------------------
+Route::get('/intern-id-card/{id}', function ($id) {
+    $intern = Intern::with('application')->findOrFail($id);
+
+    $idCardPath = public_path('images/I-card-bg.png'); // Double check if it's .png or .jpeg!
+
+if (!file_exists($idCardPath)) {
+    return "Error: Image not found at " . $idCardPath;
+}
+
+$imageData = base64_encode(file_get_contents($idCardPath));
+$base64Image = 'data:image/jpeg;base64,' . $imageData;
+
+$pdf = Pdf::loadView('i-card.intern-id-card', compact('intern', 'base64Image'))
+          ->setPaper([0, 0, 153, 243])
+                ->setWarnings(false)
+                ->setOptions([
+                    'dpi' => 300,             // Force 300 DPI for print
+                    'defaultPaperSize' => 'a4',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true,
+                    'defaultFont' => 'sans-serif'
+                ]);
+
+    return $pdf->stream('intern-id-card.pdf');
+})->name('view-id-card');
 

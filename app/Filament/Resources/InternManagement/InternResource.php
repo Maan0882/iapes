@@ -94,6 +94,14 @@ class InternResource extends Resource
                 //
             ])
             ->actions([
+
+            Tables\Actions\Action::make('view_id_card')
+                ->label('I-Card')
+                ->icon('heroicon-o-identification')
+                ->color('primary')
+                ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+            //----------------------------------------------------------------------------
                 
             Tables\Actions\Action::make('view_completion_letter')
                 ->label('Completion Letter')
