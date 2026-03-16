@@ -10,6 +10,7 @@ use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -33,6 +34,43 @@ class ViewInternProfile extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            // ── NEW: Upload Profile Picture Action ──
+                Actions\Action::make('updateProfilePicture')
+                ->label('Upload Photo')
+                ->icon('heroicon-o-camera')
+                ->color('info')
+                ->form([
+                    Forms\Components\FileUpload::make('intern_image')
+                            ->label('Profile Picture')
+                            ->image()
+                            ->avatar()
+                            ->imageEditor()
+                            ->directory('intern-profiles')
+                            ->visibility('public')
+                            // ── Dynamic Filename Logic ──
+                            ->getUploadedFileNameForStorageUsing(
+                                fn ($file, $record): string => (string) str($record->intern_code)
+                                    ->replace('/', '-') // Changes TS26/WD/001 to TS26-WD-001
+                                    ->prepend('profile-')
+                                    ->append('.' . $file->getClientOriginalExtension()),
+                            )
+                                                    ->required(),
+                            ])
+                                ->action(function (array $data, $record) {
+                                    $record->update([
+                                        'intern_image' => $data['intern_image'],
+                                    ]);
+
+                                    Notification::make()
+                                        ->title('Profile picture updated!')
+                                        ->success()
+                                        ->send();
+                                })
+                                ->modalHeading('Upload Your Picture')
+                                ->modalSubmitActionLabel('Save Photo'),
+
+            //-------------------------------------------------------------------------                                
             Actions\Action::make('viewCertificate')
                 ->label('View Certificate')
                 ->icon('heroicon-o-academic-cap')
@@ -99,23 +137,44 @@ class ViewInternProfile extends ViewRecord
             // ── Row 1: Identity + Internship Details + Batch & Team ──
             Grid::make(3)->schema([
 
+                
                 // ── Card 1: Basic Information ──
                 Section::make('Basic Information')
                     ->icon('heroicon-o-user-circle')
                     ->columnSpan(1)
                     ->schema([
-                        TextEntry::make('intern_code')
-                            ->label('Intern ID')
-                            ->badge()
-                            ->color('primary')
-                            ->copyable()
-                            ->copyMessage('Intern ID copied!')
-                            ->size(TextEntrySize::Large),
+                        Grid::make(2) // Create a 2-column split inside the card
+                            ->schema([
+                                // Left Side: Text Details
+                                Grid::make(1)
+                                    ->columnSpan(1)
+                                    ->schema([
+                                        TextEntry::make('intern_code')
+                                            ->label('Intern ID')
+                                            ->badge()
+                                            ->color('primary')
+                                            ->copyable()
+                                            ->size(TextEntrySize::Large),
 
-                        TextEntry::make('name')
-                            ->label('Full Name')
-                            ->weight(FontWeight::Bold)
-                            ->size(TextEntrySize::Large),
+                                        TextEntry::make('name')
+                                            ->label('Full Name')
+                                            ->weight(FontWeight::Bold)
+                                            ->size(TextEntrySize::Large),
+                                ]),
+
+                    // Right Side: Profile Image
+                    ImageEntry::make('intern_image')
+                        ->label(false)
+                        ->disk('public') // Explicitly tell it to use the public disk
+                        ->visibility('public')
+                        
+                        ->grow(false)
+                        ->alignEnd()
+                        ->columnSpan(1)
+                        ->extraImgAttributes([
+                            'class' => 'ring-2 ring-primary-500/20 shadow-md',
+                        ]),
+            ]),
 
                         TextEntry::make('email')
                             ->label('Email Address')
