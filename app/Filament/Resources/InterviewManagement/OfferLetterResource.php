@@ -67,7 +67,7 @@ class OfferLetterResource extends Resource
                 Select::make('template')
                     ->label('Offer Letter Template')
                     ->options([
-                        'bachelors' => 'Bachelors Internship',
+                        '3_month_offer_letter' => '3 Month Offer Letter',
                         'masters' => 'Masters Internship',
                         'one_month' => 'One Month Internship',
                         'general' => 'General Internship',
@@ -206,10 +206,10 @@ class OfferLetterResource extends Resource
                     ->label('Bulk Print')
                     ->icon('heroicon-o-printer')
                     ->action(function ($records) {
-
-                            $pdf = Pdf::loadView('offerletter.$template', [
-                                'offers' => $records
-                            ]);
+                        $template = $records->first()?->template ?? 'general';
+                        $pdf = Pdf::loadView("offerletter.$template", [
+                            'offers' => $records
+                        ]);
 
                             return response()->streamDownload(
                                 fn () => print($pdf->output()),
