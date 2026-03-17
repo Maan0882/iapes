@@ -52,9 +52,9 @@
         <div class="absolute top-[-15%] left-[-10%] w-[55%] h-[55%] bg-[#f7a93b]/20 dark:bg-[#f7a93b]/10 rounded-full blur-[140px]"></div>
         <div class="absolute bottom-[-15%] right-[-10%] w-[55%] h-[55%] bg-[#1d70b8]/20 dark:bg-[#1d70b8]/10 rounded-full blur-[140px]"></div>
 
-        <main class="w-full sm:max-w-lg md:max-w-xl lg:max-w-3xl glass-container rounded-[40px] overflow-hidden relative z-10 p-1 lg:p-2 animate-in fade-in zoom-in duration-700">
-            
-            <div class="flex items-center gap-2 px-8 py-6 border-b border-black/5 dark:border-white/5">
+        <main class="w-full sm:max-w-lg md:max-w-xl lg:max-w-xl glass-container rounded-[40px] overflow-hidden relative z-10 p-1 animate-in fade-in zoom-in duration-700">
+    
+            <div class="flex items-center gap-2 px-8 py-4 border-b border-black/5 dark:border-white/5">
                 <div class="flex gap-2">
                     <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
                     <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
@@ -65,51 +65,51 @@
                 </div>
             </div>
 
-            <div class="p-8 md:p-14 lg:p-20">
-                <div class="flex flex-col items-center text-center mb-14 lg:mb-20">
-                    <div class="p-5 bg-white dark:bg-white/5 rounded-[28px] shadow-sm mb-6 transition-all duration-300 hover:scale-110">
-                        <img src="{{ asset('images/TsLogo.png') }}" alt="Tech स्त्रोत" class="h-14 md:h-20 lg:h-24 w-auto">
+            <div class="p-6 md:p-10 lg:p-12">
+                <div class="flex flex-col items-center text-center mb-8 lg:mb-10">
+                    <div class="p-3 bg-white dark:bg-white/5 rounded-[22px] shadow-sm mb-4 transition-all duration-300 hover:scale-110">
+                        <img src="{{ asset('images/TsLogo.png') }}" alt="Tech स्त्रोत" class="h-12 md:h-16 lg:h-18 w-auto">
                     </div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-gray-900 dark:text-white uppercase italic">
+                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-gray-900 dark:text-white uppercase italic">
                         IAPES <span class="text-[#f7a93b] dark:text-[#f7a93b]">PORTAL</span>
                     </h1>
-                    <p class="text-[10px] md:text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.4em] mt-4">
+                    <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.4em] mt-2">
                         Powered by TechStrota &bull; Enterprise
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    <a href="{{ url('/admin') }}" class="glass-btn flex flex-col items-center p-8 md:p-10 rounded-[32px] no-underline group text-center hover:scale-105 transition-all">
-                        <div class="w-16 h-16 bg-[#f7a93b]/15 rounded-2xl flex items-center justify-center text-[#f7a93b] mb-5 transition-all group-hover:bg-[#f7a93b] group-hover:text-white group-hover:shadow-[0_0_30px_rgba(247,169,59,0.3)]">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 21a9.983 9.983 0 005.143-1.41l.054.09m-4.695-4.695a2 2 0 11-2.828-2.828 2 2 0 012.828 2.828zm-2.828-4.95a5 5 0 105.656 5.656"/></svg>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                    <a href="{{ url('/admin') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
+                        <div class="w-12 h-12 bg-[#f7a93b]/15 rounded-xl flex items-center justify-center text-[#f7a93b] mb-3 transition-all group-hover:bg-[#f7a93b] group-hover:text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 21a9.983 9.983 0 005.143-1.41l.054.09m-4.695-4.695a2 2 0 11-2.828-2.828 2 2 0 012.828 2.828zm-2.828-4.95a5 5 0 105.656 5.656"/></svg>
                         </div>
                         <div class="flex-1">
-                            <div class="text-xl font-black dark:text-white uppercase tracking-tight">Admin</div>
-                            <div class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Manage Interview and Interns</div>
+                            <div class="text-lg font-black dark:text-white uppercase tracking-tight">Admin</div>
+                            <div class="text-[9px] text-gray-500 mt-1 font-bold uppercase tracking-widest">Manage Interns</div>
                         </div>
                     </a>
 
-                    <a href="{{ url('/intern') }}" class="glass-btn flex flex-col items-center p-8 md:p-10 rounded-[32px] no-underline group text-center hover:scale-105 transition-all">
-                        <div class="w-16 h-16 bg-[#1d70b8]/15 rounded-2xl flex items-center justify-center text-[#1d70b8] mb-5 transition-all group-hover:bg-[#1d70b8] group-hover:text-white group-hover:shadow-[0_0_30px_rgba(29,112,184,0.3)]">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <a href="{{ url('/intern') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
+                        <div class="w-12 h-12 bg-[#1d70b8]/15 rounded-xl flex items-center justify-center text-[#1d70b8] mb-3 transition-all group-hover:bg-[#1d70b8] group-hover:text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                         <div class="flex-1">
-                            <div class="text-xl font-black dark:text-white uppercase tracking-tight">Intern</div>
-                            <div class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Workspace, Task & Evaluation</div>
+                            <div class="text-lg font-black dark:text-white uppercase tracking-tight">Intern</div>
+                            <div class="text-[9px] text-gray-500 mt-1 font-bold uppercase tracking-widest">Workspace & Tasks</div>
                         </div>
                     </a>
                 </div>
 
-                <div class="mt-16 lg:mt-24 pt-10 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="mt-10 lg:mt-12 pt-6 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex items-center gap-3">
-                        <span class="relative flex h-3 w-3">
+                        <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                         </span>
-                        <span class="text-[11px] portal-mono text-gray-400 dark:text-gray-500 uppercase tracking-widest font-bold">Encrypted Node: Active</span>
+                        <span class="text-[9px] portal-mono text-gray-400 dark:text-gray-500 uppercase tracking-widest font-bold">Active</span>
                     </div>
-                    <p class="text-[10px] portal-mono text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] font-medium">
-                        &copy; 2026 Tech स्त्रोत &bull; Secure Enterprise Protocol
+                    <p class="text-[9px] portal-mono text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] font-medium">
+                        &copy; 2026 TechStrota
                     </p>
                 </div>
             </div>
