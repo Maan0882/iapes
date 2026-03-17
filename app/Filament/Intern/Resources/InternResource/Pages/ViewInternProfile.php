@@ -167,7 +167,7 @@ class ViewInternProfile extends ViewRecord
                         ->label(false)
                         ->disk('public') // Explicitly tell it to use the public disk
                         ->visibility('public')
-                        
+                        // ->pathStrategy(\Filament\Infolists\Components\ImageEntry\PathStrategy::Relative)
                         ->grow(false)
                         ->alignEnd()
                         ->columnSpan(1)
