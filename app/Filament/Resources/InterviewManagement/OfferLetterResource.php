@@ -39,6 +39,7 @@ class OfferLetterResource extends Resource
                     ->multiple()
                    ->options(
                         Application::where('status', 'Shortlisted')
+                            ->whereDoesntHave('offerLetter')
                             ->get()
                             ->mapWithKeys(function ($app) {
                                 return [

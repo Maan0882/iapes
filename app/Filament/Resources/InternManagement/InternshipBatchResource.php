@@ -24,14 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InternshipBatchResource extends Resource
 {
     protected static ?string $model = InternshipBatch::class;
-    // This changes the text in the Sidebar
     protected static ?string $navigationLabel = 'Intern Batches';
-    // This changes the Heading on the List page
     public static function getPluralLabel(): ?string
     {
         return 'Intern Batches';
     }
-    // This changes "New Internship Batch" button to "New Intern Batch"
     public static function getModelLabel(): string
     {
         return 'Intern Batch';
@@ -51,14 +48,23 @@ class InternshipBatchResource extends Resource
                     ->multiple()
                     ->relationship('interns', 'name', modifyQueryUsing: function ($query, $record) {
                         return $query->where(function ($q) use ($record) {
+                            // Include interns who don't have a batch assigned yet
                             $q->whereNull('internship_batch_id');
-                            if ($record) $q->orWhere('internship_batch_id', $record->id);
+                            $q->where('is_active', true);
+                            // ALSO include interns who don't have a team assigned yet
+                            $q->whereNull('intern_team_id'); 
+
+                            // If you are EDITING an existing batch, keep the interns already in it
+                            if ($record) {
+                                $q->orWhere('internship_batch_id', $record->id);
+                            }
                         });
                     })
                     ->getOptionLabelFromRecordUsing(function ($record) {
                         $college = ($record->application?->college) ?? 'N/A';
                         return "{$record->name} ({$college})";
                     })
+                    ->preload()
                     ->live()
                     ->afterStateUpdated(fn ($state, $set) => $set('no_of_interns', count($state)))
                     ->required()
@@ -141,10 +147,11 @@ class InternshipBatchResource extends Resource
                 TextColumn::make('batch_name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('team.team_name')
+                TextColumn::make('teams.team_name') // Change 'team' to 'teams'
                     ->label('Team Name')
                     ->badge()
-                    ->color('info'),
+                    ->color('info')
+                    ->placeholder('No Teams Assigned'),
                 TextColumn::make('no_of_interns')
                     ->numeric()
                     ->summarize(Sum::make()->label('Total Interns')),
@@ -189,7 +196,11 @@ class InternshipBatchResource extends Resource
             //
         ];
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['team', 'interns']); 
+    }
     public static function getPages(): array
     {
         return [

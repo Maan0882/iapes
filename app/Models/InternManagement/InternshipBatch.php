@@ -25,9 +25,14 @@ class InternshipBatch extends Model
         // The first argument is the class, the second is the foreign key ON the interns table
         return $this->hasMany(Intern::class, 'internship_batch_id');
     }
-    
-    public function team()
+    public function teams(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(InternTeam::class, 'team_id');
+        // This looks for teams where 'internship_batch_id' matches this batch's ID
+        return $this->hasMany(InternTeam::class, 'internship_batch_id');
+    }
+    public function team(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        // Use the full namespace to ensure Laravel finds the class
+        return $this->belongsTo(\App\Models\InternManagement\InternTeam::class, 'team_id');
     }
 }

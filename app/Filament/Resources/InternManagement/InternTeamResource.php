@@ -68,6 +68,11 @@ class InternTeamResource extends Resource
                     ->counts('interns') //
                     ->label('Total Members')
                     ->badge(),
+                Tables\Columns\TextColumn::make('interns.name')
+                    ->label('Members')
+                    ->listWithLineBreaks() // Displays names on new lines
+                    ->bulleted()           // Adds dots before names
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -89,6 +94,11 @@ class InternTeamResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['interns']); // This loads all names in one single query
+    }
     public static function getPages(): array
     {
         return [

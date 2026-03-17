@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\InterviewManagement\Offerletter;
 
 use Carbon\Carbon;
 
@@ -32,5 +33,10 @@ class Application extends Model
         'resume_path',
         'status',
     ];
+
+    public function offerLetter()
+    {
+        return $this->hasOne(OfferLetter::class, 'application_id');
+    }
 
 }
