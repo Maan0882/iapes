@@ -48,4 +48,12 @@ class TaskAssignment extends Model
         return $this->belongsTo(InternshipBatch::class,'batch_id');
     }
 
+    public function task_submission()
+    {
+        return $this->hasOne(
+            \App\Models\TaskManagement\TaskSubmission::class,
+            'task_id',
+            'task_id'
+        )->where('intern_id', auth()->id());
+    }
 }

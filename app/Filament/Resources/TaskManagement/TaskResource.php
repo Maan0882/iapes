@@ -133,7 +133,8 @@ class TaskResource extends Resource
 
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->label('Task Created On')
+                    ->date(),
 
             ])
             ->filters([

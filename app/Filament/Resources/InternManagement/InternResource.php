@@ -99,6 +99,8 @@ class InternResource extends Resource
                 ->label('I-Card')
                 ->icon('heroicon-o-identification')
                 ->color('primary')
+                // Check the relationship to the OfferLetter model
+                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
                 ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
             //----------------------------------------------------------------------------

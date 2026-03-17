@@ -13,7 +13,11 @@ class ViewAssignedTask extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\Action::make('back')
+                ->label('Back')
+                ->icon('heroicon-m-arrow-left')
+                ->color('gray')
+                ->url(AssignedTaskResource::getUrl('index')), // redirect to list page
         ];
     }
 }

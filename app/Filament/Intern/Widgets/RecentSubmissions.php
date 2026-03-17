@@ -29,9 +29,9 @@ class RecentSubmissions extends BaseWidget
                     ->label('Task Name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('task_submission.submitted_at')
+                Tables\Columns\TextColumn::make('submitted_at')
                     ->label('Date Submitted')
-                    ->dateTime('d M, Y h:i A')
+                    ->date('d M, Y')
                     ->sortable(),
 
                 Tables\Columns\SelectColumn::make('status')
@@ -65,7 +65,12 @@ class RecentSubmissions extends BaseWidget
                 Tables\Actions\Action::make('view')
                     ->label('View Task')
                     ->icon('heroicon-m-eye')
-                    ->url(fn ($record): string => "/intern/tasks/{$record->task_id}"),
+                    ->url(fn ($record): ?string => 
+                        $record->taskAssignment
+                            ? route('filament.intern.resources.task-management.assigned-tasks.view', $record->task->task_id)
+                            : null
+                    )
+                    ->disabled(fn ($record) => !$record->taskAssignment)
             ]);
     }
 }

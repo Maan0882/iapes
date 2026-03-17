@@ -23,4 +23,14 @@ class TaskSubmission extends Model
     {
         return $this->belongsTo(Task::class,'task_id');
     }
+
+
+    public function taskAssignment()
+    {
+        return $this->belongsTo(
+            \App\Models\TaskManagement\TaskAssignment::class,
+            'task_id',
+            'task_id'
+        )->where('intern_id', auth()->id());
+    }
 }

@@ -37,7 +37,8 @@ class AssignedTaskResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('intern_id', auth()->id()); // Assumes 'intern_id' is the foreign key in TaskAssignment
+            ->where('intern_id', auth()->id()) // Assumes 'intern_id' is the foreign key in TaskAssignment
+            ->with(['task', 'task_submission']); // ✅ MUST
     }
 
     public static function form(Form $form): Form
@@ -65,7 +66,7 @@ class AssignedTaskResource extends Resource
                                     ? (\Illuminate\Support\Carbon::parse($record->task->due_date)->format('M d, Y')) 
                                     : 'No deadline'),
 
-                            Placeholder::make('status')
+                            Placeholder::make('task_submission.status')
                                 ->label('Current Status')
                                 ->content(fn ($record) => ucfirst($record->status)),
 
@@ -118,20 +119,28 @@ class AssignedTaskResource extends Resource
                         //default => 'primary',
                     }),
                 
-                TextColumn::make('task_submission.status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'reviewed' => 'gray',
-                        'rejected' => 'warning',
-                        'approved' => 'success',
-                        default => 'primary',
-                    }),
-
-                TextColumn::make('task.due_date')
+                 TextColumn::make('task.due_date')
+                    ->label('Task Due Date')
                     ->date()
                     ->sortable(),
 
-                TextColumn::make('created_at')
+                TextColumn::make('submission_status')
+                    ->label('Task Status')
+                    ->getStateUsing(fn ($record) => 
+                        $record->task_submission?->status ?? 'not submitted'
+                    )
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        'reviewed' => 'info',
+                        'submitted' => 'warning',
+                        'not submitted' => 'gray',
+                        default => 'gray',
+                    }),
+                
+
+                TextColumn::make('task.created_at')
                     ->label('Assigned On')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -169,7 +178,7 @@ class AssignedTaskResource extends Resource
                             ->visibility('public'),
                         
                         TextInput::make('link')
-                            ->label('Or Submission Link (GitHub/Drive)')
+                            ->label('Or Submission Link (GitHub)')
                             ->url()
                             ->placeholder('https://github.com/...'),
                             
@@ -228,8 +237,8 @@ class AssignedTaskResource extends Resource
         return [
             'index' => Pages\ListAssignedTasks::route('/'),
             //'create' => Pages\CreateAssignedTask::route('/create'),
-            //'view' => Pages\ViewAssignedTask::route('/{record}'),
-            'edit' => Pages\EditAssignedTask::route('/{record}/edit'),
+            'view' => Pages\ViewAssignedTask::route('/{record}'),
+            //'edit' => Pages\EditAssignedTask::route('/{record}/edit'),
         ];
     }
 }
