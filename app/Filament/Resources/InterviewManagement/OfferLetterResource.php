@@ -235,6 +235,26 @@ class OfferLetterResource extends Resource
                             );
                         })
                     ->deselectRecordsAfterCompletion(),
+                Tables\Actions\BulkAction::make('send_credentials_bulk')
+                    ->label('Email Credentials')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function ($records) {
+                        foreach ($records as $record) {
+                            if ($record->is_accepted && $record->intern) {
+                                // Sent directly (not queued)
+                                \Illuminate\Support\Facades\Mail::to($record->intern->email)
+                                    ->send(new \App\Mail\InternWelcomeMail($record->intern));
+                            }
+                        }
+
+                        Notification::make()
+                            ->title('Credentials Sent Successfully')
+                            ->success()
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
