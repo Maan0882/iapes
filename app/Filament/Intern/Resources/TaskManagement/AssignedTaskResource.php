@@ -8,7 +8,7 @@ use App\Models\TaskManagement\TaskAssignment;
 use App\Models\TaskManagement\TaskSubmission;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid, Placeholder};
+use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Placeholder};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,6 +17,11 @@ use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Grid;
 
 class AssignedTaskResource extends Resource
 {
@@ -45,58 +50,73 @@ class AssignedTaskResource extends Resource
     {
         return $form
             ->schema([
-                //
-                // Assuming TaskAssignment belongsTo a 'Task' model
-                Section::make('Task Information')
-                    ->description('Details of the task assigned to you.')
-                    ->schema([
-                    Grid::make(2) // Creates a 2-column layout
-                        ->schema([
-                            Placeholder::make('task_name')
-                                ->label('Task Title')
-                                ->content(fn ($record) => $record?->task?->title),
-
-                            Placeholder::make('priority')
-                                ->label('Priority')
-                                ->content(fn ($record) => strtoupper($record?->task?->priority ?? 'N/A')),
-                            
-                            Placeholder::make('due_date')
-                                ->label('Deadline')
-                                ->content(fn ($record) => $record?->task?->due_date 
-                                    ? (\Illuminate\Support\Carbon::parse($record->task->due_date)->format('M d, Y')) 
-                                    : 'No deadline'),
-
-                            Placeholder::make('task_submission.status')
-                                ->label('Current Status')
-                                ->content(fn ($record) => ucfirst($record->status)),
-
-
-                                
-                        ]),
-
-                    // Full width for description
-                    Placeholder::make('description')
-                        ->label('Task Description')
-                        ->content(fn ($record) => $record?->task?->description ?? 'No description provided.'),
-
-                    // --- ADD THIS ATTACHMENT FIELD ---
-                   Placeholder::make('view_attachment')
-                        ->label('Attachment')
-                        ->content(function ($record) {
-                            if (!$record?->task?->attachment) return 'No attachment';
-                            
-                            return new \Illuminate\Support\HtmlString('
-                                <a href="'.asset('storage/'.$record->task->attachment).'" 
-                                target="_blank" 
-                                style="color: #fbbf24; text-decoration: underline; font-weight: bold;">
-                                Click here to view attachment
-                                </a>
-                            ');
-                        }),
-                        
-                ]),
+                
             ]);
     }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+                ->schema([
+                    Section::make('Task Information')
+                        ->description('Details of the task assigned to you.')
+                        ->schema([
+                            Grid::make(2)
+                                ->schema([
+                                    TextEntry::make('task.title')
+                                        ->label('Task Title'),
+
+                                    TextEntry::make('task.priority')
+                                        ->label('Priority')
+                                        ->badge()
+                                        ->formatStateUsing(fn ($state) => strtoupper($state)),
+                                    
+                                    TextEntry::make('task.due_date')
+                                        ->label('Deadline')
+                                        ->dateTime('M d, Y')
+                                        ->placeholder('No deadline'),
+
+                                    TextEntry::make('task_submission.status')
+                                        ->label('Current Status')
+                                        ->badge()
+                                        ->color(fn (string $state): string => match ($state) 
+                                        {
+                                            'approved' => 'success',
+                                            'rejected' => 'danger',
+                                            'reviewed' => 'info',
+                                            'submitted' => 'warning',
+                                            'not submitted' => 'gray',
+                                            default => 'gray',
+                                        }),
+                                    
+                                    
+                                ]),
+
+                            TextEntry::make('task.description')
+                                ->label('Task Description')
+                                ->markdown(),
+
+                            TextEntry::make('task.attachment')
+                                ->label('Attachment')
+                                ->formatStateUsing(fn ($state) => $state ? 'Click here to view attachment' : 'No attachment')
+                                ->url(fn ($record) => $record->task->attachment ? asset('storage/' . $record->task->attachment) : null, true)
+                                ->color('warning') // TechStrota's yellow-ish gold
+                                ->weight('bold'),
+
+                            TextEntry::make('task_submission.admin_feedback')
+                                ->label('Admin Remarks')
+                                ->placeholder('No feedback provided yet.')
+                                ->columnSpanFull()
+                                ->prose() // Makes long text more readable
+                                ->icon('heroicon-m-chat-bubble-left-right')
+                                ->color('info'),
+                        ]),
+                        
+                ]);
+    }
+
+
+    //--------------------------------------------------------
 
     public static function table(Table $table): Table
     {
@@ -158,10 +178,8 @@ class AssignedTaskResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->modalHeading('Task Details'), // This makes it open in a modal automatically if the View Page isn't used
-
-                //Tables\Actions\EditAction::make(),
-
+                    ->modalHeading('View Assigned Task')
+                    ->modalWidth('4xl'), // Makes the modal look good on desktop
 
                 Action::make('submit_task')
                     ->label('Submit Task')
@@ -237,8 +255,8 @@ class AssignedTaskResource extends Resource
         return [
             'index' => Pages\ListAssignedTasks::route('/'),
             //'create' => Pages\CreateAssignedTask::route('/create'),
-            'view' => Pages\ViewAssignedTask::route('/{record}'),
-            //'edit' => Pages\EditAssignedTask::route('/{record}/edit'),
+           // 'view' => Pages\ViewAssignedTask::route('/{record}'),
+           // 'edit' => Pages\EditAssignedTask::route('/{record}/edit'),
         ];
     }
 }

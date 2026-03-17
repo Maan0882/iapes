@@ -4,6 +4,7 @@ namespace App\Models\TaskManagement;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\TaskManagement\Task;
+use App\Models\InternManagement\Intern;
 
 class TaskSubmission extends Model
 {
@@ -16,7 +17,10 @@ class TaskSubmission extends Model
         'status',
         'submission_text',
         'submission_file',
-        'submitted_at'
+        'submitted_at',
+        'admin_feedback',
+        'marks',
+        'grade',
     ];
 
     public function task()
@@ -32,5 +36,12 @@ class TaskSubmission extends Model
             'task_id',
             'task_id'
         )->where('intern_id', auth()->id());
+    }
+
+
+    public function intern()
+    {
+        return $this->belongsTo(Intern::class,'intern_id');
+
     }
 }

@@ -8,6 +8,8 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 use App\Models\TaskManagement\TaskSubmission;
 use Illuminate\Support\Facades\Auth;
+use App\Filament\Intern\Resources\TaskManagement\AssignedTaskResource;
+//use Filament\Tables\Actions\ViewAction;
 
 class RecentSubmissions extends BaseWidget
 {
@@ -34,15 +36,7 @@ class RecentSubmissions extends BaseWidget
                     ->date('d M, Y')
                     ->sortable(),
 
-                Tables\Columns\SelectColumn::make('status')
-                    ->options([
-                        'submitted' => 'Submitted',
-                        'reviewed' => 'Reviewed',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ])
-                    ->disabled(), // Interns shouldn't change their own status
-
+            
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -65,11 +59,15 @@ class RecentSubmissions extends BaseWidget
                 Tables\Actions\Action::make('view')
                     ->label('View Task')
                     ->icon('heroicon-m-eye')
-                    ->url(fn ($record): ?string => 
-                        $record->taskAssignment
-                            ? route('filament.intern.resources.task-management.assigned-tasks.view', $record->task->task_id)
-                            : null
-                    )
+                    ->infolist(fn ($infolist) => AssignedTaskResource::infolist($infolist))
+                    // Optional: Ensure it opens in a modal
+                    ->modalWidth('5xl')
+                    //->resource(AssignedTaskResource::class)
+                    // ->url(fn ($record): ?string => 
+                    //     $record->taskAssignment
+                    //         ? route('filament.intern.resources.task-management.assigned-tasks.view', $record->task->task_id)
+                    //         : null
+                    // )
                     ->disabled(fn ($record) => !$record->taskAssignment)
             ]);
     }
