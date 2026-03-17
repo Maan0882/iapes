@@ -143,45 +143,82 @@ class InternshipBatchResource extends Resource
     {
         return $table
             ->poll('15s')
-            ->columns([
-                TextColumn::make('batch_name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('teams.team_name') // Change 'team' to 'teams'
-                    ->label('Team Name')
-                    ->badge()
-                    ->color('info')
-                    ->placeholder('No Teams Assigned'),
-                TextColumn::make('no_of_interns')
-                    ->numeric()
-                    ->summarize(Sum::make()->label('Total Interns')),
-                TextColumn::make('batch_timing')
-                    ->label('Batch Duration')
-                    ->icon('heroicon-m-calendar-days')
-                    ->formatStateUsing(function ($record) {
-                        // If start_time/end_time columns exist separately, format them here
-                        if ($record->start_time && $record->end_time) {
-                            $start = Carbon::parse($record->start_time)->format('g:i A');
-                            $end = Carbon::parse($record->end_time)->format('g:i A');
-                            return "{$start} To {$end}";
-                        }
-                        
-                        // Otherwise, return the already formatted string from the database
-                        return $record->batch_timing ?? 'N/A';
-                    }),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+            ->contentGrid([
+                'md' => 3,
+                'xl' => 4,
             ])
-            ->filters([
-                SelectFilter::make('team_id')
-                    ->relationship('team', 'team_name') // Assumes Team model has a 'name' column
-                    ->label('Filter by Team')
-                    ->preload(),
+            ->columns([
+                Tables\Columns\Layout\Stack::make([
+                    // Header: Batch Name and Duration Badge
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('batch_name')
+                            ->searchable()
+                            ->weight('bold')
+                            ->size('lg')
+                            ->grow(false),
+                        
+                        Tables\Columns\TextColumn::make('batch_timing')
+                            ->badge()
+                            ->icon('heroicon-m-clock')
+                            ->color('warning') // Amber color for timing visibility
+                            ->alignEnd()
+                            ->formatStateUsing(function ($record) {
+                                if ($record->start_time && $record->end_time) {
+                                    $start = \Carbon\Carbon::parse($record->start_time)->format('g:i A');
+                                    $end = \Carbon\Carbon::parse($record->end_time)->format('g:i A');
+                                    return "{$start} - {$end}";
+                                }
+                                return $record->batch_timing ?? 'N/A';
+                            }),
+                    ]),
+
+                    // Middle: Occupancy Info
+                    Tables\Columns\TextColumn::make('no_of_interns')
+                        ->formatStateUsing(fn ($state) => "👨‍🎓 " . ($state ?? 0) . " Interns Enrolled")
+                        ->color('success') // Green for active enrollment
+                        ->weight('bold')
+                        ->size('lg')
+                        ->extraAttributes([
+                            'class' => 'text-base mt-2 font-bold'
+                        ]),
+
+                    // Bottom: List of Teams or Interns
+                    Tables\Columns\TextColumn::make('teams.team_name')
+                        ->label('Assigned Teams')
+                        ->badge()
+                        ->color('info')
+                        ->size('lg')
+                        ->listWithLineBreaks()
+                        ->placeholder('No Teams Formed Yet')
+                        ->extraAttributes([
+                            'class' => 'mt-4 text-base font-bold'
+                        ]),
+                    
+                    // Optional: List of Intern Names
+                    Tables\Columns\TextColumn::make('interns.name')
+                        ->listWithLineBreaks()
+                        ->bulleted()
+                        ->color('white')
+                        ->size('m')
+                        ->limitList(3)
+                        ->expandableLimitedList()
+                        ->extraAttributes([
+                            'class' => 'mt-2 opacity-80'
+                        ]),
+                ])->space(4),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->label('Modify Batch')
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('primary')
+                    ->size('md'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('team_id')
+                    ->relationship('team', 'team_name')
+                    ->label('Filter by Team'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -61,29 +61,58 @@ class InternTeamResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'md' => 3,
+                'xl' => 4,
+            ])
             ->columns([
-                Tables\Columns\TextColumn::make('team_name')->searchable()->sortable(), //
-                Tables\Columns\TextColumn::make('batch.batch_name')->label('Batch'), //
-                Tables\Columns\TextColumn::make('interns_count')
-                    ->counts('interns') //
-                    ->label('Total Members')
-                    ->badge(),
-                Tables\Columns\TextColumn::make('interns.name')
-                    ->label('Members')
-                    ->listWithLineBreaks() // Displays names on new lines
-                    ->bulleted()           // Adds dots before names
-                    ->searchable(),
+                Tables\Columns\Layout\Stack::make([
+                    // Header: Team Name and Batch Badge
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('team_name')
+                            ->label('Team Name')
+                            ->searchable()
+                            ->weight('bold')
+                            ->size('lg')
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('batch.batch_name')
+                            ->badge()
+                            ->icon('heroicon-m-briefcase') // Changed Icon
+                            ->color('warning')
+                            ->alignEnd(),
+                    ]),
+
+                    // Body: Member Count with Icon
+                    Tables\Columns\TextColumn::make('interns_count')
+                        ->counts('interns')
+                        ->formatStateUsing(fn ($state) => "👥 " . ($state ?? 0) . " Members")
+                        ->color('info')
+                        ->weight('bold')
+                        ->extraAttributes(['class' => 'text-sm mt-2 font-medium']),
+
+                    // Footer: Bulleted List of Names
+                    Tables\Columns\TextColumn::make('interns.name')
+                        ->listWithLineBreaks()
+                        ->bulleted()
+                        ->color('white')
+                        ->weight('medium')
+                        ->extraAttributes(['class' => 'mt-4 text-sm leading-relaxed opacity-90']),
+                ])->space(4),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->label('Edit Team Details') // Clearer label
+                    ->icon('heroicon-m-pencil-square')
+                    ->outlined()
+                    ->size('md'),
+                // Tables\Actions\EditAction::make(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -97,8 +126,9 @@ class InternTeamResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['interns']); // This loads all names in one single query
+            ->with(['interns', 'batch']); // Pre-loads batch info to avoid extra queries
     }
+
     public static function getPages(): array
     {
         return [
