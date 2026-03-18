@@ -151,11 +151,59 @@
 
     @if(isset($offers))
         @foreach($offers as $offer)
+
+            {{-- Resolve relationships once for clean usage throughout --}}
+            @php
+                $application  = $offer->application;                    // OfferLetter → application()
+                $intern       = $offer->intern;                          // OfferLetter → intern()
+
+                // Name & Degree — from Application (via OfferLetter)
+                $internName   = $application?->name   ?? 'N/A';
+                $degree       = strtoupper($application?->degree ?? 'N/A');
+
+                // Intern Code — from Intern
+                $internCode   = $intern?->intern_code ?? 'N/A';
+
+                // Duration & Duration Unit — from Application (via OfferLetter)
+                $duration     = $application?->duration      ?? 'N/A';
+                $durationUnit = $application?->duration_unit ?? '';
+
+                // Working Hours & Role — from OfferLetter
+                $workingHours = $offer->working_hours    ?? 'N/A';
+                $role         = $offer->internship_role  ?? 'N/A';
+
+                // Dates — from OfferLetter
+                $joiningDate    = $offer->joining_date
+                    ? \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y')
+                    : 'N/A';
+                $completionDate = $offer->completion_date
+                    ? \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y')
+                    : 'N/A';
+
+                // Project — from OfferLetter
+                $projectName        = $offer->project_name        ?? 'N/A';
+                $projectDescription = $offer->project_description ?? 'N/A';
+
+                // Parse skills from project_description
+                // Expected format: "Label: skill1, skill2 | Label2: skill3, skill4"
+                $skillCategories = [];
+                if ($offer->project_description) {
+                    $segments = explode('|', $offer->project_description);
+                    foreach ($segments as $segment) {
+                        $segment = trim($segment);
+                        if (str_contains($segment, ':')) {
+                            [$label, $skills] = explode(':', $segment, 2);
+                            $skillCategories[trim($label)] = trim($skills);
+                        }
+                    }
+                }
+            @endphp
+
             <header>
                 <table class="header-table">
                     <tr>
                         <td style="text-align: left; width: 33%; font-size: 12px; font-weight: bold;">
-                            Email: info@techstrota.com
+                            Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e38a8d858ca39786808b9097918c9782cd808c8e">[email&#160;protected]</a>
                         </td>
                         <td style="text-align: center; width: 34%;">
                             <img src="{{ public_path('images/TsLogo.png') }}" style="height: 60px;">
@@ -175,25 +223,29 @@
                 <div class="meta-section">
                     <table style="width: 100%;">
                         <tr>
-                            <td style="text-align: left;"><strong>Issued on:</strong> {{ \Carbon\Carbon::parse($offer->completion_date ?? '03/12/2025')->format('d/m/Y') }}</td>
-                            <td style="text-align: right;"><strong>Certificate ID No:</strong> {{ $offer->intern?->intern_code ?? 'TS25/WD/01' }}</td>
+                            {{-- completion_date → OfferLetter --}}
+                            <td style="text-align: left;"><strong>Issued on:</strong> {{ $completionDate }}</td>
+                            {{-- intern_code → Intern --}}
+                            <td style="text-align: right;"><strong>Certificate ID No:</strong> {{ $internCode }}</td>
                         </tr>
                     </table>
                 </div>
 
                 <div class="content-p">
-                    This is to certify that <strong>{{ $offer->application?->name ?? 'Ms. Kajalben Bharatbhai Vanazara' }}</strong>, a student of 
-                    <strong>{{ strtoupper($offer->application?->degree ?? 'BCA') }}</strong>, has successfully completed the 
-                    <strong>27 Days (135 Hours)</strong> intensive internship with an overall performance <strong>Grade A</strong>. 
-                    The internship was carried out for the course titled <strong>"Web Development"</strong>, conducted by <strong>Techstrota</strong> 
+                    {{-- name, degree → Application | duration, duration_unit → Application | working_hours, internship_role, joining_date, completion_date → OfferLetter --}}
+                    This is to certify that <strong>{{ $internName }}</strong>, a student of 
+                    <strong>{{ $degree }}</strong>, has successfully completed the 
+                    <strong>{{ $duration }} {{ $durationUnit }} ({{ $workingHours }} Hours)</strong> intensive internship with an overall performance <strong>Grade A</strong>. 
+                    The internship was carried out for the course titled <strong>"{{ $role }}"</strong>, conducted by <strong>Techstrota</strong> 
                     and facilitated by <strong>Shree P.M. Patel College of Computer Science & Technology, Anand</strong>. 
-                    The internship duration was from <strong>03/11/2025 to 03/12/2025</strong> at Techstrota.
+                    The internship duration was from <strong>{{ $joiningDate }} to {{ $completionDate }}</strong> at Techstrota.
                 </div>
 
                 <div class="content-p">
+                    {{-- project_name, project_description → OfferLetter --}}
                     <strong>Project Work:</strong> As part of the internship, the student worked on a 
-                    <strong>Financial Service Intro Website project</strong>, which involved developing the 
-                    <strong>About, Service and Contact modules</strong>. This real-world assignment helped the student understand 
+                    <strong>{{ $projectName }}</strong>, which involved developing the 
+                    <strong>{{ $projectDescription }}</strong>. This real-world assignment helped the student understand 
                     client requirements, gain exposure to industry-level workflows, and apply practical front-end development skills effectively. 
                     Also built an <strong>Admin Backend for Blogs and Contacts</strong> with content management features.
                 </div>
@@ -201,10 +253,13 @@
                 <div class="tech-section">
                     <div class="tech-title">Technical Competencies Acquired</div>
                     <ul class="tech-list">
-                        <li><strong>Language & Framework:</strong> JavaScript, PHP, Laravel, Filament</li>
-                        <li><strong>Library:</strong> React, React hook form, framer-motion</li>
-                        <li><strong>Tools & Technology:</strong> Github, Xampp, Tailwind, bootstrap, API Key, VS Code</li>
-                        <li><strong>Extra Activity:</strong> Git Collab, APP Tester (Play Console)</li>
+                        {{-- Parsed from OfferLetter project_description --}}
+                        {{-- Format: "Label: skill1, skill2 | Label2: skill3" --}}
+                        @forelse($skillCategories as $label => $skills)
+                            <li><strong>{{ $label }}:</strong> {{ $skills }}</li>
+                        @empty
+                            <li>No technical competencies recorded.</li>
+                        @endforelse
                     </ul>
                 </div>
 
@@ -250,10 +305,4 @@
                     Vadodara, Gujarat-390007 | CIN: GJ240114897
                 </td>
                 <td style="width: 25%; vertical-align: bottom;">
-                    <div class="system-remark">This is a system-generated document.</div>
-                </td>
-            </tr>
-        </table>
-    </footer>
-</body>
-</html>
+                    <div class="system-remark">This is

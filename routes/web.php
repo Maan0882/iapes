@@ -31,27 +31,22 @@ Route::get('/', function () {
 
 
 Route::get('/view-completion-pdf/{id}', function ($id) {
-    // 1. Find the intern and eager load the offerLetter and application
-    $intern = Intern::with(['offerLetter', 'application'])->findOrFail($id);
-    
-    $offer = $intern->offerLetter;
+    $intern = \App\Models\InternManagement\Intern::with(['offerletter.application'])->findOrFail($id);
+    $offer  = $intern->offerletter;
 
-    if (!$offer) {
-        abort(404, 'Completion Letter not found for this intern.');
-    }
+    // Map template slugs → actual blade paths
+    $templateMap = [
+        '3_month_offer_letter' => 'completionletter.bachelors',
+        'masters_offer_letter' => 'completionletter.masters',
+        // add more as needed
+    ];
 
-    // 2. Use the template defined in the offer letter
-    $template = $offer->template ?? 'general';
+    $view = $templateMap[$offer->template] 
+            ?? 'completionletter.bachelors'; // fallback
 
-    // 3. Generate the PDF
-    $pdf = Pdf::loadView("completionletter.$template", [
-        'offers' => collect([$offer]),
-    ]);
-
-    // 4. Stream to new tab
-    $fileName = 'Completion_Certificate_' . str_replace('/', '-', $offer->offer_letter_code) . '.pdf';
-    return $pdf->stream($fileName);
-})->name('view-completion-pdf')->middleware(['auth']);
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($view, ['offers' => [$offer]]);
+    return $pdf->stream('completion_letter.pdf');
+})->middleware(['web', 'auth'])->name('view-completion-pdf');
 
 //---------------------------------------------------------
 
