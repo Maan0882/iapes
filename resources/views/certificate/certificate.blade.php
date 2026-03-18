@@ -8,63 +8,25 @@
 <body style="margin: 0; padding: 0;">
 @endif
 <div id="certificate-wrapper">
-    @if(!$isPdf && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
-    <header class="preview-header no-print">
-        <div class="header-content">
-            <div class="header-left">
-                <span class="preview-badge">Preview Mode</span>
-                <h1>Certificate Workshop</h1>
-            </div>
-            <button onclick="window.print()" class="print-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Print All Certificates
-            </button>
-        </div>
-    </header>
-    @endif
-
+    
     <div id="certificate-container">
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
-            @media print {
-                @page { size: A4 landscape; margin: 0; }
-                
-                @if(!auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
-                body, #certificate-wrapper, .cert-stack, .cert { display: none !important; }
-                @endif
-
-                body { margin: 0; padding: 0; background: white; }
-                .no-print { display: none !important; }
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                body * { visibility: hidden !important; }
-                #certificate-wrapper, #certificate-wrapper * { visibility: visible !important; }
-                #certificate-wrapper { position: absolute; left: 0; top: 0; padding: 0 !important; }
-                
-                #certificate-container {
-                    position: absolute !important; left: 0 !important; top: 0 !important;
-                    width: 297mm !important; margin: 0 !important; padding: 0 !important;
-                }
-                html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
-                .cert { margin: 0 !important; page-break-after: always !important; display: block !important; box-shadow: none !important; }
-            }
 
             @media screen {
-                #certificate-wrapper { 
+                #certificate-wrapper {
                     background-color: #0f172a;
-                    background-image: 
+                    background-image:
                         radial-gradient(at 0% 0%, rgba(14, 114, 180, 0.25) 0px, transparent 50%),
                         radial-gradient(at 100% 0%, rgba(244, 162, 67, 0.2) 0px, transparent 50%),
                         radial-gradient(at 50% 50%, rgba(30, 41, 59, 0.5) 0px, transparent 100%),
                         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
                     background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-                    min-height: 100vh; 
-                    padding: 100px 0 60px 0; 
+                    min-height: 100vh;
+                    padding: 100px 0 60px 0;
                     font-family: 'Outfit', sans-serif;
                 }
-
                 .preview-header {
                     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
                     background: rgba(15, 23, 42, 0.8);
@@ -83,7 +45,6 @@
                     font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
                     margin-bottom: 4px; border: 1px solid rgba(59, 130, 246, 0.2);
                 }
-
                 .print-btn {
                     background: linear-gradient(135deg, #0e72b4 0%, #0a4f7c 100%);
                     color: white; border: none; padding: 0.6rem 1.25rem;
@@ -94,30 +55,29 @@
                 }
                 .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 114, 180, 0.4); filter: brightness(1.1); }
                 .print-btn svg { width: 1.2rem; height: 1.2rem; }
-
-                #certificate-container { 
-                    display: flex; flex-direction: column; align-items: center; gap: 60px; 
+                #certificate-container {
+                    display: flex; flex-direction: column; align-items: center; gap: 60px;
                 }
-                .cert { 
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+                .cert {
+                    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
                     transition: transform 0.4s ease;
                 }
                 .cert:hover { transform: scale(1.01); }
             }
 
             @media print {
+                @page { size: A4 landscape; margin: 0; }
+                body { margin: 0; padding: 0; background: white; }
                 .no-print { display: none !important; }
                 * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 body * { visibility: hidden !important; }
                 #certificate-container, #certificate-container * { visibility: visible !important; }
-                
                 #certificate-container {
                     position: absolute !important; left: 0 !important; top: 0 !important;
                     width: 297mm !important; margin: 0 !important; padding: 0 !important;
                 }
                 html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
                 .cert { margin: 0 !important; page-break-after: always !important; display: block !important; box-shadow: none !important; }
-                @page { size: A4 landscape; margin: 0; }
             }
 
             .cert {
@@ -125,10 +85,8 @@
                 background: #ffffff !important; overflow: hidden;
                 box-sizing: border-box; font-family: 'Inter', sans-serif; color: #2d3748;
             }
-
             .b-outer { position: absolute; top: 10mm; left: 10mm; right: 10mm; bottom: 10mm; border: 3pt solid #0e72b4; z-index: 5; }
             .b-inner { position: absolute; top: 13mm; left: 13mm; right: 13mm; bottom: 13mm; border: 1pt solid #f4a243; z-index: 5; }
-
             .wave { position: absolute; width: 55mm; height: 55mm; z-index: 2; pointer-events: none; opacity: 0.8; }
             .wave-tl-1 { top: -12mm; left: -12mm; fill: #0e72b4; }
             .wave-tl-2 { top: 8mm; left: -18mm; fill: #f4a243; opacity: 0.6; transform: rotate(15deg); }
@@ -138,34 +96,29 @@
             .wave-bl-2 { bottom: -20mm; left: -5mm; fill: #0e72b4; opacity: 0.6; transform: scaleY(-1) rotate(-30deg); }
             .wave-br-1 { bottom: -12mm; right: -12mm; fill: #0e72b4; transform: scale(-1); }
             .wave-br-2 { bottom: 8mm; right: -18mm; fill: #f4a243; opacity: 0.6; transform: scale(-1) rotate(-15deg); }
-
             .wm-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-
             .content-wrapper {
                 position: relative; z-index: 10; width: 100%; height: 100%;
                 display: flex; flex-direction: column; align-items: center;
                 padding: 25mm 40mm; text-align: center; box-sizing: border-box;
             }
-
-            .main-title { 
+            .main-title {
                 font-family: 'Cormorant Garamond', serif;
-                font-size: 36pt; font-weight: 700; color: #0e72b4; 
-                text-transform: uppercase; letter-spacing: 2pt; margin-top: 1mm; 
+                font-size: 36pt; font-weight: 700; color: #0e72b4;
+                text-transform: uppercase; letter-spacing: 2pt; margin-top: 1mm;
             }
-            .recipient { 
-                font-family: 'Cormorant Garamond', serif; font-size: 48pt; font-weight: 600; 
-                color: #1a202c; margin: 3mm 0 1mm; font-style: italic; 
+            .recipient {
+                font-family: 'Cormorant Garamond', serif; font-size: 48pt; font-weight: 600;
+                color: #1a202c; margin: 3mm 0 1mm; font-style: italic;
             }
             .underline { width: 80%; height: 2pt; background: linear-gradient(90deg, transparent, #f4a243, transparent); margin-bottom: 15mm; }
-            .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -6mm;}
-
+            .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -6mm; }
             .footer {
                 position: absolute; bottom: 25mm; left: 35mm; right: 35mm;
                 display: flex; justify-content: space-between; align-items: flex-end;
             }
             .sig-box { width: 60mm; text-align: center; }
             .line { border-top: 1.5pt solid #cbd5e0; margin-bottom: 3mm; }
-
             .outer-footer {
                 position: absolute; bottom: 3mm; left: 10mm; right: 10mm; z-index: 10;
                 display: flex; justify-content: space-between; align-items: center;
@@ -176,16 +129,9 @@
                 font-weight: 500; letter-spacing: 0.5pt;
             }
             .outer-footer .system-gen { margin-left: auto; font-style: italic; color: maroon; opacity: 1; }
-
-            @if($isPdf)
-            .sig-box { display: inline-block; width: 60mm; vertical-align: bottom; }
-            .footer { width: 227mm; display: block; }
-            .stamp-box { display: inline-block; width: 35mm; }
-            .content-wrapper { display: block; }
-            @endif
         </style>
 
-        @if(isset($offers))
+        @if(isset($offers) && $offers->isNotEmpty())
             @foreach($offers as $offer)
                 <div class="cert">
                     @php
@@ -193,7 +139,7 @@
                         $blob1 = "M44.7,-76.4C58.3,-69.2,70.1,-59,78.5,-46.3C86.9,-33.5,92,-18.3,91.3,-3.3C90.7,11.7,84.3,26.5,75.2,39.5C66.1,52.5,54.2,63.7,40.5,71.2C26.9,78.7,11.5,82.5,-3.1,87.8C-17.7,93.1,-31.4,100,-44.1,96.4C-56.8,92.8,-68.5,78.7,-76.5,64.1C-84.5,49.5,-88.8,34.4,-91,19.3C-93.2,4.2,-93.3,-10.8,-88.9,-24.8C-84.5,-38.8,-75.6,-51.8,-63.9,-59.5C-52.2,-67.2,-37.7,-69.6,-24.7,-76.1C-11.7,-82.6,0,-93.2,12.7,-91.1C25.4,-89,31.1,-83.6,44.7,-76.4Z";
                         $blob2 = "M41.5,-71.4C53.3,-66.1,61.4,-50.2,67.9,-34.7C74.4,-19.2,79.2,-4.2,77.8,10.2C76.4,24.6,68.8,38.3,58.3,49.4C47.8,60.5,34.4,69.1,20.2,74.1C6,79.1,-9.1,80.5,-23.8,77.7C-38.4,74.9,-52.6,67.9,-63.9,57.5C-75.2,47.1,-83.6,33.4,-88.4,18.5C-93.2,3.6,-94.3,-12.4,-88.7,-25.9C-83.1,-39.3,-70.7,-50.3,-57.7,-57.5Z";
                     @endphp
-                    
+
                     <svg class="wave wave-tl-2" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
                     <svg class="wave wave-tl-1" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
                     <svg class="wave wave-tr-2" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
@@ -219,48 +165,47 @@
                             @if(isset($slots[$index]))
                                 @php
                                     $slot = $slots[$index];
-                                    $top = ($slot['r'] * 22) + 6 + mt_rand(0, 4);
+                                    $top  = ($slot['r'] * 22) + 6 + mt_rand(0, 4);
                                     $left = ($slot['c'] * 15) + 5 + mt_rand(0, 4);
                                     $size = mt_rand(11, 16);
-                                    $rot = mt_rand(-30, 30);
+                                    $rot  = mt_rand(-30, 30);
                                 @endphp
-                                <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4" 
-                                     style="position: absolute; top: {{ $top }}%; left: {{ $left }}%; width: {{ $size }}mm; opacity: 0.2; transform: rotate({{ $rot }}deg);">
+                                <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4"
+                                     style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
                             @endif
                         @endforeach
                     </div>
 
                     <div class="content-wrapper">
-                        <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height: 80px; margin-bottom: 6mm; margin-top:-7mm;">
+                        <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
                         <div class="main-title">Certificate of Internship</div>
-                        <p style="font-size: 14pt; color: #718096; margin: 2mm 0;">This is to certify that</p>
+                        <p style="font-size:14pt;color:#718096;margin:2mm 0;">This is to certify that</p>
                         <div class="recipient">{{ $offer->application?->name ?? 'Student Name' }}</div>
                         <div class="underline"></div>
                         <div class="body-text">
-                            has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship 
-                            at <b>TechStrota</b>. The internship was conducted from 
-                            <b>{!! !empty($offer->joining_date) ? \Carbon\Carbon::parse($offer->joining_date)->format('dS F Y') : '01 Dec 2025' !!}</b> to 
+                            has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship
+                            at <b>TechStrota</b>. The internship was conducted from
+                            <b>{!! !empty($offer->joining_date) ? \Carbon\Carbon::parse($offer->joining_date)->format('dS F Y') : '01 Dec 2025' !!}</b> to
                             <b>{!! !empty($offer->completion_date) ? \Carbon\Carbon::parse($offer->completion_date)->format('dS F Y') : '31 Dec 2025' !!}</b>.
                             During this tenure, the intern demonstrated exceptional professional conduct and technical proficiency.
                         </div>
                         <div class="footer">
                             <div class="sig-box">
                                 <div class="line"></div>
-                                <b style="color: #2d3748; font-size: 12pt; font-weight: 700;">Founder/CEO</b><br>
-                                <span style="font-size: 9.5pt; color: #718096; font-weight: 500;">TechStrota</span>
+                                <b style="color:#2d3748;font-size:12pt;font-weight:700;">Founder/CEO</b><br>
+                                <span style="font-size:9.5pt;color:#718096;font-weight:500;">TechStrota</span>
                             </div>
-                            <div class="stamp-box" style="width: 35mm; height: 35mm;"></div>
-                            <div class="sig-box" style="display: @if($isPdf) inline-block @else flex @endif; flex-direction: column; align-items: center;">
-                                <div style="width: 22mm; height: 22mm; border: 1pt solid #edf2f7; background: #f7fafc; border-radius: 4px; display: @if($isPdf) block @else flex @endif; align-items: center; justify-content: center; font-size: 7pt; color: #a0aec0; @if($isPdf) line-height: 22mm; text-align: center; @endif">QR CODE</div>
-                                <span style="font-size: 8pt; color: #4a5568; margin-top: 3mm; font-family: monospace; letter-spacing: 0.5pt;">
+                            <div class="stamp-box" style="width:35mm;height:35mm;"></div>
+                            <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
+                                <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">QR CODE</div>
+                                <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
                                     ID: {{ $offer->intern->intern_code ?? '000' }}
                                 </span>
                             </div>
-                            @if($isPdf)<div style="clear: both;"></div>@endif
                         </div>
                         <div class="outer-footer">
                             <div class="website">
-                                <a href="https://techstrota.com" style="color: inherit; text-decoration: none;">www.techstrota.com</a>
+                                <a href="https://techstrota.com" style="color:inherit;text-decoration:none;">www.techstrota.com</a>
                             </div>
                             <div class="system-gen">This is a system generated certificate</div>
                         </div>
@@ -277,9 +222,7 @@
 @if(request()->query('print') === 'true' && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
 <script>
     window.addEventListener('load', function() {
-        setTimeout(function() {
-            window.print();
-        }, 500);
+        setTimeout(function() { window.print(); }, 500);
     });
 </script>
 @endif

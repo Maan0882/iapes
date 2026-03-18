@@ -15,7 +15,8 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
 use Filament\Tables\Filters\SelectFilter;
-
+use Illuminate\Support\Facades\View;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -118,24 +119,25 @@ class InternResource extends Resource
                 ->openUrlInNewTab(),
                 
             Tables\Actions\Action::make('print_certificate')
-                ->label('Print Certificate')
-                ->icon('heroicon-o-printer')
-                ->color('info')
-                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(fn (Intern $record): string => route('view-certificate-print', ['id' => $record->id, 'print' => true]))
-                ->openUrlInNewTab(),
+                    ->label('Certificate')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                    ->url(fn (Intern $record): string => route('intern.certificate.download', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
 
             Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('bulk_print_certificate')
-                        ->label('Bulk Print')
-                        ->icon('heroicon-o-printer')
+                     Tables\Actions\BulkAction::make('bulk_print_certificate')
+                        ->label('Bulk Certificate')
+                        ->icon('heroicon-o-document-arrow-down')
                         ->color('info')
-                        ->action(function ($records) {
+                        ->action(function ($records, $livewire) {
                             $ids = $records->pluck('id')->implode(',');
-                            return redirect()->route('view-certificate-print', ['id' => $ids, 'print' => true]);
+                            $url = route('intern.certificate.download', ['id' => $ids]);
+                            $livewire->js("window.open('" . addslashes($url) . "', '_blank')");
                         }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
