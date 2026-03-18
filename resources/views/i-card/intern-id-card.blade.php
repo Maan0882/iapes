@@ -6,7 +6,6 @@
         @page { margin: 0; }
         body { margin: 0; padding: 0; font-family: 'Helvetica', sans-serif; }
         
-        /* Container must be relative for positioning inside */
         .card-container {
             position: relative;
             width: 153pt; 
@@ -14,17 +13,50 @@
             overflow: hidden;
         }
 
-        /* Background image is placed ABSOLUTE at the front (higher z-index) */
+        /* =========================================
+           LAYER 1: BOTTOM (Intern Photo) 
+           ========================================= */
+        .photo-container {
+            position: absolute;
+            top: 70pt; 
+            left: 48.5%; 
+            width: 60pt; 
+            height: 60pt;
+            margin-left: -30pt; 
+            z-index: 1; /* Lowest Layer */
+            overflow: hidden; 
+            border-radius: 4px; 
+            /* Note: Removed flexbox as PDF engines do not support it */
+        }
+
+        .photo {
+            width: 100%;
+            height: 100%;
+            /* object-fit: cover; works in modern browsers, but if it fails in PDF, 
+               ensure your $internImageBase64 is cropped to a 1:1 ratio before encoding */
+        }
+
+        /* =========================================
+           LAYER 2: MIDDLE (Background Frame) 
+           ========================================= */
         .bg-image {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10; /* Circuit is at the front */
+            width: 153pt;
+            height: 243pt;
+            z-index: 2; /* Middle Layer - Covers the edges of the photo */
         }
 
-        .int-id{
+        /* =========================================
+           LAYER 3: TOP (All Text Elements) 
+           ========================================= */
+        /* Grouping z-index for all text to ensure it stays above the background */
+        .int-id, .name, .role, .date, .contact, .address {
+            z-index: 3; /* Top Layer */
+        }
+
+        .int-id {
             position: absolute;
             top: 45pt;
             width: 100%;
@@ -35,30 +67,6 @@
             text-transform: uppercase;
         }
         
-        /* Photo container is placed ABSOLUTE and behind the background */
-.photo-container {
-    position: absolute;
-    /* Manually position the photo BEHIND the hole */
-    top: 83pt; /* Adjust vertically to align with the hole */
-    left: 47%; /* Adjust horizontally to center under the hole */
-    width: 60pt; /* Size of the intern photo slightly smaller than the hole */
-    height: 60pt;
-    margin-left: -30pt; /* Negative margin for perfect centering */
-    z-index: 5; /* Intern photo is behind the background */
-    display: flex; /* Use flexbox to center image within container */
-    justify-content: center;
-    align-items: center;
-    overflow: hidden; /* Hide anything outside the photo container */
-}
-
-/* Make sure the photo fills its container */
-.photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cover the whole area without distortion */
-    border-radius: 4px; /* Slight rounded corner on the photo itself */
-}
-
         .name {
             position: absolute;
             top: 140pt;
@@ -80,7 +88,7 @@
             text-transform: uppercase;
         }
         
-        .date{
+        .date {
             position: absolute;
             top: 170pt;
             width: 100%;
@@ -88,8 +96,8 @@
             font-size: 8pt;
             font-weight: bold;
             color: #1E73BE; 
-
         }
+
         .contact {
             position: absolute;
             bottom: 42pt; 
@@ -112,13 +120,14 @@
 </head>
 <body>
     <div class="card-container">
-        <img src="{{ $base64Image }}" class="bg-image">
-
+        
         <div class="photo-container">
            @if($internImageBase64)
                 <img src="{{ $internImageBase64 }}" class="photo">
            @endif
         </div>
+
+        <img src="{{ $base64Image }}" class="bg-image">
 
         <div class="name">{{ strtoupper($intern->application->name) }}</div>
         <div class="role">INTERN</div>
@@ -128,13 +137,14 @@
         -
         {{ $intern->offer_letters?->completion_date 
             ? \Carbon\Carbon::parse($intern->offer_letters->completion_date)->format('d M Y') 
-            : '' }}]
+            : 'PRESENT' }}]
         </div>
         <div class="contact">{{ $intern->application->phone }}</div>
         <div class="address">
             TechSrota, Alkapuri,<br>
             Vadodara, Gujarat - 390007
         </div>
+        
     </div>
 </body>
 </html>
