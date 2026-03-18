@@ -61,7 +61,7 @@
                     <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                 </div>
                 <div class="ml-6 flex-1 bg-black/5 dark:bg-white/5 rounded-xl py-2 px-5 text-[10px] lg:text-[12px] portal-mono text-gray-400 dark:text-gray-500 truncate tracking-widest">
-                    <a href="https://techstrota.com/">https://techstrota.com/</a>
+                    <a href="https://techstrota.com/">TechStrota.com/</a>
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                    <a href="{{ url('/admin') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
+                    <a href="{{ url('/admin/login') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
                         <div class="w-12 h-12 bg-[#f7a93b]/15 rounded-xl flex items-center justify-center text-[#f7a93b] mb-3 transition-all group-hover:bg-[#f7a93b] group-hover:text-white">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 21a9.983 9.983 0 005.143-1.41l.054.09m-4.695-4.695a2 2 0 11-2.828-2.828 2 2 0 012.828 2.828zm-2.828-4.95a5 5 0 105.656 5.656"/></svg>
                         </div>
@@ -89,7 +89,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ url('/intern') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
+                    <a href="{{ url('/intern/login') }}" class="glass-btn flex flex-col items-center p-6 md:p-8 rounded-[28px] no-underline group text-center hover:scale-105 transition-all">
                         <div class="w-12 h-12 bg-[#1d70b8]/15 rounded-xl flex items-center justify-center text-[#1d70b8] mb-3 transition-all group-hover:bg-[#1d70b8] group-hover:text-white">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>

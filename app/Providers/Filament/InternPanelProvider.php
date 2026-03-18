@@ -26,11 +26,10 @@ class InternPanelProvider extends PanelProvider
         return $panel
             ->id('intern')
             ->path('intern')
-            //->login()
-            ->authGuard('intern')
-            // Tell the panel to use your custom Login class!
             ->login(Login::class)
             ->loginRouteSlug('login')
+            ->authPasswordBroker('interns')
+            ->authGuard('intern')
             ->brandName('Intern Portal')
             ->colors([
                 'primary' => '#1d70b8', // The Blue from your logo
