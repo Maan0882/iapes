@@ -56,6 +56,8 @@ Route::get('/view-completion-pdf/{id}', function ($id) {
 //---------------------------------------------------------
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/intern/certificate/view/{id}', [CertificateController::class, 'view'])
+         ->name('intern.certificate.view');
     Route::get('/intern/certificate/{id}', [CertificateController::class, 'download'])
          ->name('intern.certificate.download');
 });

@@ -76,9 +76,8 @@ class ViewInternProfile extends ViewRecord
                 ->icon('heroicon-o-academic-cap')
                 ->color('success')
                 ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(fn ($record) => route('view-certificate-print', ['id' => $record->id]))
+                ->url(fn ($record): string => route('intern.certificate.view', ['id' => $record->id]))
                 ->openUrlInNewTab(),
-
             Actions\Action::make('viewIdCard')
                 ->label('View ID Card')
                 ->icon('heroicon-o-identification')

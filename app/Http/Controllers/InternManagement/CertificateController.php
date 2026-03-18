@@ -9,6 +9,38 @@ use Illuminate\Support\Facades\View;
 
 class CertificateController extends Controller
 {
+    private function resolveOffers(string $id): \Illuminate\Support\Collection
+    {
+        $ids = array_filter(array_map('trim', explode(',', $id)));
+ 
+        $interns = Intern::with(['application', 'offerLetter.intern'])
+            ->whereIn('id', $ids)
+            ->get()
+            ->filter(fn (Intern $intern) => $intern->offerLetter?->is_accepted ?? false);
+ 
+        abort_if($interns->isEmpty(), 403, 'No accepted offer letter found.');
+ 
+        return $interns->map(function (Intern $intern) {
+            $offer              = $intern->offerLetter;
+            $offer->application = $intern->application;
+            return $offer;
+        });
+    }
+
+    public function view(Request $request, string $id)
+    {
+        $offers = $this->resolveOffers($id);
+ 
+        return response(
+            View::make('certificate.certificate', [
+                'offers' => $offers,
+                'isPdf'  => false,
+            ])->render(),
+            200,
+            ['Content-Type' => 'text/html; charset=UTF-8']
+        );
+    }
+
     public function download(Request $request, string $id)
     {
         // Parse comma-separated IDs for bulk
