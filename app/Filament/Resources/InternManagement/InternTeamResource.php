@@ -106,7 +106,8 @@ class InternTeamResource extends Resource
                     ->icon('heroicon-m-pencil-square')
                     ->outlined()
                     ->size('md'),
-                // Tables\Actions\EditAction::make(),
+
+                    // Tables\Actions\EditAction::make(),
             ])
             ->filters([
                 //

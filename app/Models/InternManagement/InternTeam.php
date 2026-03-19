@@ -13,29 +13,14 @@ class InternTeam extends Model
 {
     protected $fillable = [
         'internship_batch_id', //
-        'team_name', 
-        'slug',         //
-        //'team_leader_id',      //
+        'team_name',
+      //'team_leader_id',      //
     ];
     public function getRouteKeyName(): string
     {
-        return 'slug';
+        return 'id';
     }
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($team) {
-            if (empty($team->slug)) {
-                $team->slug = Str::slug($team->name);
-            }
-        });
-        static::updating(function ($team) {
-            if ($team->isDirty('team_name')) {
-                $team->slug = Str::slug($team->team_name);
-            }
-        });
-    }
+    
     public function batch()
     {
         return $this->belongsTo(InternshipBatch::class, 'internship_batch_id');
