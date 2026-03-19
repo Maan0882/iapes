@@ -46,8 +46,9 @@ class ApplicationResource extends Resource
                         Grid::make(2)->schema([
                             TextInput::make('application_code')
                                 ->label('Application Code')
-                                ->disabled()
-                                ->dehydrated(false),    
+                                ->placeholder('Auto-generated on save')
+                                ->disabled() // User can't edit it
+                                ->dehydrated(false),   
                                 
                             TextInput::make('name')
                                 ->label('Full Name')
@@ -65,6 +66,7 @@ class ApplicationResource extends Resource
                                 ->maxLength(15),
                             TextInput::make('college')
                                 ->label('College Name')
+                                ->required()
                                 ->maxLength(255),
 
                             TextInput::make('degree')
@@ -74,12 +76,14 @@ class ApplicationResource extends Resource
                             TextInput::make('year')
                                 ->label('Year')
                                 ->placeholder('e.g. Sem 3, Sem 6')
+                                ->required()
                                 ->maxLength(255),
 
                             TextInput::make('cgpa')
                                 ->label('CGPA / Percentage')
                                 ->numeric()       // Ensures only numbers are entered
-                                ->step(0.01)      // Allows decimals like 8.55
+                                ->step(0.01)  
+                                 ->required()    // Allows decimals like 8.55
                                 ->maxValue(100),  // Optional: prevents unrealistic numbers
 
                             TextInput::make('domain')
@@ -88,7 +92,27 @@ class ApplicationResource extends Resource
                                 //->searchable()
                             //  ->disabled(fn ($record) => $record?->status !== 'applied'),
                         ]),
+
                     ]),
+
+
+                     Section::make('duration')
+                                ->schema([
+                                   TextInput::make('duration')
+                                    ->label('Internship Duration')
+                                    ->required(),
+
+                                    Select::make('duration_unit')
+                                    ->label('Internship Duration')
+                            ->options([
+                                'months' => 'Months',
+                                'days' => 'Days',
+                                'hours' => 'Hours',
+                               
+                            ])
+                            ->required(),
+                                      
+                                ])->columns(2),
 
                             Section::make('Skills')
                                 ->schema([
@@ -107,20 +131,21 @@ class ApplicationResource extends Resource
                                         ->acceptedFileTypes([
                                             'application/pdf',
                                         ])
+                                        ->required()
                                         ->downloadable()
                                         ->openable()
                                         ->preserveFilenames(),
                                 ])->columns(3),
 
-                            Select::make('status')
-                            ->options([
-                                'Applied' => 'Applied',
-                                'Interview_Scheduled' => 'Interview Scheduled',
-                                'Interviewed' => 'Interviewed',
-                                'Shortlisted' => 'Shortlisted',
-                                'Rejected' => 'Rejected',
-                            ])
-                            ->required(),
+                            // Select::make('status')
+                            // ->options([
+                            //     'Applied' => 'Applied',
+                            //     'Interview_Scheduled' => 'Interview Scheduled',
+                            //     'Interviewed' => 'Interviewed',
+                            //     'Shortlisted' => 'Shortlisted',
+                            //     'Rejected' => 'Rejected',
+                            // ])
+                            // ->required(),
 
             ]);
     }

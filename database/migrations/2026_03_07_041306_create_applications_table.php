@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->string('application_code')->unique(); // 👈 NEW FIELD
+            $table->string('application_code')->unique()->nullable(); // 👈 NEW FIELD
             $table->string('email')->index();
             // $table->timestamp('email_verified_at')->nullable();
             $table->string('name')->nullable();
