@@ -66,7 +66,7 @@ class InterviewAssignmentResource extends Resource
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $set('total_marks', $state + ($get('communication') ?? 0));
+                        $set('overall_score', ($state ?? 0) + ($get('communication') ?? 0));
                     }),
 
                 Forms\Components\TextInput::make('communication')
@@ -77,7 +77,7 @@ class InterviewAssignmentResource extends Resource
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $set('total_marks', $state + ($get('problem_solving') ?? 0));
+                        $set('overall_score', ($state ?? 0) + ($get('problem_solving') ?? 0));
                     }),
 
                 Forms\Components\TextInput::make('overall_score')
