@@ -160,6 +160,7 @@
                 // Name & Degree — from Application (via OfferLetter)
                 $internName   = $application?->name   ?? 'N/A';
                 $degree       = strtoupper($application?->degree ?? 'N/A');
+                $internCollege   = $application?->college   ?? 'N/A';
 
                 // Intern Code — from Intern
                 $internCode   = $intern?->intern_code ?? 'N/A';
@@ -237,7 +238,7 @@
                     <strong>{{ $degree }}</strong>, has successfully completed the 
                     <strong>{{ $duration }} {{ $durationUnit }} ({{ $workingHours }} Hours)</strong> intensive internship with an overall performance <strong>Grade A</strong>. 
                     The internship was carried out for the course titled <strong>"{{ $role }}"</strong>, conducted by <strong>Techstrota</strong> 
-                    and facilitated by <strong>Shree P.M. Patel College of Computer Science & Technology, Anand</strong>. 
+                    and facilitated by <strong>{{$internCollege}}</strong>. 
                     The internship duration was from <strong>{{ $joiningDate }} to {{ $completionDate }}</strong> at Techstrota.
                 </div>
 
@@ -301,8 +302,14 @@
             <tr>
                 <td style="width: 75%; text-align: left;">
                     <strong>Techstrota</strong> | <span style="color: #000000;">www.techstrota.com</span><br>
-                    156, 1st Floor, K10 Atlantis, C tower, Near Genda Circle, Opp Honest Restaurant,<br>
-                    Vadodara, Gujarat-390007 | CIN: GJ240114897
+                    503, Sterling Centre, R C
+                    Dutt Road, Alkapuri,
+                    Vadodara - 390007
+                    | CIN: GJ240114897
                 </td>
                 <td style="width: 25%; vertical-align: bottom;">
-                    <div class="system-remark">This is
+                    <div class="system-remark">This is a system-generated document.</div>
+                </td>
+            </tr>
+    </table>
+</footer>
