@@ -225,7 +225,7 @@
     <footer>
         <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">TECHSTROTA</div>
         <div style="text-decoration: underline; margin-bottom: 5px;">www.techstrota.com</div>
-        <div>503, Sterling Centre, R C Dutt Road, Alkapuri,</div>
+        <div>503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri,</div>
         <div>Vadodara, Gujarat - 390007 | Tel: +91 81288 40055 | CIN: GJ240114897</div>
     </footer>
 

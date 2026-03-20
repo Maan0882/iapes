@@ -76,7 +76,7 @@
                 <br>
 
                 CIN: GJ240114897<br>
-                503, Sterling Centre, R C Dutt Road, Alkapuri, Vadodara, Gujarat,
+                503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri, Vadodara, Gujarat,
                 <b>India</b> – 390007
             </td>
         </tr>

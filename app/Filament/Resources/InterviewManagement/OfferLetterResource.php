@@ -9,7 +9,7 @@ use App\Models\InterviewManagement\Application;
 use App\Models\InternManagement\Intern;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{Select, DatePicker, TextInput, Textarea};
+use Filament\Forms\Components\{Select, DatePicker, TextInput, Textarea, RichEditor};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use ZipArchive;
+use Filament\Forms\Set;
+use Filament\Forms\Get;
+use Illuminate\Support\Carbon;
 
 class OfferLetterResource extends Resource
 {
@@ -30,16 +33,17 @@ class OfferLetterResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
     protected static ?string $navigationGroup = 'Interview Management';
     protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('applications')
-                    ->label('Select Interns')
-                    ->multiple()
+                Select::make('application_id') // Changed from 'applications' to match DB column
+                ->label('Select Intern')
+                ->relationship('application', 'name')
                    ->options(
                         Application::where('status', 'Shortlisted')
-                            ->whereDoesntHave('offerLetter')
+                           ->whereDoesntHave('offerLetter')
                             ->get()
                             ->mapWithKeys(function ($app) {
                                 return [
@@ -48,17 +52,62 @@ class OfferLetterResource extends Resource
                             })
                     )
                     ->searchable()
+                    ->required()
+                   ->live() // This ensures the form state updates immediately when an intern is selected
+                   ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                    if (!$state) return;
+
+                    // Fetch data from both tables
+                    $application = Application::find($state);
+                    $offerLetter = OfferLetter::where('application_id', $state)->first();
+
+                    if ($application) {
+                        // Set values from Application table
+                        $set('university', $application->college);
+                       // $set('project_name', $application->project_title ?? ''); // Example of another column
+                    }
+
+                    if ($offerLetter) {
+                        // Set values from Offer Letter table
+                        $set('joining_date', $offerLetter->joining_date);
+                        
+                        // Recalculate completion date immediately
+                        //self::updateCompletionDate($set, $get);
+                    }
+                }),
+
+                TextInput::make('college')
+                    ->live()
+                    ->label('College Name')
+                    ->placeholder('Name of College'),
+                    
+
+                TextInput::make('university')
+                    ->live()
+                    ->label('University Name And Address')
+                    ->placeholder('University Name And Address')
                     ->required(),
 
                 DatePicker::make('joining_date')
-                    ->required(),
+                    ->live()
+                    ->displayFormat('d m Y')
+                    ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
 
                 DatePicker::make('completion_date')
-                    ->required(),
+                ->displayFormat('d m Y'),
 
                 TextInput::make('internship_role')
                     ->label('Internship Role')
                     ->placeholder('Web Developer / Full Stack Developer, etc..')
+                    ->required(),
+
+                TextInput::make('internship_role')
+                    ->label('Internship Role')
+                    ->placeholder('BCA Intern')
+                    ->required(),
+
+                TextInput::make('working_hours')
+                    ->placeholder('Total hour per week')
                     ->required(),
 
                 TextInput::make('working_hours')
@@ -76,12 +125,12 @@ class OfferLetterResource extends Resource
                     ])
                     ->required(),
                 
-                TextInput::make('project_name')
-                    ->placeholder('Project Name'),
+                // TextInput::make('project_name')
+                //     ->placeholder('Project Name'),
                     
 
-                Textarea::make('project_description')
-                    ->placeholder('Project Description'),
+                // Textarea::make('project_description')
+                //     ->placeholder('Project Description'),
                     
             ]);
     }
@@ -273,5 +322,36 @@ class OfferLetterResource extends Resource
             'create' => Pages\CreateOfferLetter::route('/create'),
             'edit' => Pages\EditOfferLetter::route('/{record}/edit'),
         ];
+    }
+
+    // Add this helper method inside your Resource class to keep the code clean
+    public static function updateCompletionDate(Set $set, Get $get)
+    {
+        $selectedIds = $get('applications');
+        $joiningDate = $get('joining_date');
+
+        if (empty($selectedIds) || !$joiningDate) {
+            return;
+        }
+
+        // We fetch the first intern selected to determine the duration
+        $application = Application::find(collect($selectedIds)->first());
+
+        if ($application && $application->duration && $application->duration_unit) {
+            $date = Carbon::parse($joiningDate);
+            $duration = (int) $application->duration;
+            $unit = strtolower($application->duration_unit);
+
+            // Add duration based on unit (e.g., 'months', 'weeks', 'days')
+            if (str_contains($unit, 'month')) {
+                $date->addMonths($duration);
+            } elseif (str_contains($unit, 'week')) {
+                $date->addWeeks($duration);
+            } else {
+                $date->addDays($duration);
+            }
+
+            $set('completion_date', $date->format('Y-m-d'));
+        }
     }
 }

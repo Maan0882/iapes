@@ -177,7 +177,7 @@
                     To,<br>
                     <strong>{{ $offer->application->name ?? 'Intern 2' }}</strong><br>
                     {{ $offer->application->college ?? 'GTU' }},<br>
-                    <!-- {{ $offer->application->city ?? 'Vadodara' }} - {{ $offer->application->pincode ?? '391750' }} -->
+                    {{ $offer->application->city ?? 'Vadodara' }} - {{ $offer->application->pincode ?? '391750' }}
                 </div>
 
                 <div class="subject">
@@ -253,7 +253,7 @@
     <footer>
         <strong>Techstrota</strong> | <span style="color: blue;">www.techstrota.com</span><br>
         503, Sterling Centre, R C
-        Dutt Road, Alkapuri,
+        Dutt Road, Near Fairfield Hotel, Alkapuri,
         Vadodara - 390007<br>
         Tel: +91 81288 40055 | CIN: GJ240114897
         <span class="system-remark">This is a system-generated document.</span>

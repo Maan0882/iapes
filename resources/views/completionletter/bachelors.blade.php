@@ -249,6 +249,7 @@
                     <strong>{{ $projectDescription }}</strong>. This real-world assignment helped the student understand 
                     client requirements, gain exposure to industry-level workflows, and apply practical front-end development skills effectively. 
                     Also built an <strong>Admin Backend for Blogs and Contacts</strong> with content management features.
+                    
                 </div>
 
                 <div class="tech-section">
@@ -303,7 +304,7 @@
                 <td style="width: 75%; text-align: left;">
                     <strong>Techstrota</strong> | <span style="color: #000000;">www.techstrota.com</span><br>
                     503, Sterling Centre, R C
-                    Dutt Road, Alkapuri,
+                    Dutt Road, Alkapuri, Near Fairfield Hotel,
                     Vadodara - 390007
                     | CIN: GJ240114897
                 </td>
