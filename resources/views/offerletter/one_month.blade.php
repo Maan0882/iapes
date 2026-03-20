@@ -177,7 +177,7 @@
                     To,<br>
                     <strong>{{ $offer->application->name ?? 'Intern 2' }}</strong><br>
                     {{ $offer->application->college ?? 'GTU' }},<br>
-                    {{ $offer->application->city ?? 'Vadodara' }} - {{ $offer->application->pincode ?? '391750' }}
+                    {{ $offer->university }} <br>
                 </div>
 
                 <div class="subject">

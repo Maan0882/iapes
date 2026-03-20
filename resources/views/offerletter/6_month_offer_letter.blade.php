@@ -149,8 +149,8 @@
                     To, <br>
                     <strong>{{ strtoupper($offer->application->name) }}</strong>, <br>
                     {{ $offer->application->college }} <br>
-                    {{ $offer->application->university }} <br>
-                    {{ $offer->application->address }}
+                    {{ $offer->university }} <br>
+                    
                 </div>
 
                 <div class="date-section">

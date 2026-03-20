@@ -47,7 +47,7 @@ class OfferLetterResource extends Resource
                             ->options(function (Get $get, ?OfferLetter $record) {
                                 $query = Application::where('status', 'Shortlisted');
                                 if (!$record) {
-                                    $query->whereDoesntHave('offerLetter');
+                                   // $query->whereDoesntHave('offerLetter');
                                     $selectedIds = $get('applications') ?? [];
                                     if (!empty($selectedIds)) {
                                         $firstIntern = Application::find($selectedIds[0]);
@@ -142,6 +142,7 @@ class OfferLetterResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('offer_letter_code')
                     ->label('Offer Code')
@@ -162,6 +163,20 @@ class OfferLetterResource extends Resource
                         $end = \Carbon\Carbon::parse($record->completion_date);
                         return $start->diffInMonths($end) . ' Months';
                     }),
+                TextColumn::make('template')
+                    ->label('Offer Letter Template')
+                    ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        '3_month_offer_letter' => '3 Month Offer Letter',
+                        '4_month_offer_letter' => '4 Month Offer Letter',
+                        '6_month_offer_letter' => '6 Month Offer Letter',
+                        'one_month' => 'One Month Internship',
+                        'general' => 'General Internship',
+                        default => $state,
+                    })
+                    ->badge() // Optional: Makes it look like a nice UI tag
+                    ->color('info'),
                 ToggleColumn::make('is_accepted')
                     ->label('Offer Status')
                     ->afterStateUpdated(function ($record, $state) {
