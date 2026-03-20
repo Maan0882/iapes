@@ -61,7 +61,7 @@
                     <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                 </div>
                 <div class="ml-6 flex-1 bg-black/5 dark:bg-white/5 rounded-xl py-2 px-5 text-[10px] lg:text-[12px] portal-mono text-gray-400 dark:text-gray-500 truncate tracking-widest">
-                    <a href="https://techstrota.com/">TechStrota.com/</a>
+                    <a href="https://techstrota.com/">TechStrota.com</a>
                 </div>
             </div>
 
