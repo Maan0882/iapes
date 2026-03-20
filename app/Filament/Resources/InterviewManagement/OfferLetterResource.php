@@ -41,16 +41,16 @@ class OfferLetterResource extends Resource
                 Select::make('application_id') // Changed from 'applications' to match DB column
                 ->label('Select Intern')
                 ->relationship('application', 'name')
-                   ->options(
-                        Application::where('status', 'Shortlisted')
-                           ->whereDoesntHave('offerLetter')
-                            ->get()
-                            ->mapWithKeys(function ($app) {
-                                return [
-                                    $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
-                                ];
-                            })
-                    )
+                    ->options(
+                            Application::where('status', 'Shortlisted')
+                            ->whereDoesntHave('offerLetter')
+                                ->get()
+                                ->mapWithKeys(function ($app) {
+                                    return [
+                                        $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
+                                    ];
+                                })
+                        )
                     ->searchable()
                     ->required()
                    ->live() // This ensures the form state updates immediately when an intern is selected

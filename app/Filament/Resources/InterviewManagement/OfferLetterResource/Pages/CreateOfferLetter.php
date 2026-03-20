@@ -32,6 +32,7 @@ class CreateOfferLetter extends CreateRecord
                 'completion_date' => $data['completion_date'],
                 'internship_role' => $data['internship_role'],
                 'working_hours' => $data['working_hours'],
+                'template'             => $data['template'],
             ]);
 
         }
