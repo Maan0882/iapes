@@ -9,7 +9,7 @@ use App\Models\InterviewManagement\Application;
 use App\Models\InternManagement\Intern;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{Select, DatePicker, TextInput, Textarea, RichEditor};
+use Filament\Forms\Components\{Select, DatePicker, TextInput, Textarea, RichEditor, Section};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -38,50 +38,105 @@ class OfferLetterResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('applications')
-                    ->label('Select Interns')
-                    ->multiple()
-                   ->options(
-                        Application::where('status', 'Shortlisted')
-                           // ->whereDoesntHave('offerLetter')
-                            ->get()
-                            ->mapWithKeys(function ($app) {
-                                return [
-                                    $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
-                                ];
+                Section::make('Intern Selection')
+                    ->description('Select interns from the same college to generate letters in bulk.')
+                    ->schema([
+                        Select::make('applications')
+                            ->label('Select Interns')
+                            ->multiple()
+                            ->options(function (Get $get, ?OfferLetter $record) {
+                                $query = Application::where('status', 'Shortlisted');
+                                if (!$record) {
+                                    $query->whereDoesntHave('offerLetter');
+                                    $selectedIds = $get('applications') ?? [];
+                                    if (!empty($selectedIds)) {
+                                        $firstIntern = Application::find($selectedIds[0]);
+                                        if ($firstIntern) {
+                                            $query->where('college', $firstIntern->college);
+                                        }
+                                    }
+                                }
+                                return $query->get()->mapWithKeys(fn ($app) => [
+                                    $app->id => "{$app->name} - {$app->college}"
+                                ]);
                             })
-                    )
-                    ->searchable()
-                    ->required(),
+                            ->live()
+                            ->required()
+                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                // Pre-fill fields only if we are selecting the first intern in a bulk create
+                                if (!empty($state) && count($state) === 1) {
+                                    $app = Application::find($state[0]);
+                                    if ($app) {
+                                        $set('intern_name', $app->name);
+                                        $set('university', $app->college);
+                                        $set('college', $app->college);
+                                    }
+                                }
+                                self::updateCompletionDate($set, $get);
+                            }),
 
-                DatePicker::make('joining_date')
-                    ->required(),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                TextInput::make('intern_name')
+                                    ->label('Intern Name (Editable)')
+                                    ->helperText('This pre-fills from the first selected intern but can be changed.')
+                                    ->required(),
 
-                DatePicker::make('completion_date')
-                    ->required(),
+                                TextInput::make('university')
+                                    ->label('University/College')
+                                    ->placeholder('Enter University Name')
+                                    ->required(),
 
-                TextInput::make('internship_role')
-                    ->label('Internship Role')
-                    ->placeholder('Web Developer / Full Stack Developer, etc..')
-                    ->required(),
+                                TextInput::make('college')
+                                    ->label('College')
+                                    ->placeholder('Enter University Name'),
+                            ]),
+                    ]),
 
-                TextInput::make('working_hours')
-                    ->placeholder('Total hour per week')
-                    ->required(),
+                Forms\Components\Section::make('Internship Details')
+                    ->columns(2) // Organize into two columns
+                    ->schema([
+                        DatePicker::make('joining_date')
+                            ->required()
+                            ->native(true), // Better UI
 
-                Select::make('template')
-                    ->label('Offer Letter Template')
-                    ->options([
-                        '3_month_offer_letter' => '3 Month Offer Letter',
-                        '4_month_offer_letter' => '4 Month Offer Letter',
-                        '6_month_offer_letter' => '6 Month Offer Letter',
-                        'one_month' => 'One Month Internship',
-                        'general' => 'General Internship',
-                    ])
-                    ->required(),
+                        DatePicker::make('completion_date')
+                            ->required()
+                            ->native(true),
 
+                        TextInput::make('internship_role')
+                            ->label('Internship Role')
+                            ->placeholder('Web Developer')
+                            ->required(),
+
+                        // Added internship_position if it differs from role
+                        TextInput::make('internship_position')
+                            ->label('Internship Position')
+                            ->placeholder('e.g. Junior Developer Intern')
+                            ->required(),
+
+                        TextInput::make('working_hours')
+                            ->label('Working Hours')
+                            ->placeholder('e.g. 40 hours per week')
+                            ->required(),
+
+                        Select::make('template')
+                            ->label('Offer Letter Template')
+                            ->options([
+                                '3_month_offer_letter' => '3 Month Offer Letter',
+                                '4_month_offer_letter' => '4 Month Offer Letter',
+                                '6_month_offer_letter' => '6 Month Offer Letter',
+                                'one_month' => 'One Month Internship',
+                                'general' => 'General Internship',
+                            ])
+                            ->required(),
+                    ]),
+                
+                // Helpful hint for the user
+                Forms\Components\Placeholder::make('note')
+                    ->content('The Offer Letter Code will be generated automatically upon saving.')
+                    ->columnSpanFull(),
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -103,15 +158,9 @@ class OfferLetterResource extends Resource
                         if (!$record->joining_date || !$record->completion_date) {
                             return 'N/A';
                         }
-
                         $start = \Carbon\Carbon::parse($record->joining_date);
                         $end = \Carbon\Carbon::parse($record->completion_date);
-
-                        // This returns a human-friendly string like "3 months" or "12 weeks"
                         return $start->diffInMonths($end) . ' Months';
-                        
-                        // Alternatively, for more precision:
-                        // return $start->shortAbsoluteDiffForHumans($end, 2); 
                     }),
                 ToggleColumn::make('is_accepted')
                     ->label('Offer Status')

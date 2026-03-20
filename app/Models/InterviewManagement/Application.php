@@ -61,6 +61,16 @@ class Application extends Model
                 $application->verification_token = Str::random(60);
             }
         });
+
+        static::updated(function ($application) {
+            // If name or college changes, find the associated offer letter
+            $offerLetter = $application->offerLetter;
+            if ($offerLetter) {
+                // Note: Since name/college live on Application, this simply 
+                // ensures the relationship stays logically consistent.
+                $offerLetter->touch(); // Refreshes timestamps if needed
+            }
+        });
     }
 
     public function offerLetter()

@@ -16,9 +16,8 @@ class OfferLetter extends Model
         'working_hours',
         'intern_id',
         'template',
-
-        'project_name',
-        'project_description',
+        'university',
+        'internship_position',
     ];
 
     protected static function boot()
@@ -46,11 +45,39 @@ class OfferLetter extends Model
 
     public function application()
     {
-        return $this->belongsTo(Application::class);
+        // Ensure this matches your foreign key in the offer_letters table
+        return $this->belongsTo(Application::class, 'application_id');
+    }
+
+    // Accessor for convenience
+    public function getNameAttribute()
+    {
+        return $this->application?->name;
+    }
+
+    public function getCollegeAttribute()
+    {
+        return $this->application?->college;
     }
 
     public function intern()
     {
         return $this->belongsTo(Intern::class, 'intern_id');
+    }
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::updated(function ($offerLetter) {
+            // If the OfferLetter was updated with new name/college data, 
+            // we sync it back to the related application.
+            if ($offerLetter->application) {
+                $offerLetter->application->update([
+                    'name' => $offerLetter->name,
+                    'college' => $offerLetter->college,
+                ]);
+            }
+        });
     }
 }

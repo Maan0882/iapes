@@ -22,4 +22,23 @@ class EditOfferLetter extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // The Select field expects an array for 'multiple()'. 
+        // We wrap the single ID into an array so it shows up in the dropdown.
+        $data['applications'] = [$data['application_id']];
+        $data['intern_name'] = $data['internship_position'] ?? '';
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Before saving the edit, take the first value from the array 
+        // and put it back into the single 'application_id' field.
+        if (!empty($data['applications'])) {
+            $data['application_id'] = $data['applications'][0];
+        }
+
+        return $data;
+    }
 }
