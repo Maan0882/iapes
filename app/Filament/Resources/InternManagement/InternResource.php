@@ -37,83 +37,91 @@ class InternResource extends Resource
     {
         return $form
             ->schema([
-                //
-                Select::make('applications')
-                    ->label('Select Intern')
-                    //->multiple()
-                   ->options(
-                        Application::where('status', 'Shortlisted')
-                           // ->whereDoesntHave('offerLetter')
-                            ->get()
-                            ->mapWithKeys(function ($app) {
-                                return [
-                                    $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
-                                ];
-                            })
-                    )
-                    ->searchable()
-                    ->required()
-                   ->live() // This ensures the form state updates immediately when an intern is selected
-                   ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                    if (!$state) return;
+                Section::make('Intern Selection')
+                    ->description('Select an intern to generate or edit their completion details.')
+                    ->schema([
+                        Select::make('id') // Binds to the Intern ID
+                            ->label('Select Intern')
+                            ->options(
+                                Intern::with(['application', 'offer_letters'])
+                                    ->whereHas('offer_letters', fn ($query) => $query->where('is_accepted', true))
+                                    ->get()
+                                    ->mapWithKeys(fn ($intern) => [
+                                        $intern->id => "{$intern->intern_code} - {$intern->application->name}"
+                                    ])
+                            )
+                            ->searchable()
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                if (!$state) return;
 
-                    // Fetch data from both tables
-                    $application = Application::find($state);
-                    $offerLetter = OfferLetter::where('application_id', $state)->first();
+                                $intern = Intern::with(['application', 'offer_letters'])->find($state);
+                                if (!$intern) return;
 
-                    if ($application) {
-                        // Set values from Application table
-                        $set('college', $application->college);
-                       // $set('project_name', $application->project_title ?? ''); // Example of another column
-                    }
+                                // Fetch from Application
+                                $set('intern_name', $intern->application->name);
+                                $set('college', $intern->application->college);
+                                $set('degree', $intern->application->degree);
 
-                    if ($offerLetter) {
-                        // Set values from Offer Letter table
-                        $set('joining_date', $offerLetter->joining_date);
+                                // Fetch from Offer Letter
+                                if ($intern->offer_letters) {
+                                    $set('joining_date', $intern->offer_letters->joining_date);
+                                    $set('internship_role', $intern->offer_letters->internship_role);
+                                    $set('internship_position', $intern->offer_letters->internship_position);
+                                    $set('university', $intern->offer_letters->university);
+                                }
+                            }),
+                    ]),
+
+                Section::make('Completion Details')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('project_name')
+                                ->label('Project Name')
+                                ->required(),
+                            
+                            DatePicker::make('completion_date')
+                                ->label('Completion Date')
+                                ->default(now())
+                                ->required(),
+                        ]),
                         
-                        // Recalculate completion date immediately
-                        //self::updateCompletionDate($set, $get);
-                    }
-                }),
+                        RichEditor::make('project_description')
+                            ->label('Project Description')
+                            ->columnSpanFull(),
 
-                TextInput::make('college')
-                    ->live()
-                    ->label('College Name')
-                    ->placeholder('Web Developer / Full Stack Developer, etc..')
-                    ->required(),
+                        Select::make('completion_letter_template')
+                            ->label('Certificate Template')
+                            ->options([
+                                'bachelors' => 'Bachelor Degree Template',
+                                'masters' => 'Master Degree Template',
+                            ])
+                            ->required()
+                            ->native(false),
+                    ]),
 
-               
-                DatePicker::make('joining_date')
-                    ->live()
-                    ->native(false)
-                    ->displayFormat('d-m-Y')
-                    ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
-
-                DatePicker::make('completion_date')
-                ->native(false)
-                ->displayFormat('d-m-Y'),
-
-
-                Select::make('template')
-                    ->label('Completion Letter Template')
-                    ->options([
-                        '3_month_offer_letter' => '3 Month Completion Letter',
-                        //'4_month_offer_letter' => '4 Month Offer Letter',
-                        'masters_offer_letter' => 'Master Completion Letter',
-                        // 'one_month' => 'One Month Internship',
-                        // 'general' => 'General Internship',
-                    ])
-                    ->required(),
-                
-                TextInput::make('project_name')
-                    ->placeholder('Project Name'),
-                    
-
-                RichEditor::make('project_description')
-                    ->placeholder('Project Description'),
-                    
-            
-                
+                Section::make('Editable Fetched Information')
+                    ->description('Changes here will update the Application and Offer Letter records.')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('intern_name')
+                                ->label('Full Name')
+                                ->required(),
+                            TextInput::make('degree')
+                                ->label('Degree/Course'),
+                            TextInput::make('college')
+                                ->label('College'),
+                            TextInput::make('university')
+                                ->label('University'),
+                            TextInput::make('internship_role')
+                                ->label('Role'),
+                            TextInput::make('internship_position')
+                                ->label('Position'),
+                            DatePicker::make('joining_date')
+                                ->label('Joining Date'),
+                        ]),
+                    ]),
             ]);
     }
 
@@ -186,19 +194,7 @@ class InternResource extends Resource
                 ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
             //----------------------------------------------------------------------------
-                
-            Tables\Actions\Action::make('view_completion_letter')
-                ->label('Completion Letter')
-                ->icon('heroicon-o-academic-cap')
-                ->color('success')
-                // Check the relationship to the OfferLetter model
-                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(function ($record) {
-                    // Points to the new route we will define below
-                    return route('view-completion-pdf', ['id' => $record->id]);
-                })
-                ->openUrlInNewTab(),
-                
+            
             Tables\Actions\Action::make('print_certificate')
                     ->label('Certificate')
                     ->icon('heroicon-o-document-arrow-down')
