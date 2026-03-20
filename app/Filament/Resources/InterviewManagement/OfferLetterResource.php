@@ -38,72 +38,31 @@ class OfferLetterResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('application_id') // Changed from 'applications' to match DB column
-                ->label('Select Intern')
-                ->relationship('application', 'name')
-                    ->options(
-                            Application::where('status', 'Shortlisted')
-                            ->whereDoesntHave('offerLetter')
-                                ->get()
-                                ->mapWithKeys(function ($app) {
-                                    return [
-                                        $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
-                                    ];
-                                })
-                        )
+                Select::make('applications')
+                    ->label('Select Interns')
+                    ->multiple()
+                   ->options(
+                        Application::where('status', 'Shortlisted')
+                           // ->whereDoesntHave('offerLetter')
+                            ->get()
+                            ->mapWithKeys(function ($app) {
+                                return [
+                                    $app->id => $app->name . ' - ' . $app->college. ' - ' . $app->duration.' ' . $app->duration_unit
+                                ];
+                            })
+                    )
                     ->searchable()
-                    ->required()
-                   ->live() // This ensures the form state updates immediately when an intern is selected
-                   ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                    if (!$state) return;
-
-                    // Fetch data from both tables
-                    $application = Application::find($state);
-                    $offerLetter = OfferLetter::where('application_id', $state)->first();
-
-                    if ($application) {
-                        // Set values from Application table
-                        $set('university', $application->college);
-                       // $set('project_name', $application->project_title ?? ''); // Example of another column
-                    }
-
-                    if ($offerLetter) {
-                        // Set values from Offer Letter table
-                        $set('joining_date', $offerLetter->joining_date);
-                        
-                        // Recalculate completion date immediately
-                        //self::updateCompletionDate($set, $get);
-                    }
-                }),
-
-                TextInput::make('college')
-                    ->live()
-                    ->label('College Name')
-                    ->placeholder('Name of College'),
-                    
-
-                TextInput::make('university')
-                    ->live()
-                    ->label('University Name And Address')
-                    ->placeholder('University Name And Address')
                     ->required(),
 
                 DatePicker::make('joining_date')
-                    ->live()
-                    ->displayFormat('d m Y')
-                    ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
+                    ->required(),
 
                 DatePicker::make('completion_date')
-                ->displayFormat('d m Y'),
+                    ->required(),
 
                 TextInput::make('internship_role')
                     ->label('Internship Role')
                     ->placeholder('Web Developer / Full Stack Developer, etc..')
-                    ->required(),
-
-                TextInput::make('internship_role')
-                    ->label('Internship Position')
-                    ->placeholder('BCA Intern')
                     ->required(),
 
                 TextInput::make('working_hours')
@@ -120,15 +79,9 @@ class OfferLetterResource extends Resource
                         'general' => 'General Internship',
                     ])
                     ->required(),
-                
-                // TextInput::make('project_name')
-                //     ->placeholder('Project Name'),
-                    
 
-                // Textarea::make('project_description')
-                //     ->placeholder('Project Description'),
-                    
             ]);
+
     }
 
     public static function table(Table $table): Table

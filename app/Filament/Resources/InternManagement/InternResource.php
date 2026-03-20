@@ -85,18 +85,14 @@ class InternResource extends Resource
                
                 DatePicker::make('joining_date')
                     ->live()
-                    ->displayFormat('d m Y'),
-                    //->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
+                    ->native(false)
+                    ->displayFormat('d-m-Y')
+                    ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
 
                 DatePicker::make('completion_date')
-                ->displayFormat('d m Y'),
+                ->native(false)
+                ->displayFormat('d-m-Y'),
 
-
-                
-
-                // TextInput::make('working_hours')
-                //     ->placeholder('Total hour per week')
-                //     ->required(),
 
                 Select::make('template')
                     ->label('Completion Letter Template')

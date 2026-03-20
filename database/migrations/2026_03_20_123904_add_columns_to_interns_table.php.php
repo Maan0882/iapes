@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('offer_letters', function (Blueprint $table) {
+        //
+        Schema::table('interns', function (Blueprint $table) {
             //
-            $table->string('project_name')->nullable();
-            $table->text('project_description')->nullable();
+            $table->string('project_name')
+                ->nullable()
+                ->after('joining_date');
+            $table->text('project_description')
+                ->nullable()
+                ->after('project_name');
         });
     }
 
@@ -23,7 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('offer_letters', function (Blueprint $table) {
+        //
+        Schema::table('interns', function (Blueprint $table) {
             //
              $table->dropColumn(['project_name','project_description']);
 
