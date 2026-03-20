@@ -102,12 +102,8 @@ class OfferLetterResource extends Resource
                     ->required(),
 
                 TextInput::make('internship_role')
-                    ->label('Internship Role')
+                    ->label('Internship Position')
                     ->placeholder('BCA Intern')
-                    ->required(),
-
-                TextInput::make('working_hours')
-                    ->placeholder('Total hour per week')
                     ->required(),
 
                 TextInput::make('working_hours')
