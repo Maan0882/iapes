@@ -51,10 +51,17 @@ Route::get('/view-completion-pdf/{id}', function ($id) {
 //---------------------------------------------------------
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/intern/certificate/view/{id}', [CertificateController::class, 'view'])
-         ->name('intern.certificate.view');
-    Route::get('/intern/certificate/{id}', [CertificateController::class, 'download'])
-         ->name('intern.certificate.download');
+    // Completion Letter Routes
+    Route::get('/intern/completion-letter/view/{id}', [CertificateController::class, 'viewCompletionLetter'])   
+        ->name('intern.completion_letter.view');
+    Route::get('/intern/completion-letter/download/{id}', [CertificateController::class, 'downloadCompletionLetter'])
+        ->name('intern.completion_letter.download');
+
+    // Certificate Routes
+    Route::get('/intern/certificate/view/{id}', [CertificateController::class, 'viewCertificate'])
+        ->name('intern.certificate.view');
+    Route::get('/intern/certificate/download/{id}', [CertificateController::class, 'downloadCertificate'])
+        ->name('intern.certificate.download');
 });
 // Route::get('/view-certificate-pdf/{id}', function ($id) {
 //     $intern = Intern::with(['offerLetter', 'application'])->findOrFail($id);

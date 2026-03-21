@@ -28,7 +28,9 @@ class Intern extends Authenticatable implements FilamentUser
         'password',
         'name',
         'email',
-        'joining_date',
+        'completion_letter_template', // Added this line
+        'project_name',
+        'project_description',
         'is_active',
         'intern_image'
     ];

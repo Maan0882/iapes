@@ -76,7 +76,7 @@ class InternResource extends Resource
 
                 Section::make('Completion Details')
                     ->schema([
-                        Grid::make(2)->schema([
+                        Grid::make(3)->schema([
                             TextInput::make('project_name')
                                 ->label('Project Name')
                                 ->required(),
@@ -85,20 +85,23 @@ class InternResource extends Resource
                                 ->label('Completion Date')
                                 ->default(now())
                                 ->required(),
+
+                            Select::make('completion_letter_template')
+                            ->label('Completion Letter Template')
+                            ->options([
+                                'bachelors' => 'Bachelor Degree Completion Letter',
+                                'masters' => 'Master Degree Completion Letter',
+                            ])
+                            ->required()
+                            ->native(false) // This makes it look like the modern dropdown in your image
+                            ->searchable()   // Optional: allows HR to type and find the template quickly
+                            ->placeholder('Select a template')
+                            ->columnSpan(1),
                         ]),
                         
                         RichEditor::make('project_description')
                             ->label('Project Description')
                             ->columnSpanFull(),
-
-                        Select::make('completion_letter_template')
-                            ->label('Certificate Template')
-                            ->options([
-                                'bachelors' => 'Bachelor Degree Template',
-                                'masters' => 'Master Degree Template',
-                            ])
-                            ->required()
-                            ->native(false),
                     ]),
 
                 Section::make('Editable Fetched Information')
@@ -130,31 +133,31 @@ class InternResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('intern_code')
+                TextColumn::make('intern_code')
                     ->label('Intern ID')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('application.application_code')
+                TextColumn::make('application.application_code')
                     ->label('Application ID')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('application.name')
+                TextColumn::make('application.name')
                     ->label('Intern Name')
                     //->description(fn ($record) => $record->application->name)
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('application.degree')
+                TextColumn::make('application.degree')
                     ->label('Intern Course')
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('application.domain')
+                TextColumn::make('application.domain')
                     ->label('Intern Domain')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('internship_duration')
+                TextColumn::make('internship_duration')
                     ->label('Internship Duration')
                     ->getStateUsing(function ($record) {
 
@@ -165,7 +168,22 @@ class InternResource extends Resource
 
                         return $record->application->duration . ' ' . $record->application->duration_unit . '';
                     }),
+                TextColumn::make('completion_letter_template')
+                    ->label('Letter Template')
+                    ->badge()
+                    ->colors([
+                        'primary' => 'bachelors',
+                        'info' => 'masters',
+                        'gray' => null, // Shows gray if no template is selected yet
+                    ])
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->sortable(),
 
+                TextColumn::make('completion_date')
+                    ->label('Completion Date')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->placeholder('Not Completed'),
 
 
                ToggleColumn::make('is_active')
@@ -194,7 +212,19 @@ class InternResource extends Resource
                 ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
             //----------------------------------------------------------------------------
-            
+            Tables\Actions\Action::make('print_completion_letter')
+                ->label('Completion Letter')
+                ->icon('heroicon-o-document-check')
+                ->color('success')
+                // The button only shows if an offer is accepted AND a template is chosen
+                ->visible(fn (Intern $record) => 
+                    ($record->offerLetter?->is_accepted ?? false) && 
+                    filled($record->completion_letter_template) &&
+                    filled($record->project_name)
+                )
+                ->url(fn (Intern $record): string => route('intern.completion_letter.download', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+
             Tables\Actions\Action::make('print_certificate')
                     ->label('Certificate')
                     ->icon('heroicon-o-document-arrow-down')
@@ -207,7 +237,22 @@ class InternResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                     Tables\Actions\BulkAction::make('bulk_print_certificate')
+                    Tables\Actions\BulkAction::make('bulk_print_completion_letter')
+                        ->label('Bulk Completion Letters')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->action(function ($records, $livewire) {
+                            // Only pluck IDs for interns who have a template selected
+                            $ids = $records->whereNotNull('completion_letter_template')->pluck('id')->implode(',');
+                            
+                            if (empty($ids)) {
+                                Notification::make()->title('No templates selected for these records.')->danger()->send();
+                                return;
+                            }
+
+                            $url = route('intern.completion_letter.download', ['id' => $ids]);
+                            $livewire->js("window.open('" . addslashes($url) . "', '_blank')");
+                        }),
+                    Tables\Actions\BulkAction::make('bulk_print_certificate')
                         ->label('Bulk Certificate')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('info')

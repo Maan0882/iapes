@@ -20,62 +20,71 @@ class CertificateController extends Controller
  
         abort_if($interns->isEmpty(), 403, 'No accepted offer letter found.');
  
-        return $interns->map(function (Intern $intern) {
-            $offer              = $intern->offerLetter;
-            $offer->application = $intern->application;
-            return $offer;
-        });
+        return $interns;
     }
 
-    public function view(Request $request, string $id)
+    // --- COMPLETION LETTER METHODS ---
+
+    public function viewCompletionLetter(Request $request, string $id)
     {
-        $offers = $this->resolveOffers($id);
+        $interns = $this->resolveInterns($id);
  
         return response(
-            View::make('certificate.certificate', [
-                'offers' => $offers,
-                'isPdf'  => false,
+            View::make('completion_letter.wrapper', [
+                'interns' => $interns,
+                'isPdf'   => false,
             ])->render(),
             200,
             ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
 
-    public function download(Request $request, string $id)
+    public function downloadCompletionLetter(Request $request, string $id)
     {
-        // Parse comma-separated IDs for bulk
-        $ids = array_filter(array_map('trim', explode(',', $id)));
- 
-        // Load interns with their offerLetter and application
-        // The blade uses $offers (each item = offerLetter) with ->application and ->intern relations
-        $interns = Intern::with(['application', 'offerLetter.intern'])
-            ->whereIn('id', $ids)
-            ->get()
-            ->filter(fn (Intern $intern) => $intern->offerLetter?->is_accepted ?? false);
- 
-        abort_if($interns->isEmpty(), 403, 'No accepted offer letter found for the selected intern(s).');
- 
-        // Pass offerLetter models as $offers — blade accesses $offer->application, $offer->intern, etc.
-        $offers = $interns->map(function (Intern $intern) {
-            $offer              = $intern->offerLetter;
-            $offer->application = $intern->application; // attach application onto offer for blade
-            return $offer;
-        });
- 
-        $isBulk   = $offers->count() > 1;
-        $filename = $isBulk
-            ? 'certificates_bulk.html'
-            : 'certificate_' . ($interns->first()->intern_code ?? $interns->first()->id) . '.html';
- 
-        $html = View::make('certificate.certificate', [
-            'offers' => $offers,
-            'isPdf'  => false,
+        $interns = $this->resolveInterns($id);
+        $isBulk   = $interns->count() > 1;
+        $filename = $isBulk ? 'completion_letters_bulk.html' : 'completion_letter_' . $interns->first()->intern_code . '.html';
+
+        $html = View::make('completion_letter.wrapper', [
+            'interns' => $interns,
+            'isPdf'   => false,
         ])->render();
  
         return response($html, 200, [
             'Content-Type'        => 'text/html; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            'Cache-Control'       => 'no-cache, no-store',
+        ]);
+    }
+
+    // --- CERTIFICATE METHODS ---
+
+    public function viewCertificate(Request $request, string $id)
+    {
+        $interns = $this->resolveInterns($id); 
+        return response(
+            View::make('certificate.certificate', [ // Points to certificate folder
+                'interns' => $interns,
+                'isPdf'   => false,
+            ])->render(),
+            200,
+            ['Content-Type' => 'text/html; charset=UTF-8']
+        );
+    }
+
+    public function downloadCertificate(Request $request, string $id)
+    {
+        $interns = $this->resolveInterns($id);
+        $isBulk   = $interns->count() > 1;
+        $filename = $isBulk ? 'certificates_bulk.html' : 'certificate_' . $interns->first()->intern_code . '.html';
+ 
+        $html = View::make('certificate.certificate', [
+            'interns' => $interns,
+            'isPdf'   => false,
+        ])->render();
+ 
+        return response($html, 200, [
+            'Content-Type'        => 'text/html; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
 }
