@@ -46,22 +46,51 @@ class OfferLetterResource extends Resource
                             ->multiple()
                             ->options(function (Get $get, ?OfferLetter $record) {
                                 $query = Application::where('status', 'Shortlisted');
-                                if (!$record) {
-                                   // $query->whereDoesntHave('offerLetter');
-                                    $selectedIds = $get('applications') ?? [];
-                                    if (!empty($selectedIds)) {
-                                        $firstIntern = Application::find($selectedIds[0]);
-                                        if ($firstIntern) {
-                                            $query->where('college', $firstIntern->college);
-                                        }
+                                $query->where(function ($q) use ($record) {
+                                $q->whereDoesntHave('offerLetter') // Doesn't have an offer letter
+                                ->orWhereHas('offerLetter', function ($subQ) use ($record) {
+                                    // OR it belongs to the current offer letter we are editing
+                                    if ($record) {
+                                        $subQ->where('id', $record->id);
+                                    } else {
+                                        // If creating new, this part won't match anything
+                                        $subQ->whereRaw('1 = 0');
+                                    }
+                                });
+                            });
+
+                            if (!$record) {
+                                $selectedIds = $get('applications') ?? [];
+                                if (!empty($selectedIds)) {
+                                    $firstIntern = Application::find($selectedIds[0]);
+                                    if ($firstIntern) {
+                                        $query->where('college', $firstIntern->college);
                                     }
                                 }
-                                return $query->get()->mapWithKeys(fn ($app) => [
-                                    $app->id => "{$app->name} - {$app->college}"
+                            }
+
+                            return $query->get()->mapWithKeys(fn ($app) => [
+                                $app->id => "{$app->name} - {$app->college}"
                                 ]);
                             })
                             ->live()
                             ->required()
+                            ->afterStateHydrated(function (Set $set, ?OfferLetter $record, $state) {
+                                if ($record) {
+                                    // Fetch directly from the OfferLetter record during Edit
+                                    $set('intern_name', $record->intern_name);
+                                    $set('university', $record->university);
+                                    $set('college', $record->college);
+                                } elseif (!empty($state)) {
+                                    // Fallback for fresh selections (Create mode)
+                                    $app = Application::find(is_array($state) ? $state[0] : $state);
+                                    if ($app) {
+                                        $set('intern_name', $app->name);
+                                        $set('university', $app->college);
+                                        $set('college', $app->college);
+                                    }
+                                }
+                            })
                             ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                 // Pre-fill fields only if we are selecting the first intern in a bulk create
                                 if (!empty($state) && count($state) === 1) {
