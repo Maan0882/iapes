@@ -40,36 +40,40 @@ class InternResource extends Resource
                 Section::make('Intern Selection')
                     ->description('Select an intern to generate or edit their completion details.')
                     ->schema([
-                        Select::make('id') // Binds to the Intern ID
+                        Select::make('application_id') // Binds to the Intern ID
+                            ->relationship('application', 'name')
                             ->label('Select Intern')
                             ->options(
-                                Intern::with(['application', 'offer_letters'])
-                                    ->whereHas('offer_letters', fn ($query) => $query->where('is_accepted', true))
+                                Application::query()
+                                    ->whereHas('offer_letters', function ($query) {
+                                        $query->where('is_accepted', true);
+                                    })
+                                    // This ensures we don't create duplicate intern records for the same application
+                                    ->whereDoesntHave('intern') 
                                     ->get()
-                                    ->mapWithKeys(fn ($intern) => [
-                                        $intern->id => "{$intern->intern_code} - {$intern->application->name}"
-                                    ])
+                                    ->pluck('id', 'name')
                             )
                             ->searchable()
+                            ->preload()
                             ->required()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 if (!$state) return;
 
-                                $intern = Intern::with(['application', 'offer_letters'])->find($state);
-                                if (!$intern) return;
+                                $app = Application::with(['offer_letters' => fn($q) => $q->where('is_accepted', true)])->find($state);
+                                
+                                if ($app) {
+                                    $set('intern_name', $app->name);
+                                    $set('college', $app->college);
+                                    $set('degree', $app->degree);
 
-                                // Fetch from Application
-                                $set('intern_name', $intern->application->name);
-                                $set('college', $intern->application->college);
-                                $set('degree', $intern->application->degree);
-
-                                // Fetch from Offer Letter
-                                if ($intern->offer_letters) {
-                                    $set('joining_date', $intern->offer_letters->joining_date);
-                                    $set('internship_role', $intern->offer_letters->internship_role);
-                                    $set('internship_position', $intern->offer_letters->internship_position);
-                                    $set('university', $intern->offer_letters->university);
+                                    $offer = $app->offer_letters->first();
+                                    if ($offer) {
+                                        $set('joining_date', $offer->joining_date);
+                                        $set('internship_role', $offer->internship_role);
+                                        $set('internship_position', $offer->internship_position);
+                                        $set('university', $offer->university);
+                                    }
                                 }
                             }),
                     ]),
@@ -110,19 +114,26 @@ class InternResource extends Resource
                         Grid::make(2)->schema([
                             TextInput::make('intern_name')
                                 ->label('Full Name')
-                                ->required(),
+                                ->required()
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->name)),
                             TextInput::make('degree')
-                                ->label('Degree/Course'),
+                                ->label('Degree/Course')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->degree)),
                             TextInput::make('college')
-                                ->label('College'),
+                                ->label('College')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->college)),
                             TextInput::make('university')
-                                ->label('University'),
+                                ->label('University')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->university)),
                             TextInput::make('internship_role')
-                                ->label('Role'),
+                                ->label('Role')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->internship_role)),
                             TextInput::make('internship_position')
-                                ->label('Position'),
+                                ->label('Position')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->internship_position)),
                             DatePicker::make('joining_date')
-                                ->label('Joining Date'),
+                                ->label('Joining Date')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->joining_date)),
                         ]),
                     ]),
             ]);
@@ -212,6 +223,18 @@ class InternResource extends Resource
                 ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
             //----------------------------------------------------------------------------
+            Tables\Actions\Action::make('view_completion_letter')
+                ->label('View Completion Letter')
+                ->icon('heroicon-o-eye')
+                ->color('success')
+                ->visible(fn (Intern $record) => 
+                    ($record->offerLetter?->is_accepted ?? false) && 
+                    filled($record->completion_letter_template) &&
+                    filled($record->project_name)
+                )
+                ->url(fn (Intern $record): string => route('intern.completion_letter.view', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+
             Tables\Actions\Action::make('print_completion_letter')
                 ->label('Completion Letter')
                 ->icon('heroicon-o-document-check')
@@ -223,6 +246,14 @@ class InternResource extends Resource
                     filled($record->project_name)
                 )
                 ->url(fn (Intern $record): string => route('intern.completion_letter.download', ['id' => $record->id]))
+                ->openUrlInNewTab(),
+
+            Tables\Actions\Action::make('view_certificate')
+                ->label('View Certificate')
+                ->icon('heroicon-o-eye')
+                ->color('info')
+                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                ->url(fn (Intern $record): string => route('intern.certificate.view', ['id' => $record->id]))
                 ->openUrlInNewTab(),
 
             Tables\Actions\Action::make('print_certificate')
@@ -272,7 +303,10 @@ class InternResource extends Resource
             //
         ];
     }
-
+    public static function canCreate(): bool
+    {
+    return false;
+    }
     public static function getPages(): array
     {
         return [

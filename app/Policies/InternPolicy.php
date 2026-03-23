@@ -14,23 +14,23 @@ class InternPolicy
 
     public function view(Authenticatable $user, Intern $intern): bool
     {
-        if (isset($user->role) && $user->role === 'admin') {
+        if ($user->is_admin) {
             return true;
         }
-        $userIdentifier = $user->email ?? $user->username;
-        $internIdentifier = $intern->username;
 
-        return ($userIdentifier === $internIdentifier) || ($user->id === $intern->id);
+        // 2. Interns can only see their own record
+        // Use the foreign key 'user_id' stored in the interns table
+        return $user->id === $intern->user_id;
     }
 
     public function update(Authenticatable $user, Intern $intern): bool
     {
-        // Only allow if it's an Admin User
-        return isset($user->role) && $user->role === 'admin';
+        // This will now correctly return true for users with is_admin = 1
+        return (bool) $user->is_admin; 
     }
 
     public function delete(Authenticatable $user, Intern $intern): bool
     {
-        return isset($user->role) && $user->role === 'admin';
+        return (bool) $user->is_admin;
     }
 }

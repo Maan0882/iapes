@@ -87,7 +87,7 @@
             .logo-wm {
                 position: absolute;
                 width: 45px; height: 45px;
-                opacity: 0.1;
+                opacity: 0.2;
             }
 
             .content {

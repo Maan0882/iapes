@@ -16,7 +16,7 @@ class ViewCertificate extends Page
     {
         // Redirect to the standalone certificate route so it renders
         // outside the Filament shell (cleaner for printing).
-        redirect()->route('view-certificate-print', ['id' => $record])->send();
+        redirect()->route('intern.certificate.view', ['id' => $record])->send();
         exit;
     }
 }

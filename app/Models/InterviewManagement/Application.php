@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\InterviewManagement\Offerletter;
 use Carbon\Carbon;
@@ -73,9 +74,15 @@ class Application extends Model
         });
     }
 
-    public function offerLetter()
+    public function intern(): HasOne
     {
-        return $this->hasOne(OfferLetter::class, 'application_id');
+        // Assuming 'application_id' is the foreign key on the 'interns' table
+        return $this->hasOne(\App\Models\InternManagement\Intern::class, 'application_id');
+    }
+    public function offer_letters(): HasMany
+    {
+        // Adjust the foreign key if it's not 'application_id'
+        return $this->hasMany(OfferLetter::class, 'application_id');
     }
 
 }

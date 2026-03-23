@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InternManagement\InternResource\Pages;
 use App\Filament\Resources\InternManagement\InternResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Notifications\Notification;
 
 class CreateIntern extends CreateRecord
 {

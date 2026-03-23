@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\View;
 
 class CertificateController extends Controller
 {
-    private function resolveOffers(string $id): \Illuminate\Support\Collection
+    private function resolveInterns(string $id): \Illuminate\Support\Collection
     {
         $ids = array_filter(array_map('trim', explode(',', $id)));
  
@@ -28,9 +28,27 @@ class CertificateController extends Controller
     public function viewCompletionLetter(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
- 
+        
+        // For individual view (the most common case from the UI)
+        if ($interns->count() === 1) {
+            $intern = $interns->first();
+            $template = $intern->completion_letter_template ?? 'bachelors';
+            $viewPath = "completionletter.{$template}";
+            
+            return response(
+                View::make($viewPath, [
+                    'intern' => $intern,
+                    'isPdf'  => false,
+                ])->render(),
+                200,
+                ['Content-Type' => 'text/html; charset=UTF-8']
+            );
+        }
+
+        // For bulk view (multiple IDs)
+        // We'll render a simple container that includes each intern's template
         return response(
-            View::make('completion_letter.wrapper', [
+            View::make('completionletter.bulk', [
                 'interns' => $interns,
                 'isPdf'   => false,
             ])->render(),
@@ -45,11 +63,21 @@ class CertificateController extends Controller
         $isBulk   = $interns->count() > 1;
         $filename = $isBulk ? 'completion_letters_bulk.html' : 'completion_letter_' . $interns->first()->intern_code . '.html';
 
-        $html = View::make('completion_letter.wrapper', [
-            'interns' => $interns,
-            'isPdf'   => false,
-        ])->render();
- 
+        if (!$isBulk) {
+            $intern = $interns->first();
+            $template = $intern->completion_letter_template ?? 'bachelors';
+            $viewPath = "completionletter.{$template}";
+            $html = View::make($viewPath, [
+                'intern' => $intern,
+                'isPdf'  => false,
+            ])->render();
+        } else {
+            $html = View::make('completionletter.bulk', [
+                'interns' => $interns,
+                'isPdf'   => false,
+            ])->render();
+        }
+
         return response($html, 200, [
             'Content-Type'        => 'text/html; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -61,10 +89,12 @@ class CertificateController extends Controller
     public function viewCertificate(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id); 
+        $offers = $interns->map(fn($i) => $i->offerletter)->filter();
+
         return response(
-            View::make('certificate.certificate', [ // Points to certificate folder
-                'interns' => $interns,
-                'isPdf'   => false,
+            View::make('certificate.certificate', [ 
+                'offers' => $offers,
+                'isPdf'  => false,
             ])->render(),
             200,
             ['Content-Type' => 'text/html; charset=UTF-8']
@@ -74,12 +104,13 @@ class CertificateController extends Controller
     public function downloadCertificate(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
-        $isBulk   = $interns->count() > 1;
-        $filename = $isBulk ? 'certificates_bulk.html' : 'certificate_' . $interns->first()->intern_code . '.html';
+        $offers  = $interns->map(fn($i) => $i->offerletter)->filter();
+        $isBulk  = $offers->count() > 1;
+        $filename = $isBulk ? 'certificates_bulk.html' : 'certificate_' . ($offers->first()?->intern->intern_code ?? '000') . '.html';
  
         $html = View::make('certificate.certificate', [
-            'interns' => $interns,
-            'isPdf'   => false,
+            'offers' => $offers,
+            'isPdf'  => false,
         ])->render();
  
         return response($html, 200, [
