@@ -134,8 +134,13 @@
         }
 
         .skills-list {
-            margin-left: 30px;
+            margin-left: 0;
             margin-bottom: 30px;
+        }
+
+        .skills-list ul {
+            margin-left: 35px;
+            padding-left: 0;
         }
 
         .skills-list li {

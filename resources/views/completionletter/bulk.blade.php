@@ -77,8 +77,20 @@
         .meta-left { display: table-cell; width: 60%; line-height: 1.4; }
         .meta-right { display: table-cell; width: 40%; text-align: right; vertical-align: top; }
         p, .content-p { font-size: 15.5px; margin-bottom: 18px; text-align: justify; }
-        .skills-list { margin-left: 30px; margin-bottom: 30px; }
-        .skills-list li { margin-bottom: 5px; font-size: 15px; }
+        .skills-list {
+            margin-left: 0;
+            margin-bottom: 30px;
+        }
+
+        .skills-list ul {
+            margin-left: 35px;
+            padding-left: 0;
+        }
+
+        .skills-list li {
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
 
         /* Signature Styles */
         .sig-container { margin-top: auto; width: 250px; padding-bottom: 40px; }
