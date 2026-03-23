@@ -84,5 +84,9 @@ class Application extends Model
         // Adjust the foreign key if it's not 'application_id'
         return $this->hasMany(OfferLetter::class, 'application_id');
     }
+    public function offerLetter(): HasOne // Note the singular name
+    {
+        return $this->hasOne(OfferLetter::class, 'application_id');
+    }
 
 }
