@@ -213,7 +213,7 @@
         <img src="{{ asset('images/TsLogo.png') }}" class="watermark" alt="Watermark">
         <div class="header">
             <div class="header-top">
-                <div class="header-item header-email">Email: techstrota@gmail.com</div>
+                <div class="header-item header-email">Email: info@techstrota.com </div>
                 <div class="header-item header-logo">
                     <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota">
                 </div>
