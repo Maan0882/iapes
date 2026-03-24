@@ -17,7 +17,7 @@
             padding: 0;
             color: #000;
             line-height: 1.5;
-            background: #fdfdfd;
+            background: #a4a4a4;
         }
 
         .page-wrapper {
@@ -200,6 +200,15 @@
             text-decoration: none;
         }
 
+        .system-remark {
+            font-size: 9px;
+            color: maroon;
+            font-style: italic;
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
+
         @media print {
             .page-wrapper {
                 margin: 0;
@@ -237,6 +246,7 @@
                 <span class="footer-brand">Techstrota</span> | <a href="https://www.techstrota.com" class="footer-link">www.techstrota.com</a><br>
                 503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri, Vadodara, Gujarat - 390007
             </div>
+            <span class="system-remark">This is a system-generated document.</span>
         </div>
     </div>
 </body>

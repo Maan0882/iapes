@@ -70,6 +70,7 @@ class InternResource extends Resource
                                     $offer = $app->offer_letters->first();
                                     if ($offer) {
                                         $set('joining_date', $offer->joining_date);
+                                        $set('completion_date', $offer->completion_date);
                                         $set('internship_role', $offer->internship_role);
                                         $set('internship_position', $offer->internship_position);
                                         $set('university', $offer->university);
@@ -88,6 +89,7 @@ class InternResource extends Resource
                             DatePicker::make('completion_date')
                                 ->label('Completion Date')
                                 ->default(now())
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->completion_date))
                                 ->required(),
 
                             Select::make('completion_letter_template')
@@ -163,8 +165,8 @@ class InternResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                TextColumn::make('application.domain')
-                    ->label('Intern Domain')
+                TextColumn::make('offerletter.internship_role')
+                    ->label('Intern Role')
                     ->searchable()
                     ->sortable(),
 
@@ -181,6 +183,7 @@ class InternResource extends Resource
                     }),
                 TextColumn::make('completion_letter_template')
                     ->label('Letter Template')
+                    ->placeholder('Not Selected')
                     ->badge()
                     ->colors([
                         'primary' => 'bachelors',

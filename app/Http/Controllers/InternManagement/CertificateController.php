@@ -118,4 +118,12 @@ class CertificateController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+
+    public function verifyQR($code)
+    {
+        $intern = Intern::where('intern_code', $code)->firstOrFail();
+        
+        return view('certificates.public_view', compact('intern'));
+    }
 }
