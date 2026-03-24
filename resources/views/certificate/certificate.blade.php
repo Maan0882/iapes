@@ -91,6 +91,7 @@
                         transform: scale(calc(0.85 * 100vh / 180mm));
                         transform-origin: center;
                         margin: -20px 0;
+                        rotate: 90deg;
                     }
                 }
             }
