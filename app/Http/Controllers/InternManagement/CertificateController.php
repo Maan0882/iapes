@@ -120,10 +120,17 @@ class CertificateController extends Controller
     }
 
 
-    public function verifyQR($code)
+    public function verifyQR($code = null)
     {
-        $intern = Intern::where('intern_code', $code)->firstOrFail();
+        if (!$code) {
+            abort(404, 'No certificate code provided.');
+        }
+
+        // Handle the case where slashes were replaced by hyphens in the URL
+        $normalizedCode = str_replace('-', '/', $code);
+        $intern = Intern::where('intern_code', $normalizedCode)->firstOrFail();
         
-        return view('certificates.public_view', compact('intern'));
+        $offers = collect([$intern->offerletter])->filter();
+        return view('certificate.certificate', compact('offers'));
     }
 }
