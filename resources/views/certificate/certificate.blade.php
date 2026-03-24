@@ -68,30 +68,30 @@
                 .cert:hover { transform: scale(1.01); }
 
                 /* Mobile Portrait - Auto Rotate */
-                @media (max-width: 768px) and (orientation: portrait) {
-                    #certificate-wrapper {
-                        padding: 40px 0;
-                    }
-                    #certificate-container {
-                        gap: 20px;
-                    }
+                @media (max-width: 480px) and (orientation: portrait) {
+                    #certificate-wrapper { padding: 40px 0; }
+                    #certificate-container { gap: 20px; }
                     .cert {
-                        transform: rotate(90deg) scale(calc(0.92 * 100vw / 210mm));
+                        transform: rotate(90deg) scale(0.44); /* Optimized for 360px-430px wide phones */
                         transform-origin: center;
-                        margin: 110px 0; /* Creates space for the rotated height */
+                        margin: 100px 0;
+                    }
+                }
+                @media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+                    .cert {
+                        transform: rotate(90deg) scale(0.65); /* Optimized for tablets in portrait */
+                        transform-origin: center;
+                        margin: 160px 0;
                     }
                 }
 
-                /* Mobile Landscape - Scale to fit */
+                /* Mobile Landscape - Scale to fit height */
                 @media (max-width: 950px) and (orientation: landscape) {
-                    #certificate-wrapper {
-                        padding: 20px 0;
-                    }
+                    #certificate-wrapper { padding: 20px 0; }
                     .cert {
-                        transform: scale(calc(0.85 * 100vh / 180mm));
+                        transform: scale(0.45); /* Fits typical phone landscape height */
                         transform-origin: center;
-                        margin: -20px 0;
-                        rotate: 90deg;
+                        margin: -60px 0;
                     }
                 }
             }
