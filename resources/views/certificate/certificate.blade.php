@@ -87,11 +87,11 @@
 
                 /* Mobile Landscape - Scale to fit height */
                 @media (max-width: 950px) and (orientation: landscape) {
-                    #certificate-wrapper { padding: 20px 0; }
+                    #certificate-wrapper { padding: 10px 0; }
                     .cert {
-                        transform: scale(0.45); /* Fits typical phone landscape height */
+                        transform: scale(0.38); /* Fits safely in 360px-400px heights */
                         transform-origin: center;
-                        margin: -60px 0;
+                        margin: -90px 0;
                     }
                 }
             }
