@@ -145,5 +145,5 @@ $pdf = Pdf::loadView('i-card.intern-id-card',[
 })->name('view-id-card')->middleware(['auth:web,intern']);
 
 // The route that the QR code will point to
-Route::get('/verify/{code}', [CertificateController::class, 'verifyQR'])
+Route::get('/verify/{code?}', [CertificateController::class, 'verifyQR'])
      ->name('certificate.verify');
