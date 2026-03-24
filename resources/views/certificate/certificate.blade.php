@@ -1,12 +1,14 @@
 @php $isPdf = $isPdf ?? false; @endphp
-@if($isPdf)
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    @if(!$isPdf)
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Internship Certificate - TechStrota</title>
+    @endif
 </head>
-<body style="margin: 0; padding: 0;">
-@endif
+<body style="margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
 <div id="certificate-wrapper">
     
     <div id="certificate-container">
@@ -24,9 +26,8 @@
                         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
                     background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
                     min-height: 100vh;
-                    padding: 80px 0;
+                    padding: 100px 0 60px 0;
                     font-family: 'Outfit', sans-serif;
-                    overflow-x: hidden;
                 }
                 .preview-header {
                     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -56,10 +57,8 @@
                 }
                 .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 114, 180, 0.4); filter: brightness(1.1); }
                 .print-btn svg { width: 1.2rem; height: 1.2rem; }
-                
                 #certificate-container {
                     display: flex; flex-direction: column; align-items: center; gap: 60px;
-                    width: 100%;
                 }
                 .cert {
                     box-shadow: 0 30px 60px rgba(0,0,0,0.5);
@@ -67,33 +66,6 @@
                 }
                 .cert:hover { transform: scale(1.01); }
 
-                /* Mobile Portrait - Auto Rotate */
-                @media (max-width: 480px) and (orientation: portrait) {
-                    #certificate-wrapper { padding: 40px 0; }
-                    #certificate-container { gap: 20px; }
-                    .cert {
-                        transform: rotate(90deg) scale(0.44); /* Optimized for 360px-430px wide phones */
-                        transform-origin: center;
-                        margin: 100px 0;
-                    }
-                }
-                @media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
-                    .cert {
-                        transform: rotate(90deg) scale(0.65); /* Optimized for tablets in portrait */
-                        transform-origin: center;
-                        margin: 160px 0;
-                    }
-                }
-
-                /* Mobile Landscape - Scale to fit height */
-                @media (max-width: 950px) and (orientation: landscape) {
-                    #certificate-wrapper { padding: 10px 0; }
-                    .cert {
-                        transform: scale(0.38); /* Fits safely in 360px-400px heights */
-                        transform-origin: center;
-                        margin: -90px 0;
-                    }
-                }
             }
 
             @media print {
@@ -160,10 +132,51 @@
                 font-weight: 500; letter-spacing: 0.5pt;
             }
             .outer-footer .system-gen { margin-left: auto; font-style: italic; color: maroon; opacity: 1; }
+
+            /* Responsive Scaling for Mobile - MUST BE AT THE END TO OVERRIDE */
+            @media screen and (max-width: 1150px) {
+                #certificate-wrapper {
+                    padding: 80px 0 20px 0 !important;
+                    min-height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    overflow-x: hidden;
+                }
+                #certificate-container {
+                    width: 100vw !important;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px !important;
+                }
+                .cert-scale-wrapper {
+                    width: 100vw;
+                    overflow: hidden;
+                    display: flex;
+                    justify-content: center;
+                }
+                .cert {
+                    width: 1122px !important;
+                    height: 794px !important;
+                    margin: 0 !important;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
+                    transform-origin: top center !important;
+                    flex-shrink: 0;
+                }
+                .preview-header {
+                    padding: 0.5rem 1rem !important;
+                }
+                .header-content {
+                    flex-direction: row;
+                    font-size: 0.8rem;
+                }
+            }
         </style>
 
         @if(isset($offers) && $offers->isNotEmpty())
             @foreach($offers as $offer)
+                <div class="cert-scale-wrapper">
                 <div class="cert">
                     @php
                         mt_srand($offer->id ?? 0);
@@ -202,7 +215,8 @@
                                     $rot  = mt_rand(-30, 30);
                                 @endphp
                                 <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4"
-                                     style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
+
+                                style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
                             @endif
                         @endforeach
                     </div>
@@ -231,7 +245,7 @@
                             </div>
                             <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
                                 <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">
-                                    {!! QrCode::size(150)->generate(route('certificate.verify', str_replace('/', '-',$offer->intern->intern_code))) !!}
+                                    {!! QrCode::size(150)->generate(route('certificate.verify', $offer->intern->intern_code)) !!}
 
                                 </div>
                                 <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
@@ -246,15 +260,42 @@
                             <div class="system-gen">This is a system generated certificate</div>
                         </div>
                     </div>
-                </div>
+                </div>{{-- /.cert --}}
+                </div>{{-- /.cert-scale-wrapper --}}
             @endforeach
         @endif
     </div>
 </div>
-@if($isPdf)
 </body>
 </html>
+@if(!$isPdf)
+<script>
+(function() {
+    var CERT_W = 1122; // px equivalent of 297mm at 96dpi
+    var CERT_H = 794;  // px equivalent of 210mm at 96dpi
+
+    function scaleCerts() {
+        if (window.innerWidth >= 1150) return; // desktop: no JS scaling needed
+        var vw = window.innerWidth;
+        var scale = vw / CERT_W;
+
+        document.querySelectorAll('.cert-scale-wrapper').forEach(function(wrapper) {
+            var cert = wrapper.querySelector('.cert');
+            if (!cert) return;
+            cert.style.transform = 'scale(' + scale + ')';
+            cert.style.transformOrigin = 'top center';
+            // Make wrapper exactly as tall as the scaled cert so layout flows correctly
+            wrapper.style.height = Math.ceil(CERT_H * scale) + 'px';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', scaleCerts);
+    window.addEventListener('resize', scaleCerts);
+    window.addEventListener('orientationchange', function() { setTimeout(scaleCerts, 100); });
+})();
+</script>
 @endif
+
 @if(request()->query('print') === 'true' && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
 <script>
     window.addEventListener('load', function() {
