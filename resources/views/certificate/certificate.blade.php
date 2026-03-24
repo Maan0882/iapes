@@ -230,7 +230,7 @@
                             </div>
                             <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
                                 <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">
-                                    {!! QrCode::size(150)->generate(route('certificate.verify', $offer->intern->intern_code)) !!}
+                                    {!! QrCode::size(150)->generate(route('certificate.verify', str_replace('/', '-',$offer->intern->intern_code))) !!}
 
                                 </div>
                                 <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
