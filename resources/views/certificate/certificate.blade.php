@@ -24,8 +24,9 @@
                         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
                     background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
                     min-height: 100vh;
-                    padding: 100px 0 60px 0;
+                    padding: 80px 0;
                     font-family: 'Outfit', sans-serif;
+                    overflow-x: hidden;
                 }
                 .preview-header {
                     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -55,14 +56,43 @@
                 }
                 .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 114, 180, 0.4); filter: brightness(1.1); }
                 .print-btn svg { width: 1.2rem; height: 1.2rem; }
+                
                 #certificate-container {
                     display: flex; flex-direction: column; align-items: center; gap: 60px;
+                    width: 100%;
                 }
                 .cert {
                     box-shadow: 0 30px 60px rgba(0,0,0,0.5);
                     transition: transform 0.4s ease;
                 }
                 .cert:hover { transform: scale(1.01); }
+
+                /* Mobile Portrait - Auto Rotate */
+                @media (max-width: 768px) and (orientation: portrait) {
+                    #certificate-wrapper {
+                        padding: 40px 0;
+                    }
+                    #certificate-container {
+                        gap: 20px;
+                    }
+                    .cert {
+                        transform: rotate(90deg) scale(calc(0.92 * 100vw / 210mm));
+                        transform-origin: center;
+                        margin: 110px 0; /* Creates space for the rotated height */
+                    }
+                }
+
+                /* Mobile Landscape - Scale to fit */
+                @media (max-width: 950px) and (orientation: landscape) {
+                    #certificate-wrapper {
+                        padding: 20px 0;
+                    }
+                    .cert {
+                        transform: scale(calc(0.85 * 100vh / 180mm));
+                        transform-origin: center;
+                        margin: -20px 0;
+                    }
+                }
             }
 
             @media print {
