@@ -136,12 +136,13 @@
             /* Responsive Scaling for Mobile - MUST BE AT THE END TO OVERRIDE */
             @media screen and (max-width: 1150px) {
                 #certificate-wrapper {
-                    padding: 80px 0 20px 0 !important;
+                    padding: 60px 0 20px 0 !important;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     overflow-x: hidden;
+                    box-sizing: border-box;
                 }
                 #certificate-container {
                     width: 100vw !important;
@@ -152,9 +153,9 @@
                 }
                 .cert-scale-wrapper {
                     width: 100vw;
-                    overflow: hidden;
                     display: flex;
                     justify-content: center;
+                    /* height set by JS */
                 }
                 .cert {
                     width: 1122px !important;
@@ -165,11 +166,21 @@
                     flex-shrink: 0;
                 }
                 .preview-header {
-                    padding: 0.5rem 1rem !important;
+                    padding: 0.4rem 1rem !important;
                 }
                 .header-content {
                     flex-direction: row;
-                    font-size: 0.8rem;
+                    font-size: 0.75rem;
+                }
+            }
+
+            /* Landscape: tighter top padding since header is smaller */
+            @media screen and (max-width: 1150px) and (orientation: landscape) {
+                #certificate-wrapper {
+                    padding: 50px 0 10px 0 !important;
+                }
+                #certificate-container {
+                    gap: 10px !important;
                 }
             }
         </style>
@@ -271,27 +282,53 @@
 @if(!$isPdf)
 <script>
 (function() {
-    var CERT_W = 1122; // px equivalent of 297mm at 96dpi
-    var CERT_H = 794;  // px equivalent of 210mm at 96dpi
+    var CERT_W = 1122; // px — 297mm at 96dpi
+    var CERT_H = 794;  // px — 210mm at 96dpi
+    var HEADER_H = 48; // approximate fixed header height in px
 
     function scaleCerts() {
-        if (window.innerWidth >= 1150) return; // desktop: no JS scaling needed
+        if (window.innerWidth >= 1150) {
+            // Desktop: remove any inline styles set by this script
+            document.querySelectorAll('.cert-scale-wrapper').forEach(function(w) {
+                w.style.height = '';
+                var c = w.querySelector('.cert');
+                if (c) c.style.transform = '';
+            });
+            return;
+        }
+
         var vw = window.innerWidth;
-        var scale = vw / CERT_W;
+        var vh = window.innerHeight;
+        var isLandscape = vw > vh;
+
+        // Available vertical space for one certificate (minus header + padding)
+        var availableH = vh - HEADER_H - (isLandscape ? 20 : 40);
+
+        // Scale to fit width first
+        var scaleByW = vw / CERT_W;
+        // Scale to fit height (so full cert is visible without vertical scroll in landscape)
+        var scaleByH = availableH / CERT_H;
+
+        // In landscape: use the smaller of the two so it fits both axes
+        // In portrait: just scale to width (vertical scroll is fine)
+        var scale = isLandscape ? Math.min(scaleByW, scaleByH) : scaleByW;
 
         document.querySelectorAll('.cert-scale-wrapper').forEach(function(wrapper) {
             var cert = wrapper.querySelector('.cert');
             if (!cert) return;
             cert.style.transform = 'scale(' + scale + ')';
             cert.style.transformOrigin = 'top center';
-            // Make wrapper exactly as tall as the scaled cert so layout flows correctly
+            // Set wrapper height to match actual rendered height so page flow is correct
             wrapper.style.height = Math.ceil(CERT_H * scale) + 'px';
         });
     }
 
     document.addEventListener('DOMContentLoaded', scaleCerts);
     window.addEventListener('resize', scaleCerts);
-    window.addEventListener('orientationchange', function() { setTimeout(scaleCerts, 100); });
+    // orientationchange fires before innerWidth/Height update — delay slightly
+    window.addEventListener('orientationchange', function() {
+        setTimeout(scaleCerts, 150);
+    });
 })();
 </script>
 @endif
