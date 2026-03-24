@@ -124,6 +124,7 @@ class CertificateController extends Controller
     {
         $intern = Intern::where('intern_code', $code)->firstOrFail();
         
-        return view('certificates.public_view', compact('intern'));
+        $offers = collect([$intern->offerletter])->filter();
+        return view('certificate.certificate', compact('offers'));
     }
 }
