@@ -130,23 +130,13 @@ if ($intern->intern_image && Storage::disk('public')->exists($intern->intern_ima
     $internImageBase64 = "path_to_default_avatar_base64_or_null";
 }
 
-$pdf = Pdf::loadView('i-card.intern-id-card',[
-    'intern' => $intern,
+// Return the VIEW directly, not the PDF stream
+    return view('i-card.intern-id-card', [
+        'intern' => $intern,
         'base64Image' => $base64Image,
-        'internImageBase64' => $internImageBase64, // This solves the "Undefined variable" error
-])
-          ->setPaper([0, 0, 153, 243])
-                ->setWarnings(false)
-                ->setOptions([
-                    'dpi' => 300,             // Force 300 DPI for print
-                    'defaultPaperSize' => 'a4',
-                    'isHtml5ParserEnabled' => true,
-                    'isRemoteEnabled' => true,
-                    'defaultFont' => 'sans-serif'
-                ]);
-
-    return $pdf->stream('intern-id-card.pdf');
-})->name('view-id-card')->middleware(['auth:web,intern']);
+        'internImageBase64' => $internImageBase64,
+    ]);
+})->name('print-id-card')->middleware(['auth:web,intern']);
 
 // The route that the QR code will point to
 Route::get('/verify-certificate/{code}', [CertificateController::class, 'verifyQR'])

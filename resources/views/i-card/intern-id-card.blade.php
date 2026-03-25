@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        @page { margin: 0; }
+        @page { margin: 0; size: 153pt 243pt;}
         body { margin: 0; padding: 0; font-family: 'Helvetica', sans-serif; }
         
         .card-container {
@@ -69,10 +69,10 @@
         
         .name {
             position: absolute;
-            top: 140pt;
+            top: 142pt;
             width: 100%;
             text-align: center;
-            font-size: 11pt;
+            font-size: 9pt;
             font-weight: bold;
             color: #1a2b4c;
         }
@@ -129,7 +129,14 @@
 
         <img src="{{ $base64Image }}" class="bg-image">
 
-        <div class="name">{{ strtoupper($intern->application->name) }}</div>
+        <div class="name">
+            @php
+                $nameParts = explode(' ', trim($intern->application->name));
+                $firstName = $nameParts[0];
+                $lastName = count($nameParts) > 1 ? end($nameParts) : '';
+            @endphp
+            {{ strtoupper($firstName . ' ' . $lastName) }}
+        </div>
         <div class="role">INTERN</div>
         <div class="int-id">{{ $intern->intern_code }}</div>
         <div class="date">
