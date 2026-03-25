@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\InterviewManagement\Offerletter;
+use App\Models\InterviewManagement\OfferLetter;
 use Carbon\Carbon;
 
 class Application extends Model

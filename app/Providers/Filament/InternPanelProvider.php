@@ -42,6 +42,7 @@ class InternPanelProvider extends PanelProvider
             ->collapsedSidebarWidth('4.5rem')
              // ✅ FULL WIDTH CONTENT
             ->maxContentWidth('full')
+            ->databaseTransactions()
             ->discoverResources(in: app_path('Filament/Intern/Resources'), for: 'App\\Filament\\Intern\\Resources')
             ->discoverPages(in: app_path('Filament/Intern/Pages'), for: 'App\\Filament\\Intern\\Pages')
             ->pages([

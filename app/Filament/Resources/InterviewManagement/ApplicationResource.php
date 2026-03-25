@@ -116,7 +116,7 @@ class ApplicationResource extends Resource
 
                             Section::make('Skills')
                                 ->schema([
-                                    Textarea::make('skills')
+                                    TextArea::make('skills')
                                         ->label('Skills (comma separated)')
                                         ->rows(3)
                                         ->required(),
