@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\InternManagement\Intern;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable implements FilamentUser
 {

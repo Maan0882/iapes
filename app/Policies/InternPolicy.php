@@ -14,23 +14,37 @@ class InternPolicy
 
     public function view(Authenticatable $user, Intern $intern): bool
     {
-        if ($user->is_admin) {
+        // 1. Admin (User model) can see all records
+        if ($user instanceof \App\Models\User && $user->is_admin) {
             return true;
         }
 
-        // 2. Interns can only see their own record
-        // Use the foreign key 'user_id' stored in the interns table
-        return $user->id === $intern->user_id;
+        // 2. Interns (Intern model) can only see their own record
+        if ($user instanceof Intern) {
+            return $user->id === $intern->id;
+        }
+
+        return false;
     }
 
     public function update(Authenticatable $user, Intern $intern): bool
     {
-        // This will now correctly return true for users with is_admin = 1
-        return (bool) $user->is_admin; 
+        // Admins can update
+        if ($user instanceof \App\Models\User && $user->is_admin) {
+            return true;
+        }
+
+        return false;
     }
 
     public function delete(Authenticatable $user, Intern $intern): bool
     {
-        return (bool) $user->is_admin;
+        // Admins can delete
+        if ($user instanceof \App\Models\User && $user->is_admin) {
+            return true;
+        }
+
+        return false;
     }
 }
+

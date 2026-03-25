@@ -12,15 +12,20 @@ class CertificateController extends Controller
 {
     private function resolveInterns(string $id): \Illuminate\Support\Collection
     {
-        $ids = array_filter(array_map('trim', explode(',', $id)));
- 
+        // Ensure we have an array of integers, even if only one ID is passed
+        $ids = collect(explode(',', $id))
+            ->map(fn($item) => trim($item))
+            ->filter()
+            ->values()
+            ->toArray();
+
         $interns = Intern::with(['application', 'offerLetter.intern'])
             ->whereIn('id', $ids)
             ->get()
             ->filter(fn (Intern $intern) => $intern->offerLetter?->is_accepted ?? false);
- 
+
         abort_if($interns->isEmpty(), 403, 'No accepted offer letter found.');
- 
+
         return $interns;
     }
 

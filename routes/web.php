@@ -21,11 +21,15 @@ Route::get('/view-offer-pdf/{id}', function ($id) {
     $fileName = str_replace('/', '-', $record->id);
 
     return $pdf->stream($fileName . '.pdf');
-})->name('view-offer-pdf')->middleware(['auth']);
+})->name('view-offer-pdf')->middleware(['auth:web,intern']);
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', function () {
+    return redirect()->route('filament.intern.auth.login');
+})->name('login');
 
 //---------------------------------------------------------
 
@@ -46,11 +50,11 @@ Route::get('/view-completion-pdf/{id}', function ($id) {
 
     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($view, ['offers' => [$offer]]);
     return $pdf->stream('completion_letter.pdf');
-})->middleware(['web', 'auth'])->name('view-completion-pdf');
+})->middleware(['web', 'auth:web,intern'])->name('view-completion-pdf');
 
 //---------------------------------------------------------
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:web,intern'])->group(function () {
     // Completion Letter Routes
     Route::get('/intern/completion-letter/view/{id}', [CertificateController::class, 'viewCompletionLetter'])   
         ->name('intern.completion_letter.view');

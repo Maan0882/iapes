@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use App\Models\InterviewManagement\Application;
+
 use App\Models\InterviewManagement\OfferLetter;
 use App\Models\User;
 use App\Models\InternManagement\InternshipBatch;
 use App\Models\InternManagement\InternTeam;
 use App\Models\TaskManagement\TaskSubmission;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Intern extends Authenticatable implements FilamentUser
 {

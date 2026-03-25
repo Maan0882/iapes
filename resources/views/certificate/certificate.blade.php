@@ -188,90 +188,90 @@
         @if(isset($offers) && $offers->isNotEmpty())
             @foreach($offers as $offer)
                 <div class="cert-scale-wrapper">
-                <div class="cert">
-                    @php
-                        mt_srand($offer->id ?? 0);
-                        $blob1 = "M44.7,-76.4C58.3,-69.2,70.1,-59,78.5,-46.3C86.9,-33.5,92,-18.3,91.3,-3.3C90.7,11.7,84.3,26.5,75.2,39.5C66.1,52.5,54.2,63.7,40.5,71.2C26.9,78.7,11.5,82.5,-3.1,87.8C-17.7,93.1,-31.4,100,-44.1,96.4C-56.8,92.8,-68.5,78.7,-76.5,64.1C-84.5,49.5,-88.8,34.4,-91,19.3C-93.2,4.2,-93.3,-10.8,-88.9,-24.8C-84.5,-38.8,-75.6,-51.8,-63.9,-59.5C-52.2,-67.2,-37.7,-69.6,-24.7,-76.1C-11.7,-82.6,0,-93.2,12.7,-91.1C25.4,-89,31.1,-83.6,44.7,-76.4Z";
-                        $blob2 = "M41.5,-71.4C53.3,-66.1,61.4,-50.2,67.9,-34.7C74.4,-19.2,79.2,-4.2,77.8,10.2C76.4,24.6,68.8,38.3,58.3,49.4C47.8,60.5,34.4,69.1,20.2,74.1C6,79.1,-9.1,80.5,-23.8,77.7C-38.4,74.9,-52.6,67.9,-63.9,57.5C-75.2,47.1,-83.6,33.4,-88.4,18.5C-93.2,3.6,-94.3,-12.4,-88.7,-25.9C-83.1,-39.3,-70.7,-50.3,-57.7,-57.5Z";
-                    @endphp
+                    <div class="cert">
+                        @php
+                            mt_srand($offer->id ?? 0);
+                            $blob1 = "M44.7,-76.4C58.3,-69.2,70.1,-59,78.5,-46.3C86.9,-33.5,92,-18.3,91.3,-3.3C90.7,11.7,84.3,26.5,75.2,39.5C66.1,52.5,54.2,63.7,40.5,71.2C26.9,78.7,11.5,82.5,-3.1,87.8C-17.7,93.1,-31.4,100,-44.1,96.4C-56.8,92.8,-68.5,78.7,-76.5,64.1C-84.5,49.5,-88.8,34.4,-91,19.3C-93.2,4.2,-93.3,-10.8,-88.9,-24.8C-84.5,-38.8,-75.6,-51.8,-63.9,-59.5C-52.2,-67.2,-37.7,-69.6,-24.7,-76.1C-11.7,-82.6,0,-93.2,12.7,-91.1C25.4,-89,31.1,-83.6,44.7,-76.4Z";
+                            $blob2 = "M41.5,-71.4C53.3,-66.1,61.4,-50.2,67.9,-34.7C74.4,-19.2,79.2,-4.2,77.8,10.2C76.4,24.6,68.8,38.3,58.3,49.4C47.8,60.5,34.4,69.1,20.2,74.1C6,79.1,-9.1,80.5,-23.8,77.7C-38.4,74.9,-52.6,67.9,-63.9,57.5C-75.2,47.1,-83.6,33.4,-88.4,18.5C-93.2,3.6,-94.3,-12.4,-88.7,-25.9C-83.1,-39.3,-70.7,-50.3,-57.7,-57.5Z";
+                        @endphp
 
-                    <svg class="wave wave-tl-2" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-tl-1" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-tr-2" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-tr-1" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-bl-2" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-bl-1" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-br-2" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
-                    <svg class="wave wave-br-1" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-tl-2" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-tl-1" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-tr-2" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-tr-1" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-bl-2" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-bl-1" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-br-2" viewBox="0 0 200 200"><path d="{{ $blob2 }}" transform="translate(100 100)"/></svg>
+                        <svg class="wave wave-br-1" viewBox="0 0 200 200"><path d="{{ $blob1 }}" transform="translate(100 100)"/></svg>
 
-                    <div class="b-outer"></div>
-                    <div class="b-inner"></div>
+                        <div class="b-outer"></div>
+                        <div class="b-inner"></div>
 
-                    @php
-                        $icons = ['php', 'laravel', 'mysql', 'python', 'nodedotjs', 'react', 'git', 'tailwindcss', 'typescript', 'javascript', 'docker', 'html5', 'php', 'laravel', 'mysql', 'react', 'git', 'docker'];
-                        shuffle($icons);
-                        $slots = [];
-                        for ($r = 0; $r < 4; $r++) { for ($c = 0; $c < 6; $c++) { $slots[] = ['r' => $r, 'c' => $c]; } }
-                        shuffle($slots);
-                    @endphp
+                        @php
+                            $icons = ['php', 'laravel', 'mysql', 'python', 'nodedotjs', 'react', 'git', 'tailwindcss', 'typescript', 'javascript', 'docker', 'html5', 'php', 'laravel', 'mysql', 'react', 'git', 'docker'];
+                            shuffle($icons);
+                            $slots = [];
+                            for ($r = 0; $r < 4; $r++) { for ($c = 0; $c < 6; $c++) { $slots[] = ['r' => $r, 'c' => $c]; } }
+                            shuffle($slots);
+                        @endphp
 
-                    <div class="wm-overlay">
-                        @foreach($icons as $index => $icon)
-                            @if(isset($slots[$index]))
-                                @php
-                                    $slot = $slots[$index];
-                                    $top  = ($slot['r'] * 22) + 6 + mt_rand(0, 4);
-                                    $left = ($slot['c'] * 15) + 5 + mt_rand(0, 4);
-                                    $size = mt_rand(11, 16);
-                                    $rot  = mt_rand(-30, 30);
-                                @endphp
-                                <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4"
+                        <div class="wm-overlay">
+                            @foreach($icons as $index => $icon)
+                                @if(isset($slots[$index]))
+                                    @php
+                                        $slot = $slots[$index];
+                                        $top  = ($slot['r'] * 22) + 6 + mt_rand(0, 4);
+                                        $left = ($slot['c'] * 15) + 5 + mt_rand(0, 4);
+                                        $size = mt_rand(11, 16);
+                                        $rot  = mt_rand(-30, 30);
+                                    @endphp
+                                    <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4"
 
-                                style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
-                            @endif
-                        @endforeach
-                    </div>
-
-                    <div class="content-wrapper">
-                        <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
-                        <div class="main-title">Certificate of Internship</div>
-                        <p style="font-size:14pt;color:#718096;margin:2mm 0;">This is to certify that</p>
-                        <div class="recipient">{{ $offer->application?->name ?? 'Student Name' }}</div>
-                        <div class="underline"></div>
-                        <div class="body-text">
-                            has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship
-                            at <b>TechStrota</b>. The internship was conducted from
-                            <b>{!! !empty($offer->joining_date) ? \Carbon\Carbon::parse($offer->joining_date)->format('dS F Y') : '01 Dec 2025' !!}</b> to
-                            <b>{!! !empty($offer->completion_date) ? \Carbon\Carbon::parse($offer->completion_date)->format('dS F Y') : '31 Dec 2025' !!}</b>.
-                            During this tenure, the intern demonstrated exceptional professional conduct and technical proficiency.
+                                    style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
+                                @endif
+                            @endforeach
                         </div>
-                        <div class="footer">
-                            <div class="sig-box">
-                                <div class="line"></div>
-                                <b style="color:#2d3748;font-size:12pt;font-weight:700;">Founder/CEO</b><br>
-                                <span style="font-size:9.5pt;color:#718096;font-weight:500;">TechStrota</span>
-                            </div>
-                            <div class="stamp-box" style="width:35mm;height:35mm;">
-                                
-                            </div>
-                            <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
-                                <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">
-                                    {!! QrCode::size(150)->generate(route('certificate.verify',str_replace('/', '-',$offer->intern->intern_code))) !!}
 
+                        <div class="content-wrapper">
+                            <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
+                            <div class="main-title">Certificate of Internship</div>
+                            <p style="font-size:14pt;color:#718096;margin:2mm 0;">This is to certify that</p>
+                            <div class="recipient">{{ $offer->application?->name ?? 'Student Name' }}</div>
+                            <div class="underline"></div>
+                            <div class="body-text">
+                                has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship
+                                at <b>TechStrota</b>. The internship was conducted from
+                                <b>{!! !empty($offer->joining_date) ? \Carbon\Carbon::parse($offer->joining_date)->format('dS F Y') : '01 Dec 2025' !!}</b> to
+                                <b>{!! !empty($offer->completion_date) ? \Carbon\Carbon::parse($offer->completion_date)->format('dS F Y') : '31 Dec 2025' !!}</b>.
+                                During this tenure, the intern demonstrated exceptional professional conduct and technical proficiency.
+                            </div>
+                            <div class="footer">
+                                <div class="sig-box">
+                                    <div class="line"></div>
+                                    <b style="color:#2d3748;font-size:12pt;font-weight:700;">Founder/CEO</b><br>
+                                    <span style="font-size:9.5pt;color:#718096;font-weight:500;">TechStrota</span>
                                 </div>
-                                <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
-                                    ID: {{ $offer->intern->intern_code ?? '000' }}
-                                </span>
+                                <div class="stamp-box" style="width:35mm;height:35mm;">
+                                    
+                                </div>
+                                <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
+                                    <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">
+                                        {!! QrCode::size(150)->generate(route('certificate.verify',str_replace('/', '-',$offer->intern->intern_code))) !!}
+
+                                    </div>
+                                    <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
+                                        ID: {{ $offer->intern->intern_code ?? '000' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="outer-footer">
+                                <div class="website">
+                                    <a href="https://techstrota.com" style="color:inherit;text-decoration:none;">www.techstrota.com</a>
+                                </div>
+                                <div class="system-gen">This is a system generated certificate</div>
                             </div>
                         </div>
-                        <div class="outer-footer">
-                            <div class="website">
-                                <a href="https://techstrota.com" style="color:inherit;text-decoration:none;">www.techstrota.com</a>
-                            </div>
-                            <div class="system-gen">This is a system generated certificate</div>
-                        </div>
-                    </div>
-                </div>{{-- /.cert --}}
+                    </div>{{-- /.cert --}}
                 </div>{{-- /.cert-scale-wrapper --}}
             @endforeach
         @endif
@@ -279,74 +279,68 @@
 </div>
 </body>
 </html>
+{{-- Scripting and Access Controls --}}
 @if(!$isPdf)
-<script>
-(function() {
-    var CERT_W = 1122; // px — 297mm at 96dpi
-    var CERT_H = 794;  // px — 210mm at 96dpi
-    var HEADER_H = 48; // approximate fixed header height in px
+    <script>
+    (function() {
+        var CERT_W = 1122; // px — 297mm at 96dpi
+        var CERT_H = 794;  // px — 210mm at 96dpi
+        var HEADER_H = 48; // approximate fixed header height in px
 
-    function scaleCerts() {
-        if (window.innerWidth >= 1150) {
-            // Desktop: remove any inline styles set by this script
-            document.querySelectorAll('.cert-scale-wrapper').forEach(function(w) {
-                w.style.height = '';
-                var c = w.querySelector('.cert');
-                if (c) c.style.transform = '';
+        function scaleCerts() {
+            if (window.innerWidth >= 1150) {
+                document.querySelectorAll('.cert-scale-wrapper').forEach(function(w) {
+                    w.style.height = '';
+                    var c = w.querySelector('.cert');
+                    if (c) c.style.transform = '';
+                });
+                return;
+            }
+
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+            var isLandscape = vw > vh;
+            var availableH = vh - HEADER_H - (isLandscape ? 20 : 40);
+            var scaleByW = vw / CERT_W;
+            var scaleByH = availableH / CERT_H;
+            var scale = isLandscape ? Math.min(scaleByW, scaleByH) : scaleByW;
+
+            document.querySelectorAll('.cert-scale-wrapper').forEach(function(wrapper) {
+                var cert = wrapper.querySelector('.cert');
+                if (!cert) return;
+                cert.style.transform = 'scale(' + scale + ')';
+                cert.style.transformOrigin = 'top center';
+                wrapper.style.height = Math.ceil(CERT_H * scale) + 'px';
             });
-            return;
         }
 
-        var vw = window.innerWidth;
-        var vh = window.innerHeight;
-        var isLandscape = vw > vh;
-
-        // Available vertical space for one certificate (minus header + padding)
-        var availableH = vh - HEADER_H - (isLandscape ? 20 : 40);
-
-        // Scale to fit width first
-        var scaleByW = vw / CERT_W;
-        // Scale to fit height (so full cert is visible without vertical scroll in landscape)
-        var scaleByH = availableH / CERT_H;
-
-        // In landscape: use the smaller of the two so it fits both axes
-        // In portrait: just scale to width (vertical scroll is fine)
-        var scale = isLandscape ? Math.min(scaleByW, scaleByH) : scaleByW;
-
-        document.querySelectorAll('.cert-scale-wrapper').forEach(function(wrapper) {
-            var cert = wrapper.querySelector('.cert');
-            if (!cert) return;
-            cert.style.transform = 'scale(' + scale + ')';
-            cert.style.transformOrigin = 'top center';
-            // Set wrapper height to match actual rendered height so page flow is correct
-            wrapper.style.height = Math.ceil(CERT_H * scale) + 'px';
+        document.addEventListener('DOMContentLoaded', scaleCerts);
+        window.addEventListener('resize', scaleCerts);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(scaleCerts, 150);
         });
-    }
+    })();
+    </script>
 
-    document.addEventListener('DOMContentLoaded', scaleCerts);
-    window.addEventListener('resize', scaleCerts);
-    // orientationchange fires before innerWidth/Height update — delay slightly
-    window.addEventListener('orientationchange', function() {
-        setTimeout(scaleCerts, 150);
-    });
-})();
-</script>
-@endif
+    {{-- Auto-print for Admins --}}
+    @if(request()->query('print') === 'true' && auth()->check() && auth()->user()->canAccessPanel(filament()->getPanel('admin')))
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() { window.print(); }, 500);
+        });
+    </script>
+    @endif
 
-@if(request()->query('print') === 'true' && auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
-<script>
-    window.addEventListener('load', function() {
-        setTimeout(function() { window.print(); }, 500);
-    });
-</script>
-@endif
-@if(!auth()->user()?->canAccessPanel(filament()->getPanel('admin')))
-<script>
-    window.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-            e.preventDefault();
-            alert('Printing is disabled for this document.');
-        }
-    });
-</script>
-@endif
+    {{-- Anti-print for Non-Admins --}}
+    @if(!auth()->check() || !auth()->user()->canAccessPanel(filament()->getPanel('admin')))
+    <script>
+        window.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                alert('Printing is disabled for this document.');
+            }
+        });
+    </script>
+    @endif
+
+@endif {{-- Final closing tag for the main !$isPdf check --}}

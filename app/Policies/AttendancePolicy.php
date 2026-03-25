@@ -9,9 +9,19 @@ use Illuminate\Auth\Access\Response;
 
 class AttendancePolicy
 {
-    public function viewAny(Authenticatable $user): bool
+    public function viewAny($user): bool
     {
-        return true; // Both Admin and Intern can view
+        // 1. Admin (User model) can see all records
+        if ($user instanceof \App\Models\User && $user->is_admin) {
+            return true;
+        }
+
+        // 2. Interns (Intern model) can see the resource
+        if ($user instanceof \App\Models\InternManagement\Intern) {
+            return true;
+        }
+
+        return (isset($user->is_admin) && $user->is_admin);
     }
 
     public function create(Authenticatable $user): bool
