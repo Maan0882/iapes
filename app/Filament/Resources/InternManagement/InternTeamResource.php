@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Set; // Add this import
 
 class InternTeamResource extends Resource
 {
@@ -36,6 +37,8 @@ class InternTeamResource extends Resource
                             ->label('Internship Batch')
                             ->relationship('batch', 'batch_name')
                             ->live() //
+                            // Clears selected interns when the batch changes
+                            ->afterStateUpdated(fn (Set $set) => $set('interns', []))
                             ->required(),
                     ]),
 
@@ -46,13 +49,21 @@ class InternTeamResource extends Resource
                             ->multiple() //
                             ->minItems(2) //
                             ->maxItems(3) //
-                            ->relationship('interns', 'name', function ($query, Get $get) {
+                            ->relationship(name: 'interns', 
+                                titleAttribute: 'name', 
+                                modifyQueryUsing: function (Builder $query, Get $get) {
                                 $batchId = $get('internship_batch_id');
+
+                                // If no batch is selected, don't show any interns
+                                    if (! $batchId) {
+                                        return $query->whereNull('id'); 
+                                    }
                                 
                                 // Only show interns from the chosen batch who don't have a team yet
                                 return $query->where('internship_batch_id', $batchId)
                                             ->whereNull('intern_team_id'); 
                             })
+                            ->preload() // This forces the options to load immediately without typing
                             ->required(),
                     ]),
             ]);

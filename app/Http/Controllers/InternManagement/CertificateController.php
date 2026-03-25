@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\InternManagement\Intern;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage; // To store files
 
 class CertificateController extends Controller
 {
@@ -133,4 +134,34 @@ class CertificateController extends Controller
         $offers = collect([$intern->offerletter])->filter();
         return view('certificate.certificate', compact('offers'));
     }
+
+
+
+    public function saveCertificateToServer(string $id)
+{
+    $interns = $this->resolveInterns($id);
+    $offers = $interns->map(fn($i) => $i->offerletter)->filter();
+
+    if ($offers->isEmpty()) {
+        return back()->with('error', 'No certificate data found.');
+    }
+
+    foreach ($offers as $offer) {
+        $internCode = $offer->intern->intern_code;
+        // Clean the filename (replace / with - to avoid directory issues)
+        $safeFileName = str_replace('/', '-', $internCode) . '.html';
+        $path = "certificates/{$safeFileName}";
+
+        // Render the HTML content
+        $html = View::make('certificate.certificate', [
+            'offers' => collect([$offer]),
+            'isPdf'  => false,
+        ])->render();
+
+        // Save to storage/app/public/certificates/
+        Storage::disk('public')->put($path, $html);
+    }
+
+    return back()->with('success', 'Certificates saved to server successfully.');
+}
 }
