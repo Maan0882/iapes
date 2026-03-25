@@ -85,6 +85,15 @@ class AttendanceResource extends Resource
             ->groups([
                 Group::make('intern.batch.batch_name')
                     ->label('Intern Batch')
+                    ->getTitleFromRecordUsing(function ($record): string {
+                        // Access the batch related to the intern
+                        $batch = $record->intern?->batch;
+                        
+                        $name = $batch?->batch_name ?? 'Unknown Batch';
+                        $timing = $batch?->batch_timing ?? 'No Timing Set';
+
+                        return "{$name} | Timing: {$timing}";
+                    })
                     ->collapsible(), // Allows you to hide/show 5 interns at once
             ])
             ->defaultGroup('intern.batch.batch_name')

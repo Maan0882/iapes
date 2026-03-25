@@ -55,7 +55,7 @@
                     Mobile: <a href="tel:+918128840055" style="color:#1F6AAE; text-decoration:none;">+91 8128840055</a><br>
                     Email: <a href="mailto:sales@techstrota.com" style="color:#1F6AAE; text-decoration:none;">sales@techstrota.com</a><br>
                     <span style="color: #64748b; font-size: 11px;">
-                        CIN: GJ240114897 | Vadodara, Gujarat, <b>India</b>
+                        CIN: GJ240114897 | 503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri, Vadodara, Gujarat, <b>India</b>
                     </span>
                 </td>
             </tr>
