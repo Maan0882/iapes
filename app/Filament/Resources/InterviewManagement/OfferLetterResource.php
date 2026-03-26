@@ -38,8 +38,27 @@ class OfferLetterResource extends Resource
     {
         return $form
             ->schema([
+                // ─── STEP 1: Pick template FIRST ───────────────────────────────
+                Forms\Components\Section::make('Offer Letter Template')
+                    ->schema([
+                        Select::make('template')
+                            ->label('Offer Letter Template')
+                            ->options([
+                                '3_month_offer_letter' => '3 Month Offer Letter',
+                                '4_month_offer_letter' => '4 Month Offer Letter',
+                                '6_month_offer_letter' => '6 Month Offer Letter',
+                                'one_month'            => 'One Month Internship',
+                                'general'              => 'General Internship',
+                            ])
+                            ->required()
+                            ->live() // Re-renders form on change
+                            ->placeholder('Select a template to continue…'),
+                    ]),
+
+                // ─── SECTION A: Application-based (non-general templates) ──────
                 Section::make('Intern Selection')
                     ->description('Select interns from the same college to generate letters in bulk.')
+                    ->visible(fn (Get $get) => filled($get('template')) && $get('template') !== 'general')
                     ->schema([
                         Select::make('applications')
                             ->label('Select Interns')
@@ -47,87 +66,120 @@ class OfferLetterResource extends Resource
                             ->options(function (Get $get, ?OfferLetter $record) {
                                 $query = Application::where('status', 'Shortlisted');
                                 $query->where(function ($q) use ($record) {
-                                $q->whereDoesntHave('offerLetter') // Doesn't have an offer letter
-                                ->orWhereHas('offerLetter', function ($subQ) use ($record) {
-                                    // OR it belongs to the current offer letter we are editing
-                                    if ($record) {
-                                        $subQ->where('id', $record->id);
-                                    } else {
-                                        // If creating new, this part won't match anything
-                                        $subQ->whereRaw('1 = 0');
-                                    }
+                                    $q->whereDoesntHave('offerLetter')
+                                    ->orWhereHas('offerLetter', function ($subQ) use ($record) {
+                                        if ($record) {
+                                            $subQ->where('id', $record->id);
+                                        } else {
+                                            $subQ->whereRaw('1 = 0');
+                                        }
+                                    });
                                 });
-                            });
 
-                            if (!$record) {
-                                $selectedIds = $get('applications') ?? [];
-                                if (!empty($selectedIds)) {
-                                    $firstIntern = Application::find($selectedIds[0]);
-                                    if ($firstIntern) {
-                                        $query->where('college', $firstIntern->college);
+                                if (!$record) {
+                                    $selectedIds = $get('applications') ?? [];
+                                    if (!empty($selectedIds)) {
+                                        $firstIntern = Application::find($selectedIds[0]);
+                                        if ($firstIntern) {
+                                            $query->where('college', $firstIntern->college);
+                                        }
                                     }
                                 }
-                            }
 
-                            return $query->get()->mapWithKeys(fn ($app) => [
-                                $app->id => "{$app->name} - {$app->college}"
-                                ]);
+                                return $query->get()->mapWithKeys(
+                                    fn ($app) => [$app->id => "{$app->name} - {$app->college}"]
+                                );
                             })
                             ->live()
-                            // ->required()
                             ->afterStateHydrated(function (Set $set, ?OfferLetter $record, $state) {
                                 if ($record) {
-                                    // Fetch directly from the OfferLetter record during Edit
-                                    $set('intern_name', $record->intern_name);
-                                    $set('university', $record->university);
-                                    $set('college', $record->college);
+                                    $set('intern_name', $record->name);
+                                    $set('university',  $record->university);
+                                    $set('college',     $record->college);
                                 } elseif (!empty($state)) {
-                                    // Fallback for fresh selections (Create mode)
                                     $app = Application::find(is_array($state) ? $state[0] : $state);
                                     if ($app) {
                                         $set('intern_name', $app->name);
-                                        $set('university', $app->college);
-                                        $set('college', $app->college);
+                                        $set('university',  $app->college);
+                                        $set('college',     $app->college);
                                     }
                                 }
                             })
                             ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                                // Pre-fill fields only if we are selecting the first intern in a bulk create
                                 if (!empty($state) && count($state) === 1) {
                                     $app = Application::find($state[0]);
                                     if ($app) {
                                         $set('intern_name', $app->name);
-                                        $set('university', $app->college);
-                                        $set('college', $app->college);
+                                        $set('university',  $app->college);
+                                        $set('college',     $app->college);
                                     }
                                 }
                                 self::updateCompletionDate($set, $get);
                             }),
 
-                        Forms\Components\Grid::make(2)
-                            ->schema([
-                                TextInput::make('intern_name')
-                                    ->label('Intern Name (Editable)')
-                                    ->helperText('This pre-fills from the first selected intern but can be changed.')
-                                    ->required(),
+                        Forms\Components\Grid::make(2)->schema([
+                            TextInput::make('name')
+                                ->label('Intern Name (Editable)')
+                                ->dehydrated(true)
+                                ->helperText('Pre-fills from first selected intern but can be changed.')
+                                ->required(),
 
-                                TextInput::make('university')
-                                    ->label('University/College')
-                                    ->placeholder('Enter University Name'),
-                                    // ->required(),
+                            TextInput::make('university')
+                                ->label('University/College')
+                                ->dehydrated(true)
+                                ->placeholder('Enter University Name'),
 
-                                TextInput::make('college')
-                                    ->label('College')
-                                    ->placeholder('Enter University Name'),
-                            ]),
+                            TextInput::make('college')
+                                ->label('College')
+                                ->dehydrated(true)
+                                ->placeholder('Enter College Name'),
+                        ]),
                     ]),
 
+                // ─── SECTION B: Standalone / Quick-Generate (general only) ────
+                Section::make('Intern Details')
+                    ->description('Fill in the intern\'s details directly — no application required.')
+                    ->visible(fn (Get $get) => $get('template') === 'general')
+                    ->schema([
+                        Forms\Components\Grid::make(2)->schema([
+                            TextInput::make('name')
+                                ->label('Intern Full Name')
+                                ->dehydrated(true)
+                                ->placeholder('e.g. Rahul Sharma')
+                                ->required(),
+
+                            TextInput::make('college')
+                                ->label('College / Institution')
+                                ->dehydrated(true)
+                                ->placeholder('e.g. M B Patel College of Engineering'),
+                                // ->required(),
+
+                            TextInput::make('university')
+                                ->label('University')
+                                ->dehydrated(true)
+                                ->placeholder('e.g. GTU'),
+
+                            TextInput::make('email')
+                                ->label('Intern Email')
+                                ->email()
+                                ->placeholder('intern@example.com'),
+
+                            TextInput::make('phone')
+                                ->label('Phone Number')
+                                ->placeholder('+91 XXXXX XXXXX'),
+                        ]),
+                    ]),
+
+                // ─── INTERNSHIP DETAILS (shared by both flows) ────────────────
                 Forms\Components\Section::make('Internship Details')
-                    ->columns(2) // Organize into two columns
+                    ->visible(fn (Get $get) => filled($get('template')))
+                    ->columns(2)
                     ->schema([
                         DatePicker::make('joining_date')
                             ->required()
-                            ->native(true), // Better UI
+                            ->native(true)
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
 
                         DatePicker::make('completion_date')
                             ->required()
@@ -138,7 +190,6 @@ class OfferLetterResource extends Resource
                             ->placeholder('Web Developer')
                             ->required(),
 
-                        // Added internship_position if it differs from role
                         TextInput::make('internship_position')
                             ->label('Internship Position')
                             ->placeholder('e.g. Junior Developer Intern')
@@ -148,23 +199,28 @@ class OfferLetterResource extends Resource
                             ->label('Working Hours')
                             ->placeholder('e.g. 40 hours per week')
                             ->required(),
-
-                        Select::make('template')
-                            ->label('Offer Letter Template')
-                            ->options([
-                                '3_month_offer_letter' => '3 Month Offer Letter',
-                                '4_month_offer_letter' => '4 Month Offer Letter',
-                                '6_month_offer_letter' => '6 Month Offer Letter',
-                                'one_month' => 'One Month Internship',
-                                'general' => 'General Internship',
-                            ])
-                            ->required(),
+                        
+                        Forms\Components\Section::make('Offer Letter Body')
+                            ->visible(fn (Get $get) => filled($get('template')))
+                            ->schema([
+                                Forms\Components\RichEditor::make('description')
+                                    ->dehydrated(true)
+                                    ->label('Custom Description')
+                                    ->helperText('This content will appear on the second page of the offer letter.')
+                                    ->toolbarButtons([
+                                        'bold', 'italic', 'underline',
+                                        'bulletList', 'orderedList',
+                                        'h2', 'h3',
+                                        'undo', 'redo',
+                                    ])
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
-                
-                // Helpful hint for the user
+
                 Forms\Components\Placeholder::make('note')
                     ->content('The Offer Letter Code will be generated automatically upon saving.')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->visible(fn (Get $get) => filled($get('template'))),
             ]);
     }
 
@@ -177,8 +233,13 @@ class OfferLetterResource extends Resource
                     ->label('Offer Code')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('application.name')
-                    ->label('Intern'),
+                TextColumn::make('name')
+                    ->label('Intern')
+                    ->state(function ($record): string {
+                        return $record->application?->name 
+                            ?? $record->getRawOriginal('name') 
+                            ?? '—';
+                    }),
                 TextColumn::make('internship_role'),
                 TextColumn::make('joining_date')->date(),
                 TextColumn::make('completion_date')->date(),
@@ -228,13 +289,14 @@ class OfferLetterResource extends Resource
                             // Password
                             $plainPassword = "ts{$year}{$paddedSequence}";
                             $intern = Intern::create([
-                                'application_id'=>$record->application->id,
+                                'application_id' => $record->application_id,   // null is fine for general
+                                'offer_letter_id'=> $record->id,
                                 'intern_code'   => $generatedCode,
                                 'username'      => $username,
                                 'password'      => \Illuminate\Support\Facades\Hash::make($plainPassword),
                                 'name'          => $record->application->name ?? 'Intern ' . $sequence,
                                 'email'         => $record->application->email ?? "intern{$sequence}@example.com",
-                                'joining_date'  => $record->joining_date ?? now(),
+                                'joining_date'  => $record->joining_date,
                                 'is_active'     => true,
                             ]);
 

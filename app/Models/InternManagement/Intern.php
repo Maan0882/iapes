@@ -25,6 +25,7 @@ class Intern extends Authenticatable implements FilamentUser
     protected $fillable = [
         'application_id',
         'internship_batch_id',
+        'offer_letter_id',
         'intern_team_id',
         'intern_code',
         'username',
@@ -34,6 +35,7 @@ class Intern extends Authenticatable implements FilamentUser
         'completion_letter_template', // Added this line
         'project_name',
         'project_description',
+        'joining_date',
         'is_active',
         'intern_image'
     ];

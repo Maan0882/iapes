@@ -16,10 +16,17 @@ class OfferLetter extends Model
         'working_hours',
         'intern_id',
         'template',
+        'description',
+        'college',   // ← add this too
+        'name',
+        'email',
+        'phone',
         'university',
         'internship_position',
     ];
-
+    protected $casts = [
+        'joining_date' => 'date',
+    ];
     protected static function boot()
     {
         parent::boot();
@@ -50,15 +57,15 @@ class OfferLetter extends Model
     }
 
     // Accessor for convenience
-    public function getNameAttribute()
-    {
-        return $this->application?->name;
-    }
+    // public function getNameAttribute()
+    // {
+    //     return $this->application?->name;
+    // }
 
-    public function getCollegeAttribute()
-    {
-        return $this->application?->college;
-    }
+    // public function getCollegeAttribute()
+    // {
+    //     return $this->application?->college;
+    // }
 
     public function intern()
     {

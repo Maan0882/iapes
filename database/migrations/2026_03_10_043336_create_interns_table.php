@@ -14,7 +14,14 @@ return new class extends Migration
         Schema::create('interns', function (Blueprint $table) {
             $table->id();
             // Authentication & Identity
-            $table->string('intern_code')->unique()->nullable(); // TS26/WD/001
+            $table->string('intern_code')->unique()->nullable();
+            $table->foreignId('application_id')->nullable()
+                  ->constrained()
+                  ->cascadeOnDelete(); 
+            $table->foreignId('offer_letter_id')
+                ->nullable()
+                ->constrained('offer_letters')
+                ->nullOnDelete();
             $table->string('username')->unique();    // Same as code for login
             $table->string('password');
             // Profile Data

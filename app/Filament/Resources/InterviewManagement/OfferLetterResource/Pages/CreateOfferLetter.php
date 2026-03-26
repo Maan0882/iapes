@@ -11,22 +11,42 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreateOfferLetter extends CreateRecord
 {
+    protected static string $resource = OfferLetterResource::class;
     // To redirect on the page in resource
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
     }
 
-    protected static string $resource = OfferLetterResource::class;
     protected function handleRecordCreation(array $data): Model
     {
-        $applicationIds = $data['applications'];
-        $editedName = $data['intern_name'];
-        $editedUniversity = $data['university']; // Or however you map university
-        $editedCollege = $data['college'];
+        // ── GENERAL FLOW: no application selected ──────────────────────────
+        if (empty($data['applications'] ?? null)) {
+            return OfferLetter::create([
+                'application_id'      => null,
+                'name'                => $data['name'] ?? null,
+                'university'          => $data['university'] ?? null,
+                'college'             => $data['college'] ?? null,
+                'phone'               => $data['phone'] ?? null,
+                'email'               => $data['email'] ?? null,
+                'joining_date'        => $data['joining_date'],
+                'completion_date'     => $data['completion_date'],
+                'internship_role'     => $data['internship_role'],
+                'internship_position' => $data['internship_position'],
+                'working_hours'       => $data['working_hours'],
+                'template'            => $data['template'],
+                'description'         => $data['description'] ?? null,  // ← add
+            ]);
+        }
 
-        unset($data['applications']);
-        
+        // ── APPLICATION-BASED FLOW: bulk create one letter per intern ──────
+        $applicationIds   = $data['applications'];
+        $editedName       = $data['name'];
+        $editedUniversity = $data['university'];
+        $editedCollege    = $data['college'];
+        $editedphone      = $data['phone'] ?? null;
+        $editedemail      = $data['email'] ?? null;
+
         $lastCreatedRecord = null;
 
         foreach ($applicationIds as $id) {
@@ -34,24 +54,30 @@ class CreateOfferLetter extends CreateRecord
 
             if ($application) {
                 $application->update([
-                    'name' => $editedName,
+                    'name'   => $editedName,
                     'college' => $editedCollege,
                 ]);
             }
+
             $lastCreatedRecord = OfferLetter::create([
                 'application_id'      => $id,
+                'name'                => $editedName,      // Add this line
+                'college'             => $editedCollege,   // Add this line
+                'university'          => $editedUniversity,
+                'phone'               => $editedphone,
+                'email'               => $editedemail,
                 'joining_date'        => $data['joining_date'],
                 'completion_date'     => $data['completion_date'],
                 'internship_role'     => $data['internship_role'],
+                'internship_position' => $data['internship_position'],
                 'working_hours'       => $data['working_hours'],
                 'template'            => $data['template'],
-                'university'          => $editedUniversity,
-                'internship_position' => $data['internship_position'],
-                // If you still want to store these in OfferLetter table specifically:
-                'intern_id'           => $application->intern_id ?? null, 
+                'intern_id'           => $application->intern_id ?? null,
+                'description'         => $data['description'] ?? null,  // ← add
             ]);
         }
 
         return $lastCreatedRecord;
     }
+    
 }
