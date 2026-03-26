@@ -21,7 +21,7 @@ class InternTeamResource extends Resource
     protected static ?string $model = InternTeam::class;
     protected static ?string $navigationGroup = 'Intern Management';
     protected static ?string $navigationIcon = 'heroicon-s-users';
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

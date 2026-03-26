@@ -30,7 +30,7 @@ class InternResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $navigationGroup = 'Intern Management';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     
     public static function form(Form $form): Form
