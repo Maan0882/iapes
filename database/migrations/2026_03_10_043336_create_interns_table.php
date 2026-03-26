@@ -28,6 +28,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->date('joining_date');
+            $table->string('project_name')
+                ->nullable();
+            $table->text('project_description')
+                ->nullable();
+            $table->string('completion_letter_template')->nullable();
             // Status
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
