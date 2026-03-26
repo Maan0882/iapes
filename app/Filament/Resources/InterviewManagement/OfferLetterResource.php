@@ -31,8 +31,8 @@ class OfferLetterResource extends Resource
 {
     protected static ?string $model = OfferLetter::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-check';
-    protected static ?string $navigationGroup = 'Interview Management';
-    protected static ?int $navigationSort = 4;
+    // protected static ?string $navigationGroup = 'Interview Management';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

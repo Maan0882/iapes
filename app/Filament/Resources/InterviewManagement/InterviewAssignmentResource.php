@@ -30,7 +30,7 @@ class InterviewAssignmentResource extends Resource
     protected static ?string $model = InterviewAssignment::class;
     protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationGroup = 'Interview Management';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {

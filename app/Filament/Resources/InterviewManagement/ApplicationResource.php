@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InterviewManagement;
 use App\Filament\Resources\InterviewManagement\ApplicationResource\Pages;
 use App\Filament\Resources\InterviewManagement\ApplicationResource\RelationManagers;
 use App\Models\InterviewManagement\Application;
+use App\Models\InterviewManagement\OfferLetter;
 use App\Mail\InterviewScheduledMail;
 use Carbon\Carbon;
 
@@ -14,7 +15,7 @@ use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePick
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\{Action, BulkAction};
-use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Columns\{TextColumn, BadgeColumn, IconColumn, SelectColumn};
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Mail;
 
 // 1. IMPORT THE TRAIT
 use App\Traits\HasInterviewActions;
+use App\Models\InternManagement\Intern;
+use Illuminate\Support\Facades\Hash;
 
 class ApplicationResource extends Resource
 {
@@ -35,7 +38,7 @@ class ApplicationResource extends Resource
     protected static ?string $model = Application::class;
     protected static ?string $navigationGroup = 'Interview Management';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -186,15 +189,42 @@ class ApplicationResource extends Resource
                     ->badge()
                     ->toggleable()
                     ->color('info'),
-                BadgeColumn::make('status')
-                    ->colors([
-                        'Applied' => 'primary',
-                        'Interview_Scheduled' => 'success',
-                        'Interviewed' => 'warning',
-                        'Shortlisted' => 'info',
-                        'Rejected' => 'danger',
-                    ])->alignCenter()
-                    ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                SelectColumn::make('status')
+                    ->options([
+                        'applied' => 'Applied',
+                        'interview_scheduled' => 'Interview Scheduled',
+                        'interviewed' => 'Interviewed',
+                        'shortlisted' => 'Shortlisted',
+                        'rejected' => 'Rejected',
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->afterStateUpdated(function ($record, $state) {
+                        // Check if status is changed to Shortlisted and no offer letter exists yet
+                        if ($state === 'Shortlisted' && !$record->offerLetter) {
+                            // Your logic to create the Offer Letter here
+                            $record->offerLetter()->create([
+                                'application_id' => $record->id,
+                                'intern_name' => $record->name,
+                                'university' => $record->college,
+                                'college' => $record->college,
+                                'joining_date' => $joiningDate,
+                                'completion_date' => $completionDate,
+                                'internship_role' => $record->domain,
+                                'internship_position' => 'Intern',
+                                'working_hours' => '40 hours per week',
+                                'template' => 'general', // Default template
+                            ]);
+
+                            Notification::make()
+                                ->title('Offer Letter Generated')
+                                ->body("A new offer letter record has been created for {$record->name}.")
+                                ->success()
+                                ->send();
+                        }
+                    }),
+                    // ->required()
+                    // ->alignCenter()
+                    // ->formatStateUsing(fn (string $state) => ucfirst($state)),
                 TextColumn::make('college') 
                     ->searchable()
                     ->toggleable(),

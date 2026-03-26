@@ -30,7 +30,7 @@ class InterviewBatchResource extends Resource
     protected static ?string $model = InterviewBatch::class;
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationGroup = 'Interview Management';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
