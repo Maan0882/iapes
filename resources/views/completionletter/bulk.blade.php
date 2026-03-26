@@ -113,7 +113,7 @@
 <body>
     @foreach($interns as $intern)
         <div class="page-wrapper">
-            <img src="{{ asset('images/TsLogo.png') }}" class="watermark" alt="Watermark">
+            <img src="{{ public_path('images/TsLogo.png') }}" class="watermark" alt="Watermark">
             <div class="header">
                 <div class="header-top">
                     <div class="header-item header-email">Email: info@techstrota.com</div>

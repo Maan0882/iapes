@@ -90,7 +90,7 @@ class ApplicationResource extends Resource
                                 ->maxValue(100),  // Optional: prevents unrealistic numbers
 
                             TextInput::make('domain')
-                                ->label('Internship Domain')
+                                ->label('Internship Field')
                                 ->required()
                                 //->searchable()
                             //  ->disabled(fn ($record) => $record?->status !== 'applied'),
@@ -186,6 +186,7 @@ class ApplicationResource extends Resource
                 TextColumn::make('email')->searchable(),
                 TextColumn::make('phone') ->toggleable(),
                 TextColumn::make('domain')
+                    ->label('Internship Field')
                     ->badge()
                     ->toggleable()
                     ->color('info'),

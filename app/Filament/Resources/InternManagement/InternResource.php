@@ -261,17 +261,26 @@ class InternResource extends Resource
                 ->label('View Certificate')
                 ->icon('heroicon-o-eye')
                 ->color('info')
-                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                // Logic: Only visible if Offer is accepted AND Completion Letter details exist
+                ->visible(fn (Intern $record) => 
+                    ($record->offerLetter?->is_accepted ?? false) && 
+                    filled($record->completion_letter_template) &&
+                    filled($record->project_name)
+                )
                 ->url(fn (Intern $record): string => route('intern.certificate.view', ['id' => $record->id]))
                 ->openUrlInNewTab(),
 
             Tables\Actions\Action::make('print_certificate')
-                    ->label('Certificate')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('info')
-                    ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                    ->url(fn (Intern $record): string => route('intern.certificate.download', ['id' => $record->id]))
-                    ->openUrlInNewTab(),
+                ->label('Certificate')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('info')
+                ->visible(fn (Intern $record) => 
+                    ($record->offerLetter?->is_accepted ?? false) && 
+                    filled($record->completion_letter_template) &&
+                    filled($record->project_name)
+                )
+                ->url(fn (Intern $record): string => route('intern.certificate.download', ['id' => $record->id]))
+                ->openUrlInNewTab(),
 
             Tables\Actions\EditAction::make(),
             ])

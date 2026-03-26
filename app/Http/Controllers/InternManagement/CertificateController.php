@@ -7,6 +7,7 @@ use App\Models\InternManagement\Intern;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage; // To store files
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificateController extends Controller
 {
@@ -35,59 +36,41 @@ class CertificateController extends Controller
     {
         $interns = $this->resolveInterns($id);
         
-        // For individual view (the most common case from the UI)
         if ($interns->count() === 1) {
             $intern = $interns->first();
             $template = $intern->completion_letter_template ?? 'bachelors';
-            $viewPath = "completionletter.{$template}";
-            
             return response(
-                View::make($viewPath, [
-                    'intern' => $intern,
-                    'isPdf'  => false,
-                ])->render(),
-                200,
-                ['Content-Type' => 'text/html; charset=UTF-8']
+                View::make("completionletter.{$template}", ['intern' => $intern, 'isPdf' => false])->render(),
+                200, ['Content-Type' => 'text/html; charset=UTF-8']
             );
         }
 
-        // For bulk view (multiple IDs)
-        // We'll render a simple container that includes each intern's template
         return response(
-            View::make('completionletter.bulk', [
-                'interns' => $interns,
-                'isPdf'   => false,
-            ])->render(),
-            200,
-            ['Content-Type' => 'text/html; charset=UTF-8']
+            View::make('completionletter.bulk', ['interns' => $interns, 'isPdf' => false])->render(),
+            200, ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
 
     public function downloadCompletionLetter(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
-        $isBulk   = $interns->count() > 1;
-        $filename = $isBulk ? 'completion_letters_bulk.html' : 'completion_letter_' . $interns->first()->intern_code . '.html';
-
-        if (!$isBulk) {
+        
+        // 1. Render the HTML to a string using your existing Blade files
+        if ($interns->count() === 1) {
             $intern = $interns->first();
             $template = $intern->completion_letter_template ?? 'bachelors';
-            $viewPath = "completionletter.{$template}";
-            $html = View::make($viewPath, [
-                'intern' => $intern,
-                'isPdf'  => false,
-            ])->render();
+            $html = View::make("completionletter.{$template}", ['intern' => $intern, 'isPdf' => true])->render();
+            $safeCode = str_replace(['/', '\\'], '-', $intern->intern_code);
+            $filename = "completion_letter_{$safeCode}.pdf";
         } else {
-            $html = View::make('completionletter.bulk', [
-                'interns' => $interns,
-                'isPdf'   => false,
-            ])->render();
+            $html = View::make('completionletter.bulk', ['interns' => $interns, 'isPdf' => true])->render();
+            $filename = 'completion_letters_bulk.pdf';
         }
 
-        return response($html, 200, [
-            'Content-Type'        => 'text/html; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
+        // 2. Direct Conversion: Pass the HTML string directly to the PDF engine
+        return Pdf::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->download($filename);
     }
 
     // --- CERTIFICATE METHODS ---
@@ -98,33 +81,30 @@ class CertificateController extends Controller
         $offers = $interns->map(fn($i) => $i->offerletter)->filter();
 
         return response(
-            View::make('certificate.certificate', [ 
-                'offers' => $offers,
-                'isPdf'  => false,
-            ])->render(),
-            200,
-            ['Content-Type' => 'text/html; charset=UTF-8']
+            View::make('certificate.certificate', ['offers' => $offers, 'isPdf' => false])->render(),
+            200, ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
 
     public function downloadCertificate(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
-        $offers  = $interns->map(fn($i) => $i->offerletter)->filter();
-        $isBulk  = $offers->count() > 1;
-        $filename = $isBulk ? 'certificates_bulk.html' : 'certificate_' . ($offers->first()?->intern->intern_code ?? '000') . '.html';
- 
+        $offers = $interns->map(fn($i) => $i->offerletter)->filter();
+        
+        // 1. Render the HTML to a string
         $html = View::make('certificate.certificate', [
             'offers' => $offers,
-            'isPdf'  => false,
+            'isPdf'  => true,
         ])->render();
- 
-        return response($html, 200, [
-            'Content-Type'        => 'text/html; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
-    }
 
+        // 2. Direct Conversion
+        $internCode = $interns->first()?->intern_code ?? '000';
+        $safeCode = str_replace(['/', '\\'], '-', $internCode);
+        
+        return Pdf::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->download("certificate_{$safeCode}.pdf");
+    }
 
     public function verifyQR($code = null)
     {

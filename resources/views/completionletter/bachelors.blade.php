@@ -14,7 +14,7 @@
     </div>
 
     <div class="content-p">
-        This is to certify that <strong>{{ $intern->application->name }}</strong> studying at <strong>{{ $intern->application->college }}</strong>, 
+        This is to certify that <strong>{{ $intern->application->name ?? $intern->offerLetter->name }}</strong> studying at <strong>{{ $intern->application->college }}</strong>, 
         pursuing <strong>{{ $intern->application->degree }}</strong> degree has completed internship successfully for the period of 
         (<strong>{{ \Carbon\Carbon::parse($intern->offer_letters->joining_date)->format('d/m/Y') }} till {{ \Carbon\Carbon::parse($intern->completion_date)->format('d/m/Y') }}</strong>).
     </div>
