@@ -192,6 +192,8 @@
                     {!! $offer->description !!}
                 </div>
 
+                <p>We are excited to have you join our team and look forward to working with you. </p>
+                
                 <div class="signature-container">
                     <div style="float: left; width: 60%;">
                         For, <strong>TECHSTROTA</strong><br>

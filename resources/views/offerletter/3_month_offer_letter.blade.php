@@ -180,23 +180,9 @@
 
                 <div class="page-break"></div>
 
-                <p style="margin-top: 80px">
-                    The internship will commence on <strong>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d F, Y') }}</strong> 
-                    and will conclude on <strong>{{ \Carbon\Carbon::parse($offer->completion_date)->format('d F, Y') }}</strong>.  
-                    You will be expected to work {{ $offer->working_hours ?? '42' }} hours per week, from Monday to Saturday, between 10:30 AM to 5:30 PM. 
-                </p>
-                
-                <p>
-                    Upon successful completion of the internship, you will receive a
-                    <strong>Certificate of Completion</strong> and a <strong>Letter of Recommendation</strong>. 
-                </p>
-
-                <p>You will also be eligible for certain benefits, including access to the company's facilities, events, and training programs. </p>
-                
-                <p>
-                    To accept this offer, please sign and return this letter before the joining date. 
-                    If you have any questions or concerns, please feel free to contact us at any time. 
-                </p>
+                <div style="margin-top: 80px">
+                    {!! $offer->description !!}
+                </div>
 
                 <p>We are excited to have you join our team and look forward to working with you. </p>
 
