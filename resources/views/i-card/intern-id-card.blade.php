@@ -131,7 +131,7 @@
 
         <div class="name">
             @php
-                $nameParts = explode(' ', trim($intern->application->name));
+                $nameParts = explode(' ', trim($intern->application->name ?? $intern->offerLetter->name));
                 $firstName = $nameParts[0];
                 $lastName = count($nameParts) > 1 ? end($nameParts) : '';
             @endphp
@@ -146,7 +146,7 @@
             ? \Carbon\Carbon::parse($intern->offer_letters->completion_date)->format('d M Y') 
             : 'PRESENT' }}]
         </div>
-        <div class="contact">{{ $intern->application->phone }}</div>
+        <div class="contact">{{ $intern->application->phone ??  $intern->offerLetter->phone}}</div>
         <div class="address">
             TechSrota, Alkapuri,<br>
             Vadodara, Gujarat - 390007

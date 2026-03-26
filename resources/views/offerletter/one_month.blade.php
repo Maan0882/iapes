@@ -196,7 +196,7 @@
                     <table class="details-table">
                         <tr>
                             <td class="label">1) Internship Position:</td>
-                            <td>{{ $offer->position_title ?? 'BCA Intern' }}</td>
+                            <td>{{ $offer->internship_position ?? 'BCA Intern' }}</td>
                         </tr>
                         <tr>
                             <td class="label">2) Duration:</td>

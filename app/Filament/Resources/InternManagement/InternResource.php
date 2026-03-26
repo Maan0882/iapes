@@ -154,16 +154,22 @@ class InternResource extends Resource
                     ->label('Application ID')
                     ->searchable(),
 
-                TextColumn::make('application.name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('Intern Name')
-                    //->description(fn ($record) => $record->application->name)
-                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        // Priority 1: Name on the Offer Letter (Legal)
+                        // Priority 2: Name on the Application
+                        return $record->offerLetter?->name 
+                            ?? $record->application?->name 
+                            ?? 'Unknown Name';
+                    })
+                    ->searchable(['name']) // Allows searching if 'name' is a column in 'interns' table
                     ->sortable(),
 
-                TextColumn::make('application.degree')
-                    ->label('Intern Course')
-                    ->searchable()
-                    ->sortable(),
+                // TextColumn::make('application.degree ?? ')
+                //     ->label('Intern Course')
+                //     ->searchable()
+                //     ->sortable(),
                 
                 TextColumn::make('offerletter.internship_role')
                     ->label('Intern Role')
@@ -223,7 +229,7 @@ class InternResource extends Resource
                 ->color('primary')
                 // Check the relationship to the OfferLetter model
                 ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
+                ->url(fn ($record) => route('print-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
             //----------------------------------------------------------------------------
             Tables\Actions\Action::make('view_completion_letter')
