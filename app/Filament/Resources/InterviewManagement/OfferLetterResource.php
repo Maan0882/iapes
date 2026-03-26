@@ -74,7 +74,7 @@ class OfferLetterResource extends Resource
                                 ]);
                             })
                             ->live()
-                            ->required()
+                            // ->required()
                             ->afterStateHydrated(function (Set $set, ?OfferLetter $record, $state) {
                                 if ($record) {
                                     // Fetch directly from the OfferLetter record during Edit
@@ -113,8 +113,8 @@ class OfferLetterResource extends Resource
 
                                 TextInput::make('university')
                                     ->label('University/College')
-                                    ->placeholder('Enter University Name')
-                                    ->required(),
+                                    ->placeholder('Enter University Name'),
+                                    // ->required(),
 
                                 TextInput::make('college')
                                     ->label('College')
