@@ -295,8 +295,8 @@ class OfferLetterResource extends Resource
                                 'intern_code'   => $generatedCode,
                                 'username'      => $username,
                                 'password'      => \Illuminate\Support\Facades\Hash::make($plainPassword),
-                                'name'          => $record->application->name ?? 'Intern ' . $sequence,
-                                'email'         => $record->application->email ?? "intern{$sequence}@example.com",
+                                'name'          => $record->application->name ?? $record->name ?? 'Intern ' . $sequence,
+                                'email'         => $record->application->email ?? $record->email ?? "intern{$sequence}@example.com",
                                 'joining_date'  => $record->joining_date,
                                 'is_active'     => true,
                             ]);

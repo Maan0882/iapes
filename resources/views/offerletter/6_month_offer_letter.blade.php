@@ -145,11 +145,24 @@
         @if(isset($offers))
             @foreach($offers as $offer)
                 
+                {{-- 
+                    Resolve name: for general offers there is no linked application,
+                    so we fall back to the `name` column stored directly on the offer_letter row.
+                --}}
+                @php
+                    $internName       = $offer->application?->name   ?? $offer->getRawOriginal('name')   ?? 'Intern';
+                    $internCollege    = $offer->application?->college ?? $offer->getRawOriginal('college') ?? '';
+                    $internUniversity = $offer->university ?? $offer->application?->college ?? '';
+                @endphp
                 <div class="address-section">
-                    To, <br>
-                    <strong>{{ strtoupper($offer->application->name) }}</strong>, <br>
-                    {{ $offer->application->college }} <br>
-                    {{ $offer->university }} <br>
+                   To, <br>
+                    <strong>{{ strtoupper($internName) }}</strong>, <br>
+                    @if($internCollege)
+                        {{ $internCollege }} <br>
+                    @endif
+                    @if($internUniversity)
+                        {{ $internUniversity }} <br>
+                    @endif
                     
                 </div>
 
@@ -161,7 +174,7 @@
                     <strong>Subject: Intern Offer / Appointment Letter</strong> 
                 </div>
 
-                <p>Dear <strong>{{ strtoupper($offer->application->name) }}</strong>,</p>
+                <p>Dear <strong>{{ strtoupper($internName) }}</strong>,</p>
 
                 <p>
                     We are pleased to offer you an internship position at Techstrota for the role of 
@@ -184,7 +197,7 @@
                     {!! $offer->description !!}
                 </div>
 
-                <p>We are excited to have you join our team and look forward to working with you. </p>
+                <!-- <p>We are excited to have you join our team and look forward to working with you. </p> -->
 
                 <p>We are excited to have you join our team and look forward to working with you. </p>
 

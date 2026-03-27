@@ -168,23 +168,35 @@
     <main class="main-content">
         @if(isset($offers))
             @foreach($offers as $offer)
-                
+                {{-- 
+                    Resolve name: for general offers there is no linked application,
+                    so we fall back to the `name` column stored directly on the offer_letter row.
+                --}}
+                @php
+                    $internName       = $offer->application?->name   ?? $offer->getRawOriginal('name')   ?? 'Intern';
+                    $internCollege    = $offer->application?->college ?? $offer->getRawOriginal('college') ?? '';
+                    $internUniversity = $offer->university ?? $offer->application?->college ?? '';
+                @endphp
                 <div class="date-section">
                     Date: {{ \Carbon\Carbon::parse($offer->created_at ?? '2026-03-13')->format('d/m/Y') }}
                 </div>
 
                 <div class="recipient-info">
                     To,<br>
-                    <strong>{{ $offer->application->name ?? 'Intern 2' }}</strong><br>
-                    {{ $offer->application->college ?? 'GTU' }},<br>
-                    {{ $offer->university }} <br>
+                    <strong>{{ strtoupper($internName) }}</strong><br>
+                    @if($internCollege)
+                        {{ $internCollege }} <br>
+                    @endif
+                    @if($internUniversity)
+                        {{ $internUniversity }} <br>
+                    @endif
                 </div>
 
                 <div class="subject">
                     Subject: Internship Offer/Appointment Letter
                 </div>
 
-                <p>Dear {{ $offer->application->name ?? 'Intern 2' }},</p>
+                <p>Dear {{ strtoupper($internName) }},</p>
 
                 <p>
                     We are pleased to inform you that you have been selected for a 

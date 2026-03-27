@@ -138,7 +138,7 @@ class InternResource extends Resource
                                 ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->degree)),
                             TextInput::make('college')
                                 ->label('College')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->college)),
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->college ?? $record?->application?->college)),
                             TextInput::make('university')
                                 ->label('University')
                                 ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->university)),
@@ -192,10 +192,20 @@ class InternResource extends Resource
                 TextColumn::make('internship_duration')
                     ->label('Internship Duration')
                     ->getStateUsing(function ($record) {
-
                         if (!$record->application) 
                         {
-                            return 'No Application';
+                            $start = \Carbon\Carbon::parse($record->offerletter->joining_date);
+                            $end = \Carbon\Carbon::parse($record->offerletter->completion_date);
+                            $days = (int) $start->diffInDays($end);
+
+                            // If less than 30 days, show in Days
+                            if ($days < 30) {
+                                return "{$days} " . \Illuminate\Support\Str::plural('Day', $days);
+                            }
+
+                            // Otherwise, show in Months (rounded to whole number)
+                            $months = (int) round($start->floatDiffInMonths($end));
+                            return "{$months} " . \Illuminate\Support\Str::plural('Month', $months);
                         }
 
                         return $record->application->duration . ' ' . $record->application->duration_unit . '';

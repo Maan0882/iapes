@@ -52,4 +52,22 @@ class EditInternshipBatch extends EditRecord
                 ->update(['internship_batch_id' => $this->record->id]);
         }
     }
+
+    // For Displaying batch timing when editing Intenship Batch
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // Check if batch_timing exists and split it back into start and end times
+        if (!empty($data['batch_timing'])) {
+            // Split the string using the same separator you use to save it
+            $times = explode(' To ', $data['batch_timing']);
+            
+            if (count($times) === 2) {
+                // Parse them back to a format the TimePicker understands (H:i)
+                $data['start_time'] = Carbon::parse($times[0])->format('H:i');
+                $data['end_time']   = Carbon::parse($times[1])->format('H:i');
+            }
+        }
+
+        return $data;
+    }
 }
