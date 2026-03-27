@@ -12,19 +12,9 @@ class InternPolicy
 {
     use HandlesAuthorization;
 
-    public function view(Authenticatable $user, Intern $intern): bool
+    public function viewAny(Authenticatable $user): bool
     {
-        // 1. Admin (User model) can see all records
-        if ($user instanceof \App\Models\User && $user->is_admin) {
-            return true;
-        }
-
-        // 2. Interns (Intern model) can only see their own record
-        if ($user instanceof Intern) {
-            return $user->id === $intern->id;
-        }
-
-        return false;
+        return true;
     }
 
     public function update(Authenticatable $user, Intern $intern): bool

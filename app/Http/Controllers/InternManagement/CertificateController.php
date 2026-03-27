@@ -7,7 +7,7 @@ use App\Models\InternManagement\Intern;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage; // To store files
-use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\Browsershot\Browsershot;
 
 class CertificateController extends Controller
 {
@@ -35,18 +35,21 @@ class CertificateController extends Controller
     public function viewCompletionLetter(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
-        
+        // Pre-encode image as base64 — no file fetch needed by DomPDF
+        $logoPath = public_path('images/TsLogo.png');
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
         if ($interns->count() === 1) {
             $intern = $interns->first();
             $template = $intern->completion_letter_template ?? 'bachelors';
             return response(
-                View::make("completionletter.{$template}", ['intern' => $intern, 'isPdf' => false])->render(),
+                View::make("completionletter.{$template}", ['intern' => $intern, 'isPdf' => false, 'logo'   => $logoBase64,])->render(),
                 200, ['Content-Type' => 'text/html; charset=UTF-8']
             );
         }
 
         return response(
-            View::make('completionletter.bulk', ['interns' => $interns, 'isPdf' => false])->render(),
+            View::make('completionletter.bulk', ['interns' => $interns, 'isPdf' => false, 'logo'   => $logoBase64,])->render(),
             200, ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
@@ -55,22 +58,39 @@ class CertificateController extends Controller
     {
         $interns = $this->resolveInterns($id);
         
-        // 1. Render the HTML to a string using your existing Blade files
+        // With Browsershot, you don't necessarily need Base64. 
+        // You can use a normal public URL or path if your server allows it.
+        $logoPath = public_path('images/TsLogo.png');
+
         if ($interns->count() === 1) {
             $intern = $interns->first();
             $template = $intern->completion_letter_template ?? 'bachelors';
-            $html = View::make("completionletter.{$template}", ['intern' => $intern, 'isPdf' => true])->render();
-            $safeCode = str_replace(['/', '\\'], '-', $intern->intern_code);
-            $filename = "completion_letter_{$safeCode}.pdf";
+            $html = view("completionletter.{$template}", [
+                'intern' => $intern,
+                'isPdf'  => true,
+                'logo'   => $logoPath, 
+            ])->render();
+            $filename = "completion_letter_" . str_replace(['/', '\\'], '-', $intern->intern_code) . ".pdf";
         } else {
-            $html = View::make('completionletter.bulk', ['interns' => $interns, 'isPdf' => true])->render();
+            $html = view('completionletter.bulk', [
+                'interns' => $interns,
+                'isPdf'   => true,
+                'logo'    => $logoPath,
+            ])->render();
             $filename = 'completion_letters_bulk.pdf';
         }
 
-        // 2. Direct Conversion: Pass the HTML string directly to the PDF engine
-        return Pdf::loadHTML($html)
-            ->setPaper('a4', 'portrait')
-            ->download($filename);
+        // Render using Browsershot
+        $pdf = Browsershot::html($html)
+            // ->setChromePath('/usr/bin/google-chrome') // Optional: only if not in default path
+            ->format('A4')
+            ->showBackground()
+            ->margins(0, 0, 0, 0) // We control margins via CSS now
+            ->pdf();
+
+        return response($pdf)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     // --- CERTIFICATE METHODS ---
@@ -102,7 +122,14 @@ class CertificateController extends Controller
         $safeCode = str_replace(['/', '\\'], '-', $internCode);
         
         return Pdf::loadHTML($html)
-            ->setPaper('a4', 'portrait')
+            ->setPaper('a4', 'landscape')
+            ->setOption([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled'      => true,
+                'chroot'               => public_path(), // allows public_path() images
+                'dpi'                  => 150,
+                'defaultFont'          => 'sans-serif',
+            ])
             ->download("certificate_{$safeCode}.pdf");
     }
 

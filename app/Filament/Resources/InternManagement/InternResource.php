@@ -222,70 +222,70 @@ class InternResource extends Resource
                 //
             ])
             ->actions([
-
-            Tables\Actions\Action::make('view_id_card')
-                ->label('I-Card')
-                ->icon('heroicon-o-identification')
-                ->color('primary')
-                // Check the relationship to the OfferLetter model
-                ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
-                ->url(fn ($record) => route('print-id-card', ['id' => $record->id]))
-                ->openUrlInNewTab(),
-            //----------------------------------------------------------------------------
-            Tables\Actions\Action::make('view_completion_letter')
-                ->label('View Completion Letter')
-                ->icon('heroicon-o-eye')
-                ->color('success')
-                ->visible(fn (Intern $record) => 
-                    ($record->offerLetter?->is_accepted ?? false) && 
-                    filled($record->completion_letter_template) &&
-                    filled($record->project_name)
-                )
-                ->url(fn (Intern $record): string => route('intern.completion_letter.view', ['id' => $record->id]))
-                ->openUrlInNewTab(),
-
-            Tables\Actions\Action::make('print_completion_letter')
-                ->label('Completion Letter')
-                ->icon('heroicon-o-document-check')
-                ->color('success')
-                // The button only shows if an offer is accepted AND a template is chosen
-                ->visible(fn (Intern $record) => 
-                    ($record->offerLetter?->is_accepted ?? false) && 
-                    filled($record->completion_letter_template) &&
-                    filled($record->project_name)
-                )
-                ->url(fn (Intern $record): string => route('intern.completion_letter.download', ['id' => $record->id]))
-                ->openUrlInNewTab(),
-
-            Tables\Actions\Action::make('view_certificate')
-                ->label('View Certificate')
-                ->icon('heroicon-o-eye')
-                ->color('info')
-                // Logic: Only visible if Offer is accepted AND Completion Letter details exist
-                ->visible(fn (Intern $record) => 
-                    ($record->offerLetter?->is_accepted ?? false) && 
-                    filled($record->completion_letter_template) &&
-                    filled($record->project_name)
-                )
-                ->url(fn (Intern $record): string => route('intern.certificate.view', ['id' => $record->id]))
-                ->openUrlInNewTab(),
-
-            Tables\Actions\Action::make('print_certificate')
-                ->label('Certificate')
-                ->icon('heroicon-o-document-arrow-down')
-                ->color('info')
-                ->visible(fn (Intern $record) => 
-                    ($record->offerLetter?->is_accepted ?? false) && 
-                    filled($record->completion_letter_template) &&
-                    filled($record->project_name)
-                )
-                ->url(fn (Intern $record): string => route('intern.certificate.download', ['id' => $record->id]))
-                ->openUrlInNewTab(),
-
             Tables\Actions\EditAction::make(),
+
+            Tables\Actions\ActionGroup::make([
+                Tables\Actions\Action::make('view_id_card')
+                    ->label('I-Card')
+                    ->icon('heroicon-o-identification')
+                    ->visible(fn ($record) => $record->offerLetter?->is_accepted ?? false)
+                    ->url(fn ($record) => route('print-id-card', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('view_completion_letter')
+                    ->label('View Completion Letter')
+                    ->icon('heroicon-o-eye')
+                    ->color('success')
+                    ->visible(fn (Intern $record) => 
+                        ($record->offerLetter?->is_accepted ?? false) && 
+                        filled($record->completion_letter_template) &&
+                        filled($record->project_name)
+                    )
+                    ->url(fn (Intern $record) => route('intern.completion_letter.view', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_completion_letter')
+                    ->label('Completion Letter')
+                    ->icon('heroicon-o-document-check')
+                    ->color('success')
+                    ->visible(fn (Intern $record) => 
+                        ($record->offerLetter?->is_accepted ?? false) && 
+                        filled($record->completion_letter_template) &&
+                        filled($record->project_name)
+                    )
+                    ->url(fn (Intern $record) => route('intern.completion_letter.download', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('view_certificate')
+                    ->label('View Certificate')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->visible(fn (Intern $record) => 
+                        ($record->offerLetter?->is_accepted ?? false) && 
+                        filled($record->completion_letter_template) &&
+                        filled($record->project_name)
+                    )
+                    ->url(fn (Intern $record) => route('intern.certificate.view', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_certificate')
+                    ->label('Certificate')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->visible(fn (Intern $record) => 
+                        ($record->offerLetter?->is_accepted ?? false) && 
+                        filled($record->completion_letter_template) &&
+                        filled($record->project_name)
+                    )
+                    ->url(fn (Intern $record) => route('intern.certificate.download', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+            ])
+            ->icon('heroicon-m-ellipsis-vertical')
+            ->color('gray')
+            ->button() // Optional: makes the group look like a button
+            ->label('Actions'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('bulk_print_completion_letter')
                         ->label('Bulk Completion Letters')
                         ->icon('heroicon-o-document-duplicate')
@@ -311,8 +311,7 @@ class InternResource extends Resource
                             $livewire->js("window.open('" . addslashes($url) . "', '_blank')");
                         }),
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                ]);
     }
 
     public static function getRelations(): array
@@ -324,6 +323,11 @@ class InternResource extends Resource
     public static function canCreate(): bool
     {
     return false;
+    }
+    public static function can(string $action, ?\Illuminate\Database\Eloquent\Model $record = null): bool
+    {
+        // This overrides the Policy check entirely for this Resource
+        return true; 
     }
     public static function getPages(): array
     {
