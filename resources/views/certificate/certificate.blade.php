@@ -13,8 +13,9 @@
     
     <div id="certificate-container">
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
-
+            @if(!$isPdf)
+                @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
+            @endif
             @media screen {
                 #certificate-wrapper {
                     background-color: #0f172a;
@@ -120,12 +121,23 @@
                 position: absolute; bottom: 25mm; left: 35mm; right: 35mm;
                 display: flex; justify-content: space-between; align-items: flex-end;
             }
-            .sig-box { width: 60mm; text-align: center; }
+            .sig-box { width: 60mm; text-align: center; margin-bottom:-5mm; }
+
+           .qr { 
+                width: 20mm;   /* Forced smaller width */
+                height: 20mm;  /* Forced smaller height */
+                margin-bottom: 2mm; 
+            }
+
+            .qr svg, .qr img { 
+                width: 100% !important; 
+                height: 100% !important; 
+            }
             .line { border-top: 1.5pt solid #cbd5e0; margin-bottom: 3mm; }
             .outer-footer {
                 position: absolute; bottom: 3mm; left: 10mm; right: 10mm; z-index: 10;
                 display: flex; justify-content: space-between; align-items: center;
-                font-size: 8pt; color: #070707ff; font-family: 'Inter', sans-serif;
+                font-size: 12pt; color: #070707ff; font-family: 'Inter', sans-serif;
             }
             .outer-footer .website {
                 position: absolute; left: 50%; transform: translateX(-50%);
@@ -224,19 +236,21 @@
                                         $left = ($slot['c'] * 15) + 5 + mt_rand(0, 4);
                                         $size = mt_rand(11, 16);
                                         $rot  = mt_rand(-30, 30);
+                                        
+                                        // If PDF, use a direct path or URL that the PDF engine can resolve
+                                        $iconUrl = "https://cdn.simpleicons.org/{$icon}/0e72b4";
                                     @endphp
-                                    <img src="https://cdn.simpleicons.org/{{ $icon }}/0e72b4"
-
-                                    style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
+                                    <img src="{{ $iconUrl }}"
+                                        style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
                                 @endif
                             @endforeach
                         </div>
 
                         <div class="content-wrapper">
-                            <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
+                            <img src="{{ $isPdf ? $logo : asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
                             <div class="main-title">Certificate of Internship</div>
                             <p style="font-size:14pt;color:#718096;margin:2mm 0;">This is to certify that</p>
-                            <div class="recipient">{{ $offer->application?->name ?? 'Student Name' }}</div>
+                            <div class="recipient">{{ $offer->application?->name ?? $offer->name}}</div>
                             <div class="underline"></div>
                             <div class="body-text">
                                 has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship
@@ -255,11 +269,16 @@
                                     
                                 </div>
                                 <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
-                                    <div style="width:22mm;height:22mm;border:1pt solid #edf2f7;background:#f7fafc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#a0aec0;">
-                                        {!! QrCode::size(150)->generate(route('certificate.verify',str_replace('/', '-',$offer->intern->intern_code))) !!}
-
+                                    {{-- QR Code --}}
+                                    <div class="qr">
+                                        @if($isPdf)
+                                            {!! $qrCodes[$offer->id] ?? '' !!}
+                                        @else
+                                            {{-- Reduced size from 150 to 90 --}}
+                                            {!! QrCode::size(90)->generate(route('certificate.verify', str_replace('/', '-', $offer->intern->intern_code))) !!}
+                                        @endif
                                     </div>
-                                    <span style="font-size:8pt;color:#4a5568;margin-top:3mm;font-family:monospace;letter-spacing:0.5pt;">
+                                    <span style="font-size:8pt;color:#4a5568;margin-top:1mm;font-family:monospace;letter-spacing:0.5pt;">
                                         ID: {{ $offer->intern->intern_code ?? '000' }}
                                     </span>
                                 </div>

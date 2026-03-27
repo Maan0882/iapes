@@ -85,7 +85,10 @@ class CertificateController extends Controller
             // ->setChromePath('/usr/bin/google-chrome') // Optional: only if not in default path
             ->format('A4')
             ->showBackground()
-            ->margins(0, 0, 0, 0) // We control margins via CSS now
+            ->margins(0, 0, 0, 0)
+            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
+            ->waitUntilNetworkIdle()  // wait for fonts/images to load
+            ->timeout(120)
             ->pdf();
 
         return response($pdf)
@@ -109,28 +112,50 @@ class CertificateController extends Controller
     public function downloadCertificate(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
+
+        // 1. Embed logo as base64
+        $logoPath = public_path('images/TsLogo.png');
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+        // 2. Pre-generate QR codes keyed by offer id
         $offers = $interns->map(fn($i) => $i->offerletter)->filter();
-        
-        // 1. Render the HTML to a string
+        $qrCodes = $offers->mapWithKeys(function ($offer) {
+            $url = route('certificate.verify', str_replace('/', '-', $offer->intern->intern_code));
+            $svg = \QrCode::size(150)->format('svg')->generate($url);
+            return [$offer->id => $svg];
+        });
+
+        if ($interns->count() === 1) {
+            $intern = $interns->first();
+            $filename = "certificate_" . str_replace(['/', '\\'], '-', $intern->intern_code) . ".pdf";
+        } else {
+            $filename = "certificates_bulk.pdf";
+        }
+
         $html = View::make('certificate.certificate', [
-            'offers' => $offers,
-            'isPdf'  => true,
+            'offers'   => $offers,
+            'isPdf'    => true,
+            'logo'     => $logoBase64,
+            'qrCodes'  => $qrCodes,
         ])->render();
 
-        // 2. Direct Conversion
-        $internCode = $interns->first()?->intern_code ?? '000';
-        $safeCode = str_replace(['/', '\\'], '-', $internCode);
-        
-        return Pdf::loadHTML($html)
-            ->setPaper('a4', 'landscape')
-            ->setOption([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled'      => true,
-                'chroot'               => public_path(), // allows public_path() images
-                'dpi'                  => 150,
-                'defaultFont'          => 'sans-serif',
-            ])
-            ->download("certificate_{$safeCode}.pdf");
+        $tmpFile = tempnam(sys_get_temp_dir(), 'cert_') . '.html';
+        file_put_contents($tmpFile, $html);
+
+        $pdf = Browsershot::html($html)
+            ->format('A4')
+            ->landscape()
+            ->showBackground()
+            ->margins(0, 0, 0, 0)
+            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
+            ->timeout(120)
+            ->pdf();
+
+        @unlink($tmpFile);
+
+        return response($pdf)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     public function verifyQR($code = null)
