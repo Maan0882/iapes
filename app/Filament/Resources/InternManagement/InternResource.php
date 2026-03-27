@@ -41,40 +41,49 @@ class InternResource extends Resource
                     ->description('Select an intern to generate or edit their completion details.')
                     ->schema([
                         Select::make('application_id') // Binds to the Intern ID
-                            ->relationship('application', 'name')
+                            // ->relationship('application', 'name')
                             ->label('Select Intern')
-                            ->options(
-                                Application::query()
-                                    ->whereHas('offer_letters', function ($query) {
-                                        $query->where('is_accepted', true);
+                            ->options(function (?Intern $record) {
+                                return Intern::with(['application', 'offerletter'])
+                                    ->where(function ($query) use ($record) {
+                                        // Always include the current intern when editing
+                                        if ($record?->id) {
+                                            $query->where('id', $record->id);
+                                        }
                                     })
-                                    // This ensures we don't create duplicate intern records for the same application
-                                    ->whereDoesntHave('intern') 
+                                    ->orWhereHas('offerletter', fn($q) => $q->where('is_accepted', true))
                                     ->get()
-                                    ->pluck('id', 'name')
-                            )
+                                    ->mapWithKeys(function (Intern $intern) {
+                                        // Priority: offerLetter name → application name → intern_code
+                                        $name = $intern->offerletter?->name
+                                            ?? $intern->application?->name
+                                            ?? $intern->intern_code;
+
+                                        return [$intern->application_id ?? $intern->id => $name];
+                                    });
+                            })
                             ->searchable()
                             ->preload()
-                            ->required()
+                            // ->required()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 if (!$state) return;
 
-                                $app = Application::with(['offer_letters' => fn($q) => $q->where('is_accepted', true)])->find($state);
-                                
-                                if ($app) {
-                                    $set('intern_name', $app->name);
-                                    $set('college', $app->college);
-                                    $set('degree', $app->degree);
+                                $app = Application::with([
+                                    'offer_letters' => fn($q) => $q->where('is_accepted', true)
+                                ])->find($state);
 
+                                if ($app) {
                                     $offer = $app->offer_letters->first();
-                                    if ($offer) {
-                                        $set('joining_date', $offer->joining_date);
-                                        $set('completion_date', $offer->completion_date);
-                                        $set('internship_role', $offer->internship_role);
-                                        $set('internship_position', $offer->internship_position);
-                                        $set('university', $offer->university);
-                                    }
+
+                                    // Always prefer offer letter name as that's the legal name
+                                    $set('intern_name',          $offer?->name          ?? $app->name);
+                                    $set('college',              $offer?->college        ?? $app->college);
+                                    $set('degree',               $offer?->degree         ?? $app->degree);
+                                    $set('university',           $offer?->university     ?? $app->university);
+                                    $set('joining_date',         $offer?->joining_date);
+                                    $set('internship_role',      $offer?->internship_role);
+                                    $set('internship_position',  $offer?->internship_position);
                                 }
                             }),
                     ]),
@@ -117,7 +126,13 @@ class InternResource extends Resource
                             TextInput::make('intern_name')
                                 ->label('Full Name')
                                 ->required()
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->name)),
+                                ->afterStateHydrated(function ($component, $record) {
+                                    // Prefer offer letter name over application name
+                                    $component->state(
+                                        $record?->offerletter?->name 
+                                        ?? $record?->application?->name
+                                    );
+                                }),
                             TextInput::make('degree')
                                 ->label('Degree/Course')
                                 ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->degree)),
@@ -157,9 +172,7 @@ class InternResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Intern Name')
                     ->getStateUsing(function ($record) {
-                        // Priority 1: Name on the Offer Letter (Legal)
-                        // Priority 2: Name on the Application
-                        return $record->offerLetter?->name 
+                        return $record->offerletter?->name 
                             ?? $record->application?->name 
                             ?? 'Unknown Name';
                     })
