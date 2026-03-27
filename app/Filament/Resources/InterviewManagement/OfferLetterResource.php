@@ -251,7 +251,8 @@ class OfferLetterResource extends Resource
                         }
                         $start = \Carbon\Carbon::parse($record->joining_date);
                         $end = \Carbon\Carbon::parse($record->completion_date);
-                        return $start->diffInMonths($end) . ' Months';
+                        $months = round($start->floatDiffInMonths($end)); // 👈 rounded whole number
+                        return $months . ' Months';
                     }),
                 TextColumn::make('template')
                     ->label('Offer Letter Template')
