@@ -219,12 +219,12 @@
 </head>
 <body>
     <div class="page-wrapper">
-        <img src="{{ public_path('images/TsLogo.png') }}" class="watermark" alt="Watermark">
+        <img src="{{ $logo }}" class="watermark" alt="Watermark">
         <div class="header">
             <div class="header-top">
                 <div class="header-item header-email">Email: info@techstrota.com </div>
                 <div class="header-item header-logo">
-                    <img src="{{ asset('images/TsLogo.png') }}" alt="TechStrota">
+                    <img src="{{ $logo }}" alt="TechStrota">
                 </div>
                 <div class="header-item header-tel">Tel: +91 81600 72383</div>
             </div>
