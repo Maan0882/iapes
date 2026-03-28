@@ -103,5 +103,5 @@ if ($intern->intern_image && Storage::disk('public')->exists($intern->intern_ima
 })->name('print-id-card')->middleware(['auth:web,intern']);
 
 // The route that the QR code will point to
-Route::get('/verify-certificate/{code}', [CertificateController::class, 'verifyQR'])
+Route::get('/verify-certificate/{token}', [CertificateController::class, 'verifyQR'])
      ->name('certificate.verify');

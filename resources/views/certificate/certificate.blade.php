@@ -6,6 +6,8 @@
     @if(!$isPdf)
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Internship Certificate - TechStrota</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Allura&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     @endif
 </head>
 <body style="margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -13,9 +15,6 @@
     
     <div id="certificate-container">
         <style>
-            @if(!$isPdf)
-                @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
-            @endif
             @media screen {
                 #certificate-wrapper {
                     background-color: #0f172a;
@@ -112,8 +111,12 @@
                 text-transform: uppercase; letter-spacing: 2pt; margin-top: 1mm;
             }
             .recipient {
-                font-family: 'Cormorant Garamond', serif; font-size: 48pt; font-weight: 600;
-                color: #1a202c; margin: 3mm 0 1mm; font-style: italic;
+                font-family: 'Allura', cursive;
+                font-size: 52pt;
+                font-weight: 400;
+                color: #1a202c;
+                margin: 3mm 0 1mm;
+                font-style: normal;
             }
             .underline { width: 80%; height: 2pt; background: linear-gradient(90deg, transparent, #f4a243, transparent); margin-bottom: 15mm; }
             .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -6mm; }
@@ -240,8 +243,7 @@
                                         // If PDF, use a direct path or URL that the PDF engine can resolve
                                         $iconUrl = "https://cdn.simpleicons.org/{$icon}/0e72b4";
                                     @endphp
-                                    <img src="{{ $iconUrl }}"
-                                        style="position:absolute;top:{{ $top }}%;left:{{ $left }}%;width:{{ $size }}mm;opacity:0.2;transform:rotate({{ $rot }}deg);">
+                                    <img src="{{ $iconUrl }}"style="position:absolute; top:{{ $top }}%; left:{{ $left }}%; width:{{ $size }}mm; opacity:0.2; transform:rotate({{ $rot }}deg);">
                                 @endif
                             @endforeach
                         </div>
@@ -265,9 +267,6 @@
                                     <b style="color:#2d3748;font-size:12pt;font-weight:700;">Founder/CEO</b><br>
                                     <span style="font-size:9.5pt;color:#718096;font-weight:500;">TechStrota</span>
                                 </div>
-                                <div class="stamp-box" style="width:35mm;height:35mm;">
-                                    
-                                </div>
                                 <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
                                     {{-- QR Code --}}
                                     <div class="qr">
@@ -275,7 +274,11 @@
                                             {!! $qrCodes[$offer->id] ?? '' !!}
                                         @else
                                             {{-- Reduced size from 150 to 90 --}}
-                                            {!! QrCode::size(90)->generate(route('certificate.verify', str_replace('/', '-', $offer->intern->intern_code))) !!}
+                                            {!! QrCode::size(100)
+                                                ->color(14, 114, 180) {{-- TechStrota Blue --}}
+                                                ->margin(1)
+                                                ->generate(route('certificate.verify', $offer->intern->cert_token)) 
+                                            !!}
                                         @endif
                                     </div>
                                     <span style="font-size:8pt;color:#4a5568;margin-top:1mm;font-family:monospace;letter-spacing:0.5pt;">

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage; // To store files
 use Spatie\Browsershot\Browsershot;
+use SimpleSoftwareIO\QrCode\Generator;
 
 class CertificateController extends Controller
 {
@@ -121,7 +122,7 @@ class CertificateController extends Controller
         $offers = $interns->map(fn($i) => $i->offerletter)->filter();
         $qrCodes = $offers->mapWithKeys(function ($offer) {
             $url = route('certificate.verify', str_replace('/', '-', $offer->intern->intern_code));
-            $svg = \QrCode::size(150)->format('svg')->generate($url);
+            $svg = app(Generator::class)->size(150)->format('svg')->generate($url);
             return [$offer->id => $svg];
         });
 
@@ -158,18 +159,16 @@ class CertificateController extends Controller
             ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
-    public function verifyQR($code = null)
+    public function verifyQR($token = null)
     {
-        if (!$code) {
-            abort(404, 'No certificate code provided.');
+        if (!$token) {
+            abort(404, 'Invalid verification link.');
         }
 
         // Handle the case where slashes were replaced by hyphens in the URL
-        $normalizedCode = str_replace('-', '/', $code);
-        $intern = Intern::where('intern_code', $normalizedCode)->firstOrFail();
+        $intern = Intern::where('cert_token', $token)->firstOrFail();
         
-        $offers = collect([$intern->offerletter])->filter();
-        return view('certificate.certificate', compact('offers'));
+        return $this->downloadCertificate(request(), $intern->id);
     }
 
 
