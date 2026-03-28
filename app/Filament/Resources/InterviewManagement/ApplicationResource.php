@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Section, Grid};
+use Filament\Forms\Components\{TextInput, Textarea, FileUpload, Select, DatePicker, TimePicker, Section, Grid};
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\{Action, BulkAction};
@@ -119,7 +119,7 @@ class ApplicationResource extends Resource
 
                             Section::make('Skills')
                                 ->schema([
-                                    TextArea::make('skills')
+                                    Textarea::make('skills')
                                         ->label('Skills (comma separated)')
                                         ->rows(3)
                                         ->required(),
