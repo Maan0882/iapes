@@ -219,6 +219,12 @@
 </head>
 <body>
     @foreach($interns as $intern)
+            @php
+                $internName       = $intern->offer_letters->name ?? $intern->application->name   ?? 'Intern';
+                $internCollege    = $intern->offer_letters->college ?? $intern->application->college ?? '';
+                $internDegree     = $intern->offerLetter->degree ?? $intern->application->degree ?? '';
+                    
+            @endphp
         <div class="page-wrapper">
             <img src="{{ $logo }}" class="watermark" alt="Watermark">
             <div class="header">
@@ -244,11 +250,17 @@
                     </div>
                 </div>
 
-                <div class="content-p">
-                    This is to certify that <strong>{{ $intern->offerLetter->name ?? $intern->application->name }}</strong> studying at <strong>{{ $intern->offerLetter->college ?? $intern->application->college }}</strong>, 
-                    pursuing <strong>{{ $intern->offerLetter->degree ?? $intern->application->degree ?? 'N/A' }}</strong> degree has completed internship successfully for the period of 
-                    (<strong>{{ \Carbon\Carbon::parse($intern->offer_letters->joining_date)->format('d/m/Y') }} till {{ \Carbon\Carbon::parse($intern->offer_letters->completion_date)->format('d/m/Y') }}</strong>).
-                </div>
+            <div class="content-p">
+                This is to certify that <strong>{{ $internName }}</strong>
+                @if($internCollege)
+                    studying at <strong>{{ $internCollege }}</strong>,
+                        @if($internDegree) 
+                            pursuing <strong>{{ $intern->offerLetter->degree ?? $intern->application->degree ?? 'N/A' }}</strong> degree 
+                        @endif
+                @endif
+                has completed internship successfully for the period of 
+                (<strong>{{ \Carbon\Carbon::parse($intern->offer_letters->joining_date)->format('d/m/Y') }} till {{ \Carbon\Carbon::parse($intern->offer_letters->completion_date)->format('d/m/Y') }}</strong>).
+            </div>
 
                 @if($intern->project_description)
                     <div class="skills-list">
