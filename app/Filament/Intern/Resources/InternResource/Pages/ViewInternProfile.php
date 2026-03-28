@@ -82,7 +82,7 @@ class ViewInternProfile extends ViewRecord
                 ->label('View ID Card')
                 ->icon('heroicon-o-identification')
                 ->color('primary')
-                ->url(fn ($record) => route('view-id-card', ['id' => $record->id]))
+                ->url(fn ($record) => route('print-id-card', ['id' => $record->id]))
                 ->openUrlInNewTab(),
 
             Actions\Action::make('updatePassword')
