@@ -8,7 +8,7 @@ use App\Models\TaskManagement\TaskAssignment;
 use App\Models\TaskManagement\TaskSubmission;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{TextInput, TextArea, FileUpload};
+use Filament\Forms\Components\{TextInput, Textarea, FileUpload};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -200,7 +200,7 @@ class AssignedTaskResource extends Resource
                             ->url()
                             ->placeholder('https://github.com/...'),
                             
-                        TextArea::make('notes')
+                        Textarea::make('notes')
                             ->label('Additional Notes')
                             ->rows(3),
                     ])
