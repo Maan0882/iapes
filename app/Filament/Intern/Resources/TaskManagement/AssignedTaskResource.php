@@ -8,16 +8,16 @@ use App\Models\TaskManagement\TaskAssignment;
 use App\Models\TaskManagement\TaskSubmission;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePicker, TimePicker, Placeholder};
+use Filament\Forms\Components\{TextInput, TextArea, FileUpload};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\{Action, BulkAction};
-use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
+use Filament\Tables\Actions\{Action};
+use Filament\Tables\Columns\{TextColumn};
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Illuminate\Support\Facades\Auth;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -42,7 +42,7 @@ class AssignedTaskResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('intern_id', auth()->id()) // Assumes 'intern_id' is the foreign key in TaskAssignment
+            ->where('intern_id', Auth::id()) // Assumes 'intern_id' is the foreign key in TaskAssignment
             ->with(['task', 'task_submission']); // ✅ MUST
     }
 
@@ -207,7 +207,7 @@ class AssignedTaskResource extends Resource
                     ->action(function (TaskAssignment $record, array $data): void {
                         // Logic to create the submission
                         TaskSubmission::updateOrCreate(
-                            ['task_id' => $record->task_id, 'intern_id' => auth()->id()],
+                            ['task_id' => $record->task_id, 'intern_id' => Auth::id()],
                             [
                                 'submission_file' => $data['attachment'],
                                 'submission_text' => $data['link'],
