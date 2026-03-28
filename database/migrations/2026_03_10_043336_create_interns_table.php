@@ -15,16 +15,14 @@ return new class extends Migration
             $table->id();
             // Authentication & Identity
             $table->string('intern_code')->unique()->nullable();
-            $table->foreignId('application_id')->nullable()
-                  ->constrained()
-                  ->cascadeOnDelete(); 
-            $table->foreignId('offer_letter_id')
-                ->nullable()
-                ->constrained('offer_letters')
-                ->nullOnDelete();
+            $table->foreignId('application_id')->nullable()->constrained()->cascadeOnDelete(); 
+            $table->foreignId('offer_letter_id')->nullable()->constrained('offer_letters')->cascadeOnDelete(); 
+            $table->foreignId('internship_batch_id')->nullable()->constrained('internship_batches')->cascadeOnDelete(); 
+            $table->foreignId('intern_team_id')->nullable()->constrained('intern_teams')->cascadeOnDelete(); 
             $table->string('username')->unique();    // Same as code for login
             $table->string('password');
             // Profile Data
+            $table->string('intern_image')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->date('joining_date');

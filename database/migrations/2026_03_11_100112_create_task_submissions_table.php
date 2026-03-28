@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('task_submissions', function (Blueprint $table) {
             $table->id('submission_id');
 
-            $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('intern_id');
+            $table->foreignId('task_id')->constrained('tasks', 'task_id')->cascadeOnDelete();
+            $table->foreignId('intern_id')->constrained('interns')->cascadeOnDelete(); // ✅ Added
 
             $table->text('submission_text')->nullable();
             $table->string('submission_file')->nullable();
@@ -25,9 +25,12 @@ return new class extends Migration
             $table->enum('status',['submitted','reviewed','approved','rejected'])
                   ->default('submitted');
 
-            $table->timestamps();
+            // Added fields from your data dictionary for grading [cite: 85]
+            $table->text('admin_feedback')->nullable();
+            $table->integer('marks')->nullable();
+            $table->string('grade', 5)->nullable();
 
-            $table->foreign('task_id')->references('task_id')->on('tasks')->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 

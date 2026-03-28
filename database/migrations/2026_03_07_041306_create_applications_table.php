@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('application_code')->unique()->nullable(); // 👈 NEW FIELD
             $table->string('email')->index();
             // $table->timestamp('email_verified_at')->nullable();
+            $table->text('verification_token')->nullable();
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('college')->nullable();

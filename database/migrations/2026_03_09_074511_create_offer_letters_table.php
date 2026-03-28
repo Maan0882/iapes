@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('offer_letter_code')->unique();
             $table->foreignId('application_id')->nullable()->constrained('applications')->nullOnDelete();
-            $table->foreignId('intern_id')->nullable()->constrained('interns')->nullOnDelete();
+            
             $table->string('name')->nullable();
             $table->string('college')->nullable();
             $table->string('university')->nullable();

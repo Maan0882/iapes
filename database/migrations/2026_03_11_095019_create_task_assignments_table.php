@@ -12,20 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('task_assignments', function (Blueprint $table) {
-             $table->id('task_assignment_id');
-
-            $table->unsignedBigInteger('task_id');
-
+            $table->id('task_assignment_id');
+            $table->foreignId('task_id')->constrained('tasks', 'task_id')->cascadeOnDelete();
             $table->enum('assigned_type', ['intern','team','batch']);
 
-            $table->unsignedBigInteger('intern_id')->nullable();
-            $table->unsignedBigInteger('team_id')->nullable();
-            $table->unsignedBigInteger('batch_id')->nullable();
+            // ✅ Properly constrained foreign keys
+            $table->foreignId('intern_id')->nullable()->constrained('interns')->nullOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained('intern_teams')->nullOnDelete();
+            $table->foreignId('batch_id')->nullable()->constrained('internship_batches')->nullOnDelete();
 
             $table->timestamps();
-
-            $table->foreign('task_id')->references('task_id')->on('tasks')->cascadeOnDelete();
-        
         });
     }
 
