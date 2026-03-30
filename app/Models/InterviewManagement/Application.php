@@ -40,8 +40,11 @@ class Application extends Model
             if (empty($application->application_code)) {
                 $datePart = now()->format('dmy');
                 
-                // 1. Fetch the absolute latest record regardless of the date in the code
-                $lastApplication = static::orderBy('id', 'desc')->first();
+                // 1. Fetch the latest record that is NOT pending and HAS a code
+                $lastApplication = static::where('status', '!=', 'pending')
+                    // ->whereNotNull('application_code')
+                    ->orderBy('id', 'desc')
+                    ->first();
 
                 if ($lastApplication && !empty($lastApplication->application_code)) {
                     // 2. Extract the numeric suffix from the end of the string

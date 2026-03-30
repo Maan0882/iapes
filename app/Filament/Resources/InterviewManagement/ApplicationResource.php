@@ -56,7 +56,11 @@ class ApplicationResource extends Resource
                             TextInput::make('name')
                                 ->label('Full Name')
                                 ->required()
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                ->regex('/^(?=(?:.*?\s){1,5}(?![^\s]*\s))[a-zA-Z\s]+$/') // Validation: Only alphabets and spaces, with exactly 3 to 5 spaces total
+                                ->validationMessages([
+                                    'regex' => 'The name must only contain letters and 3 to 5 white spaces.',
+                                ]),
 
                             TextInput::make('email')
                                 ->email()
@@ -90,7 +94,7 @@ class ApplicationResource extends Resource
                                 ->maxValue(100),  // Optional: prevents unrealistic numbers
 
                             TextInput::make('domain')
-                                ->label('Internship Field')
+                                ->label('Interested Internship Field')
                                 ->required()
                                 //->searchable()
                             //  ->disabled(fn ($record) => $record?->status !== 'applied'),
@@ -103,6 +107,7 @@ class ApplicationResource extends Resource
                                 ->schema([
                                    TextInput::make('duration')
                                     ->label('Internship Duration')
+                                    ->numeric()
                                     ->required(),
 
                                     Select::make('duration_unit')
@@ -134,7 +139,7 @@ class ApplicationResource extends Resource
                                         ->acceptedFileTypes([
                                             'application/pdf',
                                         ])
-                                        ->required()
+                                        // ->required()
                                         ->downloadable()
                                         ->openable()
                                         ->preserveFilenames(),
@@ -279,5 +284,12 @@ class ApplicationResource extends Resource
             'create' => Pages\CreateApplication::route('/create'),
             'edit' => Pages\EditApplication::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', '!=', 'pending'); 
+            // Or 'applied', depending on what you specifically want to hide
     }
 }
