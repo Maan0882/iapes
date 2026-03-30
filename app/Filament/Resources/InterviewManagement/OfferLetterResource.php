@@ -179,11 +179,19 @@ class OfferLetterResource extends Resource
                             ->required()
                             ->native(true)
                             ->live()
-                            ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get)),
+                            ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get))
+                            ->minDate(now()->subYear())   // Restrict joining date to be within 1 year of today (past or future)
+                            ->maxDate(now()->addYears(2)),
+                            
 
                         DatePicker::make('completion_date')
                             ->required()
-                            ->native(true),
+                            ->native(true)
+                            ->minDate(fn (Get $get) => $get('joining_date') ?? now())  // Constraint: Prevents picking a date before joining in the UI
+                            ->maxDate(now()->addYears(2)) // Prevent absurd years like 2620
+                            ->validationMessages([
+                                'after' => 'The completion date must be a date after the joining date.',
+                            ]),
 
                         TextInput::make('internship_role')
                             ->label('Internship Role')

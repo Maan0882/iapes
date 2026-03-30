@@ -134,7 +134,7 @@ class ApplicationResource extends Resource
                                         ->acceptedFileTypes([
                                             'application/pdf',
                                         ])
-                                        ->required()
+                                        // ->required()
                                         ->downloadable()
                                         ->openable()
                                         ->preserveFilenames(),
@@ -279,5 +279,12 @@ class ApplicationResource extends Resource
             'create' => Pages\CreateApplication::route('/create'),
             'edit' => Pages\EditApplication::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', '!=', 'pending'); 
+            // Or 'applied', depending on what you specifically want to hide
     }
 }
