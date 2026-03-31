@@ -104,8 +104,28 @@ class CertificateController extends Controller
         $interns = $this->resolveInterns($id); 
         $offers = $interns->map(fn($i) => $i->offerletter)->filter();
 
+        // 1. Prepare Logo for the view
+        $logoPath = public_path('images/TsLogo.png');
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+        // 2. Generate QR Codes to satisfy the route parameter requirement
+        $qrCodes = $offers->mapWithKeys(function ($offer) {
+            $token = str_replace('/', '-', $offer->intern->intern_code);
+            
+            // This ensures the 'token' parameter is explicitly passed[cite: 3]
+            $url = route('certificate.verify', ['token' => $token]);
+            
+            $svg = app(Generator::class)->size(150)->format('svg')->generate($url);
+            return [$offer->id => $svg];
+        });
+
         return response(
-            View::make('certificate.certificate', ['offers' => $offers, 'isPdf' => false])->render(),
+            View::make('certificate.certificate', [
+                'offers' => $offers, 
+                'isPdf' => false,
+                'logo' => $logoBase64,
+                'qrCodes' => $qrCodes // Variable now available for line 278
+            ])->render(),
             200, ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }

@@ -17,6 +17,7 @@ use App\Models\InternManagement\InternTeam;
 use App\Models\TaskManagement\TaskSubmission;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Intern extends Authenticatable implements FilamentUser
 {
@@ -45,10 +46,17 @@ class Intern extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
-    // public function getAuthIdentifierName()
-    // {
-    //     return 'username';
-    // }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($intern) {
+            // Automatically generate a token if one wasn't provided
+            if (empty($intern->cert_token)) {
+                $intern->cert_token = Str::random(32);
+            }
+        });
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {
