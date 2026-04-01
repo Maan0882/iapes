@@ -83,7 +83,7 @@ class CertificateController extends Controller
 
         // Render using Browsershot
         $pdf = Browsershot::html($html)
-            ->setChromePath(env('CHROME_PATH')) // Optional: only if not in default path
+           // ->setChromePath(env('CHROME_PATH')) // Optional: only if not in default path
             ->format('A4')
             ->showBackground()
             ->margins(0, 0, 0, 0)
@@ -164,7 +164,7 @@ class CertificateController extends Controller
         file_put_contents($tmpFile, $html);
 
         $pdf = Browsershot::html($html)
-            ->setChromePath(env('CHROME_PATH'))
+            //->setChromePath(env('CHROME_PATH'))
             ->format('A4')
             ->landscape()
             ->showBackground()
