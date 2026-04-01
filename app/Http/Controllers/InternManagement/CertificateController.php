@@ -58,9 +58,6 @@ class CertificateController extends Controller
     public function downloadCompletionLetter(Request $request, string $id)
     {
         $interns = $this->resolveInterns($id);
-        
-        // With Browsershot, you don't necessarily need Base64. 
-        // You can use a normal public URL or path if your server allows it.
         $logoPath = public_path('images/TsLogo.png');
 
         if ($interns->count() === 1) {
@@ -69,7 +66,7 @@ class CertificateController extends Controller
             $html = view("completionletter.{$template}", [
                 'intern' => $intern,
                 'isPdf'  => true,
-                'logo'   => $logoPath, 
+                'logo'   => $logoPath,
             ])->render();
             $filename = "completion_letter_" . str_replace(['/', '\\'], '-', $intern->intern_code) . ".pdf";
         } else {
@@ -81,16 +78,19 @@ class CertificateController extends Controller
             $filename = 'completion_letters_bulk.pdf';
         }
 
-        // Render using Browsershot
-        $pdf = Browsershot::html($html)
-           // ->setChromePath(env('CHROME_PATH')) // Optional: only if not in default path
+        $browsershot = Browsershot::html($html)
             ->format('A4')
             ->showBackground()
             ->margins(0, 0, 0, 0)
-            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
-            ->waitUntilNetworkIdle()  // wait for fonts/images to load
-            ->timeout(120)
-            ->pdf();
+            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
+            ->waitUntilNetworkIdle()
+            ->timeout(120);
+
+        if (env('CHROME_PATH')) {
+            $browsershot->setChromePath(env('/usr/bin/google-chrome'));
+        }
+
+        $pdf = $browsershot->pdf();
 
         return response($pdf)
             ->header('Content-Type', 'application/pdf')
@@ -154,11 +154,11 @@ class CertificateController extends Controller
             ->landscape()
             ->showBackground()
             ->margins(0, 0, 0, 0)
-            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
+            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
             ->timeout(120);
 
         if (env('CHROME_PATH')) {
-            $browsershot->setChromePath(env('CHROME_PATH'));
+            $browsershot->setChromePath(env('/usr/bin/google-chrome'));
         }
 
         $pdf = $browsershot->pdf();
