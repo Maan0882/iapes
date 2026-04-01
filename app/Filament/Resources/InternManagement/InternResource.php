@@ -174,7 +174,7 @@ class InternResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->offerletter?->name 
                             ?? $record->application?->name 
-                            ?? 'Unknown Name';
+                            ?? '';
                     })
                     ->searchable(['name']) // Allows searching if 'name' is a column in 'interns' table
                     ->sortable(),

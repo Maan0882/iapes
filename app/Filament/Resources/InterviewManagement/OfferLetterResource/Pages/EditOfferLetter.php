@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InterviewManagement\OfferLetterResource\Pages;
 use App\Filament\Resources\InterviewManagement\OfferLetterResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Models\InternManagement\Intern;
 
 class EditOfferLetter extends EditRecord
 {
@@ -40,5 +41,23 @@ class EditOfferLetter extends EditRecord
         }
 
         return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $record = $this->record;
+
+        // Check if this offer letter already has an associated intern
+        $intern = Intern::where('offer_letter_id', $record->id)->first();
+
+        if ($intern) {
+            // Update the intern record with the new data from the offer letter
+            $intern->update([
+                'name' => $record->name,
+                'email' => $record->email,
+                'joining_date' => $record->joining_date,
+                // You can add other fields here like phone or college if needed
+            ]);
+        }
     }
 }

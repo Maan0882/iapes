@@ -44,6 +44,7 @@ class EditIntern extends EditRecord
         // 2. Update Offer Letter table
         if ($intern->offer_letters) {
             $intern->offer_letters->update([
+                'name'                => $data['intern_name'],
                 'joining_date'        => $data['joining_date'],
                 'internship_role'     => $data['internship_role'],
                 'internship_position' => $data['internship_position'],
