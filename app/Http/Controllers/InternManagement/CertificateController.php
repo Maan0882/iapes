@@ -12,23 +12,44 @@ use SimpleSoftwareIO\QrCode\Generator;
 
 class CertificateController extends Controller
 {
+    // ------------------------------
+    // COMMON DATA PREPARATION
+    // ------------------------------
+
+    private function prepareViewData(string $id): array
+    {
+        $interns = $this->resolveInterns($id);
+        $offers  = $interns->map(fn($i) => $i->offerletter)->filter();
+
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(
+            file_get_contents(public_path('images/TsLogo.png'))
+        );
+
+        $qrCodes = $offers->mapWithKeys(function ($offer) {
+            $token = str_replace('/', '-', $offer->intern->intern_code);
+            $url   = route('certificate.verify', ['token' => $token]);
+            $svg   = app(Generator::class)->size(150)->format('svg')->generate($url);
+            return [$offer->id => $svg];
+        });
+
+        return [$interns, $offers, $logoBase64, $qrCodes];
+    }
+    
+    // ------------------------------
+    // RESOLVE INTERNS (YOU MUST HAVE THIS)
+    // ------------------------------
+
     private function resolveInterns(string $id): \Illuminate\Support\Collection
     {
-        // Ensure we have an array of integers, even if only one ID is passed
-        $ids = collect(explode(',', $id))
-            ->map(fn($item) => trim($item))
-            ->filter()
-            ->values()
-            ->toArray();
+        // Example logic (adjust as per your DB)
+        if ($id === 'all') {
+            return Intern::with('offerletter')->get();
+        }
 
-        $interns = Intern::with(['application', 'offerLetter.intern'])
-            ->whereIn('id', $ids)
-            ->get()
-            ->filter(fn (Intern $intern) => $intern->offerLetter?->is_accepted ?? false);
+        return Intern::with('offerletter')
+            ->where('id', $id)
+            ->get();
 
-        abort_if($interns->isEmpty(), 403, 'No accepted offer letter found.');
-
-        return $interns;
     }
 
     // --- COMPLETION LETTER METHODS ---
@@ -57,38 +78,28 @@ class CertificateController extends Controller
 
     public function downloadCompletionLetter(Request $request, string $id)
     {
-        $interns = $this->resolveInterns($id);
-        $logoPath = public_path('images/TsLogo.png');
+        [$interns, $offers, $logoBase64, $qrCodes] = $this->prepareViewData($id);
 
-        if ($interns->count() === 1) {
-            $intern = $interns->first();
-            $template = $intern->completion_letter_template ?? 'bachelors';
-            $html = view("completionletter.{$template}", [
-                'intern' => $intern,
-                'isPdf'  => true,
-                'logo'   => $logoPath,
-            ])->render();
-            $filename = "completion_letter_" . str_replace(['/', '\\'], '-', $intern->intern_code) . ".pdf";
-        } else {
-            $html = view('completionletter.bulk', [
-                'interns' => $interns,
-                'isPdf'   => true,
-                'logo'    => $logoPath,
-            ])->render();
-            $filename = 'completion_letters_bulk.pdf';
-        }
+        $filename = $interns->count() === 1
+            ? 'completion_letter_' . str_replace(['/', '\\'], '-', $interns->first()->intern_code) . '.pdf'
+            : 'completion_letters_bulk.pdf';
+
+        $html = View::make('completionletter.bulk', [
+            'offers'  => $offers,
+            'isPdf'   => true,
+            'logo'    => $logoBase64,
+            'interns'  => $interns,
+
+        ])->render();
 
         $browsershot = Browsershot::html($html)
+            ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+            ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
+            ->setChromePath(env('CHROME_PATH'))
             ->format('A4')
             ->showBackground()
-            ->margins(0, 0, 0, 0)
-            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
-            ->waitUntilNetworkIdle()
+            ->noSandbox()
             ->timeout(120);
-
-        if (env('CHROME_PATH')) {
-            $browsershot->setChromePath(env('/usr/bin/google-chrome'));
-        }
 
         $pdf = $browsershot->pdf();
 
@@ -98,25 +109,6 @@ class CertificateController extends Controller
     }
 
     // --- CERTIFICATE METHODS ---
-
-    private function prepareViewData(string $id): array
-    {
-        $interns = $this->resolveInterns($id);
-        $offers  = $interns->map(fn($i) => $i->offerletter)->filter();
-
-        $logoBase64 = 'data:image/png;base64,' . base64_encode(
-            file_get_contents(public_path('images/TsLogo.png'))
-        );
-
-        $qrCodes = $offers->mapWithKeys(function ($offer) {
-            $token = str_replace('/', '-', $offer->intern->intern_code);
-            $url   = route('certificate.verify', ['token' => $token]);
-            $svg   = app(Generator::class)->size(150)->format('svg')->generate($url);
-            return [$offer->id => $svg];
-        });
-
-        return [$interns, $offers, $logoBase64, $qrCodes];
-    }
 
     public function viewCertificate(Request $request, string $id)
     {
@@ -150,16 +142,15 @@ class CertificateController extends Controller
         ])->render();
 
         $browsershot = Browsershot::html($html)
+            ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+            ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
+            ->setChromePath(env('CHROME_PATH'))
             ->format('A4')
             ->landscape()
             ->showBackground()
             ->margins(0, 0, 0, 0)
-            ->addChromiumArguments(['no-sandbox', 'disable-setuid-sandbox'])
+            ->noSandbox()
             ->timeout(120);
-
-        if (env('CHROME_PATH')) {
-            $browsershot->setChromePath(env('/usr/bin/google-chrome'));
-        }
 
         $pdf = $browsershot->pdf();
 
@@ -180,33 +171,31 @@ class CertificateController extends Controller
         return $this->downloadCertificate(request(), $intern->id);
     }
 
-
-
     public function saveCertificateToServer(string $id)
-{
-    $interns = $this->resolveInterns($id);
-    $offers = $interns->map(fn($i) => $i->offerletter)->filter();
+    {
+        $interns = $this->resolveInterns($id);
+        $offers = $interns->map(fn($i) => $i->offerletter)->filter();
 
-    if ($offers->isEmpty()) {
-        return back()->with('error', 'No certificate data found.');
+        if ($offers->isEmpty()) {
+            return back()->with('error', 'No certificate data found.');
+        }
+
+        foreach ($offers as $offer) {
+            $internCode = $offer->intern->intern_code;
+            // Clean the filename (replace / with - to avoid directory issues)
+            $safeFileName = str_replace('/', '-', $internCode) . '.html';
+            $path = "certificates/{$safeFileName}";
+
+            // Render the HTML content
+            $html = View::make('certificate.certificate', [
+                'offers' => collect([$offer]),
+                'isPdf'  => false,
+            ])->render();
+
+            // Save to storage/app/public/certificates/
+            Storage::disk('public')->put($path, $html);
+        }
+
+        return back()->with('success', 'Certificates saved to server successfully.');
     }
-
-    foreach ($offers as $offer) {
-        $internCode = $offer->intern->intern_code;
-        // Clean the filename (replace / with - to avoid directory issues)
-        $safeFileName = str_replace('/', '-', $internCode) . '.html';
-        $path = "certificates/{$safeFileName}";
-
-        // Render the HTML content
-        $html = View::make('certificate.certificate', [
-            'offers' => collect([$offer]),
-            'isPdf'  => false,
-        ])->render();
-
-        // Save to storage/app/public/certificates/
-        Storage::disk('public')->put($path, $html);
-    }
-
-    return back()->with('success', 'Certificates saved to server successfully.');
-}
 }
