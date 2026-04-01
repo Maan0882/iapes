@@ -7,8 +7,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Internship Certificate - TechStrota</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Allura&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Alex+Brush&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"> -->
     @endif
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Allura&family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body style="margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
 <div id="certificate-wrapper">
@@ -117,6 +118,7 @@
                 color: #1a202c;
                 margin: 3mm 0 1mm;
                 font-style: normal;
+                text-transform:capitalize;
             }
             .underline { width: 80%; height: 2pt; background: linear-gradient(90deg, transparent, #f4a243, transparent); margin-bottom: 15mm; }
             .body-text { font-size: 15.5pt; line-height: 1.8; color: #000000; max-width: 95%; margin-top: -6mm; }
@@ -271,7 +273,11 @@
                                     {{-- QR Code --}}
                                     <div class="qr">
                                         @if($isPdf)
-                                            {!! $qrCodes[$offer->id] ?? '' !!}
+                                            {!! QrCode::size(100)
+                                                ->color(14, 114, 180) {{-- TechStrota Blue --}}
+                                                ->margin(1)
+                                                ->generate(route('certificate.verify', $offer->intern->cert_token)) 
+                                            !!}
                                         @else
                                             {{-- Reduced size from 150 to 90 --}}
                                             {!! QrCode::size(100)
