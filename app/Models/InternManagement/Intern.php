@@ -56,6 +56,14 @@ class Intern extends Authenticatable implements FilamentUser
                 $intern->cert_token = Str::random(32);
             }
         });
+
+        // Add this to prevent UPDATING the application_id
+        static::updating(function ($intern) {
+            if ($intern->isDirty('application_id')) {
+                // Revert it to the original value from the database
+                $intern->application_id = $intern->getOriginal('application_id');
+            }
+        });
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -71,7 +79,7 @@ class Intern extends Authenticatable implements FilamentUser
     public function offerletter()
     {
         // Make sure the method name 'offerletter' matches what you wrote in the Infolist
-        return $this->hasOne(\App\Models\InterviewManagement\OfferLetter::class, 'intern_id');
+        return $this->belongsTo(\App\Models\InterviewManagement\OfferLetter::class, 'offer_letter_id');
     } 
     
 
@@ -106,6 +114,6 @@ class Intern extends Authenticatable implements FilamentUser
 
     public function offer_letters() // For accessing dates in i-card
     {
-        return $this->hasOne(OfferLetter::class, 'intern_id');
+        return $this->belongsTo(OfferLetter::class, 'offer_letter_id');
     }
 }

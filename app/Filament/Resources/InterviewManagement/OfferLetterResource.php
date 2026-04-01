@@ -314,7 +314,7 @@ class OfferLetterResource extends Resource
                                 'is_active'     => true,
                             ]);
 
-                            $record->update(['intern_id' => $intern->id]);
+                            //$record->update(['intern_id' => $intern->id]);
 
                             Notification::make()
                                 ->title('Intern Account Created')

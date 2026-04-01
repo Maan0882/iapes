@@ -113,7 +113,7 @@
             }
             .recipient {
                 font-family: 'Allura', cursive;
-                font-size: 52pt;
+                font-size: 48pt;
                 font-weight: 400;
                 color: #1a202c;
                 margin: 3mm 0 1mm;
@@ -254,7 +254,7 @@
                             <img src="{{ $isPdf ? $logo : asset('images/TsLogo.png') }}" alt="TechStrota" style="height:80px;margin-bottom:6mm;margin-top:-7mm;">
                             <div class="main-title">Certificate of Internship</div>
                             <p style="font-size:14pt;color:#718096;margin:2mm 0;">This is to certify that</p>
-                            <div class="recipient">{{ $offer->application?->name ?? $offer->name}}</div>
+                            <div class="recipient">{{ Str::title($offer->application?->name ?? $offer->name)}}</div>
                             <div class="underline"></div>
                             <div class="body-text">
                                 has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b> internship

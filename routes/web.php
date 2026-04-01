@@ -71,7 +71,7 @@ Route::middleware(['auth:web,intern'])->group(function () {
 //-------------- I - Card -----------------------------
 
 Route::get('/intern-id-card/{id}', function ($id) {
-    $intern = Intern::with('application')->findOrFail($id);
+    $intern = Intern::with('offerletter')->findOrFail($id);
 
     $idCardPath = public_path('images/I-card-bg.png'); // Double check if it's .png or .jpeg!
 

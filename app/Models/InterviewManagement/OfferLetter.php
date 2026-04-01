@@ -14,7 +14,7 @@ class OfferLetter extends Model
         'completion_date',
         'internship_role',
         'working_hours',
-        'intern_id',
+       // 'intern_id',
         'template',
         'description',
         'college',   // ← add this too
@@ -69,7 +69,7 @@ class OfferLetter extends Model
 
     public function intern()
     {
-        return $this->belongsTo(Intern::class, 'intern_id');
+        return $this->hasOne(Intern::class, 'offer_letter_id');
     }
 
     protected static function booted()
