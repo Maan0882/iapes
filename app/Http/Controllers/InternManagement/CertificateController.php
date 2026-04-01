@@ -99,81 +99,69 @@ class CertificateController extends Controller
 
     // --- CERTIFICATE METHODS ---
 
-    public function viewCertificate(Request $request, string $id)
+    private function prepareViewData(string $id): array
     {
-        $interns = $this->resolveInterns($id); 
-        $offers = $interns->map(fn($i) => $i->offerletter)->filter();
+        $interns = $this->resolveInterns($id);
+        $offers  = $interns->map(fn($i) => $i->offerletter)->filter();
 
-        // 1. Prepare Logo for the view
-        $logoPath = public_path('images/TsLogo.png');
-        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(
+            file_get_contents(public_path('images/TsLogo.png'))
+        );
 
-        // 2. Generate QR Codes to satisfy the route parameter requirement
         $qrCodes = $offers->mapWithKeys(function ($offer) {
             $token = str_replace('/', '-', $offer->intern->intern_code);
-            
-            // This ensures the 'token' parameter is explicitly passed[cite: 3]
-            $url = route('certificate.verify', ['token' => $token]);
-            
-            $svg = app(Generator::class)->size(150)->format('svg')->generate($url);
+            $url   = route('certificate.verify', ['token' => $token]);
+            $svg   = app(Generator::class)->size(150)->format('svg')->generate($url);
             return [$offer->id => $svg];
         });
 
+        return [$interns, $offers, $logoBase64, $qrCodes];
+    }
+
+    public function viewCertificate(Request $request, string $id)
+    {
+        [$interns, $offers, $logoBase64, $qrCodes] = $this->prepareViewData($id);
+
         return response(
             View::make('certificate.certificate', [
-                'offers' => $offers, 
-                'isPdf' => false,
-                'logo' => $logoBase64,
-                'qrCodes' => $qrCodes // Variable now available for line 278
+                'offers'   => $offers,
+                'isPdf'    => false,
+                'logo'     => $logoBase64,
+                'qrCodes'  => $qrCodes,
             ])->render(),
-            200, ['Content-Type' => 'text/html; charset=UTF-8']
+            200,
+            ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
 
     public function downloadCertificate(Request $request, string $id)
     {
-        $interns = $this->resolveInterns($id);
+        [$interns, $offers, $logoBase64, $qrCodes] = $this->prepareViewData($id);
 
-        // 1. Embed logo as base64
-        $logoPath = public_path('images/TsLogo.png');
-        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
-
-        // 2. Pre-generate QR codes keyed by offer id
-        $offers = $interns->map(fn($i) => $i->offerletter)->filter();
-        $qrCodes = $offers->mapWithKeys(function ($offer) {
-            $url = route('certificate.verify', str_replace('/', '-', $offer->intern->intern_code));
-            $svg = app(Generator::class)->size(150)->format('svg')->generate($url);
-            return [$offer->id => $svg];
-        });
-
-        if ($interns->count() === 1) {
-            $intern = $interns->first();
-            $filename = "certificate_" . str_replace(['/', '\\'], '-', $intern->intern_code) . ".pdf";
-        } else {
-            $filename = "certificates_bulk.pdf";
-        }
+        $filename = $interns->count() === 1
+            ? 'certificate_' . str_replace(['/', '\\'], '-', $interns->first()->intern_code) . '.pdf'
+            : 'certificates_bulk.pdf';
 
         $html = View::make('certificate.certificate', [
-            'offers'   => $offers,
-            'isPdf'    => true,
-            'logo'     => $logoBase64,
-            'qrCodes'  => $qrCodes,
+            'offers'  => $offers,
+            'isPdf'   => true,
+            'logo'    => $logoBase64,
+            'qrCodes' => $qrCodes,
         ])->render();
 
-        $tmpFile = tempnam(sys_get_temp_dir(), 'cert_') . '.html';
-        file_put_contents($tmpFile, $html);
-
-        $pdf = Browsershot::html($html)
-            //->setChromePath(env('CHROME_PATH'))
+        $browsershot = Browsershot::html($html)
             ->format('A4')
             ->landscape()
             ->showBackground()
             ->margins(0, 0, 0, 0)
             ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
-            ->timeout(120)
-            ->pdf();
+            ->timeout(120);
 
-        @unlink($tmpFile);
+        if (env('CHROME_PATH')) {
+            $browsershot->setChromePath(env('CHROME_PATH'));
+        }
+
+        $pdf = $browsershot->pdf();
 
         return response($pdf)
             ->header('Content-Type', 'application/pdf')
