@@ -41,9 +41,31 @@ class AssignedTaskResource extends Resource
     // 1. IMPORTANT: Filter the query so interns only see their own tasks
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('intern_id', Auth::id()) // Assumes 'intern_id' is the foreign key in TaskAssignment
-            ->with(['task', 'task_submission']); // ✅ MUST
+        // return parent::getEloquentQuery()
+        //     ->where('intern_id', Auth::id()) // Assumes 'intern_id' is the foreign key in TaskAssignment
+        //     ->with(['task', 'task_submission']); // ✅ MUST
+
+        $userId = Auth::id();
+
+    return parent::getEloquentQuery()
+        ->where(function (Builder $query) use ($userId) {
+            // 1. Tasks assigned directly to this Intern
+            $query->where('intern_id', $userId)
+            
+            // 2. OR Tasks assigned to a Team that this Intern is a member of
+            ->orWhereHas('team.interns', function ($q) use ($userId) {
+                $q->where('interns.id', $userId);
+            })
+            
+            // 3. OR Tasks assigned to the whole Batch this Intern belongs to
+            ->orWhereExists(function ($q) use ($userId) {
+                $q->select(\DB::raw(1))
+                    ->from('interns')
+                    ->whereColumn('interns.internship_batch_id', 'task_assignments.batch_id')
+                    ->where('interns.id', $userId);
+            });
+        })
+        ->with(['task', 'task_submission']);
     }
 
     public static function form(Form $form): Form
