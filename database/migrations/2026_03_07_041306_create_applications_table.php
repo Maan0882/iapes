@@ -34,7 +34,8 @@ return new class extends Migration
                 'interview_scheduled',
                 'interviewed',
                 'shortlisted',
-                'rejected'
+                'rejected',
+                'pending' // added for email verification in frontend application form
             ])->default('applied');
             $table->timestamps();
         });
