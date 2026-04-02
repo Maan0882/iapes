@@ -41,14 +41,13 @@ class CertificateController extends Controller
 
     private function resolveInterns(string $id): \Illuminate\Support\Collection
     {
-        // Example logic (adjust as per your DB)
+        $query = Intern::with(['offerletter.intern']); // ← eager load the chain
+
         if ($id === 'all') {
-            return Intern::with('offerletter')->get();
+            return $query->get();
         }
 
-        return Intern::with('offerletter')
-            ->where('id', $id)
-            ->get();
+        return $query->where('id', $id)->get();
 
     }
 
