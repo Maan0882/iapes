@@ -170,7 +170,15 @@ class OfferLetterResource extends Resource
 
                             TextInput::make('phone')
                                 ->label('Phone Number')
-                                ->placeholder('+91 XXXXX XXXXX'),
+                                ->tel() // Ensures numeric keyboard on mobile
+                                ->maxLength(15) // Sets the hard character limit
+                                ->placeholder('+91 XXXXX XXXXX')
+                               // This regex allows a leading + and then only digits
+                                ->regex('/^\+?[0-9]+$/') 
+                                ->validationMessages([
+                                    'regex' => 'The phone number must contain only digits and an optional leading +.',
+                                    'max' => 'The phone number cannot exceed 15 characters.',
+                                ]),
                         ]),
                     ]),
 
