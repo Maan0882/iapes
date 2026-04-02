@@ -13,19 +13,9 @@ return new class extends Migration
     {
         Schema::create('internship_batches', function (Blueprint $table) {
             $table->id();
-
-            // Use foreignId for team_id (assuming it references intern_teams table)
-            // Constrained() automatically links to 'id' on 'intern_teams'
-            $table->foreignId('team_id')->nullable()->constrained('intern_teams')->nullOnDelete();
-
             $table->string('batch_name');
-
-            // Use time() for batch timing
             $table->string('batch_timing')->nullable();
-            
-            // Use integer for number of interns
             $table->integer('no_of_interns')->default(0);
-          
             $table->timestamps();
         });
     }

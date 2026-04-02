@@ -131,11 +131,11 @@ class InternshipBatchResource extends Resource
                     ->label('Number of Interns')
                     ->readonly(),
 
-                Select::make('team_id')
-                    ->label('Associated Team')
-                    ->relationship('team', 'team_name') // Ensure 'team' relation is defined in model
-                    ->searchable()
-                    ->preload(),
+                // Select::make('team_id')
+                //     ->label('Associated Team')
+                //     ->relationship('team', 'team_name') // Ensure 'team' relation is defined in model
+                //     ->searchable()
+                //     ->preload(),
             ]);
     }
 
