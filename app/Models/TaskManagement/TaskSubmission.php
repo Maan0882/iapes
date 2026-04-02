@@ -35,7 +35,7 @@ class TaskSubmission extends Model
             \App\Models\TaskManagement\TaskAssignment::class,
             'task_id',
             'task_id'
-        )->where('intern_id', auth()->id());
+        )->where('intern_id', auth()->id);
     }
 
 
