@@ -21,7 +21,7 @@ class AttendancePolicy
             return true;
         }
 
-        return (isset($user->is_admin) && $user->is_admin);
+        return (bool) $user->is_admin;
     }
 
     public function create(Authenticatable $user): bool
