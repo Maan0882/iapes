@@ -248,6 +248,7 @@ class OfferLetterResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s') // ⬅ auto refresh
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('offer_letter_code')

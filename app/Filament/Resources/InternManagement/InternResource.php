@@ -159,6 +159,7 @@ class InternResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s') // ⬅ auto refresh
             ->columns([
                 //
                 TextColumn::make('intern_code')

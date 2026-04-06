@@ -38,6 +38,18 @@ class ViewAssignedTask extends ViewRecord
                             ->schema([
                                 TextEntry::make('task.title')
                                     ->label('Task Title'),
+                                
+                                    // --- ADDED THIS ---
+                                    TextEntry::make('assigned_type')
+                                    ->label('Task Assigned To')
+                                    ->formatStateUsing(function ($record) {
+                                            return match ($record->assigned_type) {
+                                                'intern' => "Intern",
+                                                'team'   => "Team",
+                                                'batch'  => "Batch",
+                                                default  => 'Unassigned',
+                                            };
+                                    }),
 
                                 TextEntry::make('task.priority')
                                     ->label('Priority')

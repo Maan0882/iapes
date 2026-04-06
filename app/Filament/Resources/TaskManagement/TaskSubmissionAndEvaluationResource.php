@@ -72,6 +72,7 @@ class TaskSubmissionAndEvaluationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('5s') // ⬅ auto refresh
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('task.title') 
@@ -82,8 +83,9 @@ class TaskSubmissionAndEvaluationResource extends Resource
                 Tables\Columns\TextColumn::make('intern.name') // Assuming an 'intern' relationship exists
                 ->label('Submitted By'),
 
-                Tables\Columns\TextColumn::make('submitted_at')
-                    ->dateTime()
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Submitted at')
+                    ->date()
                     ->sortable(),
 
                 Tables\Columns\BadgeColumn::make('status')

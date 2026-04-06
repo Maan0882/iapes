@@ -65,7 +65,8 @@ class AssignedTaskResource extends Resource
                     ->where('interns.id', $userId);
             });
         })
-        ->with(['task', 'task_submission']);
+        // ADD 'team.interns', 'batch', and 'intern' here to eager load names
+        ->with(['task', 'task_submission', 'team.interns', 'batch', 'intern']);
     }
 
     public static function form(Form $form): Form
@@ -87,6 +88,28 @@ class AssignedTaskResource extends Resource
                                 ->schema([
                                     TextEntry::make('task.title')
                                         ->label('Task Title'),
+
+                                      // --- ADDED THIS ---
+                                    TextEntry::make('assigned_type')
+                                    ->label('Task Assigned To')
+                                    ->getStateUsing(function (TaskAssignment $record) {
+                                            return match ($record->assigned_type) {
+                                                'intern' => "Individual: " . ($record->intern?->name ?? 'N/A'),
+                                                
+                                                'team' => "Team (" . ($record->team?->team_name ?? 'N/A') . "): " . 
+                                                        $record->team?->interns->pluck('name')->implode(', '),
+                                                
+                                                'batch' => "Batch (" . ($record->batch?->batch_name ?? 'N/A') . "): " . 
+                                                        \App\Models\InternManagement\Intern::where('internship_batch_id', $record->batch_id)
+                                                            ->pluck('name')
+                                                            ->implode(', '),
+                                                            
+                                                default => 'Unassigned',
+                                            };
+                                        })
+                                        ->badge()
+                                        ->color(fn ($state) => str_contains($state, 'Team') ? 'warning' : (str_contains($state, 'Batch') ? 'info' : 'gray'))
+                                        ->columnSpanFull(),
 
                                     TextEntry::make('task.priority')
                                         ->label('Priority')
@@ -143,6 +166,7 @@ class AssignedTaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s') // ⬅ auto refresh
             ->columns([
                 //
                     // Adjust these based on your TaskAssignment & Task relationships
@@ -150,6 +174,30 @@ class AssignedTaskResource extends Resource
                     ->label('Task Name')
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('assigned_type')
+                    ->label('Task Assigned To')
+                    ->formatStateUsing(function (TaskAssignment $record) {
+                        return match ($record->assigned_type) {
+                            'intern' => "👤 Individual",
+                            'team'   => "👥 Team: " . ($record->team?->team_name ?? 'N/A'),
+                            'batch'  => "🎓 Batch: " . ($record->batch?->batch_name ?? 'N/A'),
+                            default  => 'Unassigned',
+                        };
+                    })
+                    ->description(function (TaskAssignment $record) {
+                        // Show a snippet of members for Teams/Batches in a small sub-text
+                        if ($record->assigned_type === 'team') {
+                            return $record->team?->interns->pluck('name')->take(3)->implode(', ');
+                        }
+                        else if ($record->assigned_type === 'batch') {
+                            return $record->batch?->interns->pluck('name')->take(3)->implode(', ');
+                        }
+                        return null;
+                    })
+                    ->sortable(),
+
+                
 
                 TextColumn::make('task.priority')
                     ->label('Task Priority')
@@ -164,7 +212,8 @@ class AssignedTaskResource extends Resource
                  TextColumn::make('task.due_date')
                     ->label('Task Due Date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('No deadline'),
 
                 TextColumn::make('submission_status')
                     ->label('Task Status')

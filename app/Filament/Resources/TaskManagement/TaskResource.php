@@ -105,6 +105,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s') // ⬅ auto refresh
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
