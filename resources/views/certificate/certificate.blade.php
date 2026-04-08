@@ -109,7 +109,7 @@
                     right: 12mm;
                     bottom: 12mm;
                     border: 3.5pt solid #FFA000;
-                    z-index: 5;
+                    z-index: 1;
                 }
 
                 .b-inner {
@@ -119,7 +119,7 @@
                     right: 14.5mm;
                     bottom: 14.5mm;
                     border: 1pt solid #880E4F;
-                    z-index: 5;
+                    z-index: 1;
                 }
 
                 /* Enhanced Corner SVGs */
@@ -143,19 +143,19 @@
                 } */
 
                 .corner-svg.tr {
-                    top: 8mm;
-                    right: -5mm;
-                    width: 60mm;
-                    height: 50mm;
-                    transform: rotate(-90deg);
+                    top: -2mm;
+                    right: 2mm;
+                    width: 70mm;
+                    height: 60mm;
+                    transform: rotate(180deg) scaleX(-1);
                 }
 
                 .corner-svg.bl {
-                    bottom: 8mm;
-                    left: -5mm;
-                    width: 60mm;
-                    height: 50mm;
-                    transform: rotate(90deg);
+                    bottom: 16mm;
+                    left: -16mm;
+                    width: 70mm;
+                    height: 60mm;
+                    transform: rotate(270deg) scaleY(-1);
                 }
 
                 .wm-overlay {
@@ -205,9 +205,9 @@
                 }
 
                 .underline {
-                    width: 70%;
+                    width: 100%;
                     height: 2.5pt;
-                    background: linear-gradient(90deg, transparent, #FF7043, transparent);
+                    background: linear-gradient(90deg, transparent, #FF7043, #FF7043, transparent);
                     margin-bottom: 12mm;
                 }
 
@@ -232,7 +232,7 @@
                 .sig-box {
                     width: 60mm;
                     text-align: center;
-                    margin-bottom: -4mm;
+                    margin-bottom: -2mm;
                 }
 
                 .qr {
@@ -254,10 +254,14 @@
                     height: 100% !important;
                 }
 
+                .sig {
+                    margin-bottom: -2mm;
+                }
+
                 .sig-line-top {
                     border-top: 2pt solid #880E4F;
-                    margin-bottom: 3.5mm;
-                    margin-left: 8mm;
+                    margin-bottom: 4mm;
+                    margin-left: 10mm;
                 }
 
                 .outer-footer {
@@ -295,23 +299,20 @@
                     <div class="cert-scale-wrapper">
                         <div class="cert">
                             <!-- <div class="top-fill"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                style="position: absolute; top:0; left:0; right:0; height:6pt; background: linear-gradient(90deg, #FF7043 0%, #FFCA28 100%); z-index: 10;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    style="position: absolute; top:0; left:0; right:0; height:6pt; background: linear-gradient(90deg, #FF7043 0%, #FFCA28 100%); z-index: 10;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div> -->
                             <div class="b-outer"></div>
                             <div class="b-inner"></div>
                             <!-- 2. Dynamic Wave Patterns (Top-Right and Bottom-Left) -->
-                            <svg class="corner-svg tr" viewBox="0 0 300 250" fill="none">
-                                <path d="M300 0 C220 0 120 40 100 120 C80 200 50 240 0 240 L300 240 Z" fill="#0e72b4"
-                                    opacity="1" />
-                                <path d="M300 0 C250 0 180 60 180 140 Q180 200 120 230 L300 240 Z" fill="#FF7043" opacity="1" />
-                                <path d="M300 15 Q200 25 180 120 Q160 220 40 240" stroke="#FFCA28" stroke-width="2.5"
-                                    fill="none" />
+                            <svg class="corner-svg tr" viewBox="0 0 600 500" fill="none" style="width: 600px; height: 500px;">
+                                <path d="M600 0 Q600 480 0 480 L600 480 Z" fill="#0e72b4" opacity="1" />
+                                <path d="M600 100 Q600 480 200 480 L600 480 Z" fill="#FF7043" opacity="1" />
+                                <path d="M600 160 Q560 360 300 480" stroke="#FFCA28" stroke-width="5" fill="none" />
                             </svg>
-                            <svg class="corner-svg bl" viewBox="0 0 300 250" fill="none">
-                                <path d="M300 0 C220 0 120 40 100 120 C80 200 50 240 0 240 L300 240 Z" fill="#FF7043"
-                                    opacity="1" />
-                                <path d="M300 0 C250 0 180 60 180 140 Q180 200 120 230 L300 240 Z" fill="#0e72b4" opacity="1" />
-                                <path d="M300 15 Q200 25 180 120 Q160 220 40 240" stroke="#FFCA28" stroke-width="2.5"
+                            <svg class="corner-svg bl" viewBox="0 0 600 500" fill="none" style="width: 600px; height: 500px;">
+                                <path d="M0 0 Q0 480 600 480 L0 480 Z" fill="#FF7043" opacity="1" />
+                                <path d="M0 100 Q0 480 400 480 L0 480 Z" fill="#0e72b4" opacity="1" />
+                                <path d="M0 160 Q40 360 300 480" stroke="#FFCA28" stroke-width="5" stroke-linecap="round"
                                     fill="none" />
                             </svg>
                             @php
@@ -360,12 +361,12 @@
                                     proficiency.
                                 </div>
                                 <div class="footer">
-                                    <div class="sig-box">
+                                    <div class="sig-box sig">
                                         <div class="sig-line-top"></div>
                                         <b
-                                            style="color:#000000;font-size:12.5pt;font-weight:800;letter-spacing:1pt;margin-left:8mm;">FOUNDER/CEO</b><br>
+                                            style="color:#000000;font-size:12.5pt;font-weight:800;letter-spacing:1pt;margin-left:10mm;">FOUNDER/CEO</b><br>
                                         <span
-                                            style="font-size:10pt;color:#000000;font-weight:600;margin-left:8mm;">TechStrota</span>
+                                            style="font-size:11.5pt;color:#000000;font-weight:600;margin-left:10mm;">TechStrota</span>
                                     </div>
                                     <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
                                         {{-- QR Code --}}
