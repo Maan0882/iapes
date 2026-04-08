@@ -25,7 +25,7 @@
             width: 210mm;
             height: 297mm;
             margin: 0 auto;
-            padding: 15mm 20mm;
+            padding: 10mm 20mm;
             box-sizing: border-box;
             background: #fff;
             display: flex;
@@ -179,12 +179,12 @@
         }
 
         .footer-line {
-            border-top: 1px solid #ddd;
+            border-top: 2pt solid #f39200; /* Orange Line */
             margin-bottom: 15px;
         }
 
         .footer-content {
-            font-size: 11px;
+            font-size: 13px;
             color: #666;
             line-height: 1.4;
         }
@@ -192,7 +192,7 @@
         .footer-brand {
             font-weight: 700;
             color: #000;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .footer-link {
@@ -201,10 +201,10 @@
         }
 
         .system-remark {
-            font-size: 9px;
+            font-size: 10px;
             color: maroon;
             font-style: italic;
-            margin-top: 5px;
+            margin-top: 10px;
             display: block;
             text-align: right;
         }
@@ -271,7 +271,7 @@
 
             <div class="sig-container">
                 <div class="sig-line"></div>
-                <div class="sig-name">Badal Jamod</div>
+                <div class="sig-name">Mr. Badal Jamod</div>
                 <div class="sig-title">CEO/CTO - Techstrota</div>
             </div>
 
@@ -281,6 +281,7 @@
                     <span class="footer-brand">Techstrota</span> | <a href="https://www.techstrota.com" class="footer-link">www.techstrota.com</a><br>
                     503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri, Vadodara, Gujarat - 390007
                 </div>
+                <span class="system-remark">This is a system-generated document.</span>
             </div>
         </div>
         @if(!$loop->last)

@@ -95,11 +95,17 @@ class InternResource extends Resource
                                 ->label('Project Name')
                                 ->required(),
                             
-                            DatePicker::make('completion_date')
-                                ->label('Completion Date')
-                                ->default(now())
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->completion_date))
-                                ->required(),
+                            // DatePicker::make('completion_date')
+                            //     ->label('Completion Date')
+                            //     ->default(now())
+                            //     ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->completion_date))
+                            //     ->required(),
+
+                            DatePicker::make('issuing_date')
+                                ->label('Issuing Date')
+                                ->required()
+                                ->after('completion_date')
+                                ->minDate(fn (Get $get) => $get('completion_date')),
 
                             Select::make('completion_letter_template')
                             ->label('Completion Letter Template')
@@ -148,9 +154,12 @@ class InternResource extends Resource
                             TextInput::make('internship_position')
                                 ->label('Position')
                                 ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->internship_position)),
-                            DatePicker::make('joining_date')
-                                ->label('Joining Date')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->joining_date)),
+                            // DatePicker::make('joining_date')
+                            //     ->label('Joining Date')
+                            //     ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->joining_date)),
+                            DatePicker::make('completion_date')
+                                ->label('Completion Date')
+                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->completion_date)),
                         ]),
                     ]),
             ]);

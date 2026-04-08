@@ -25,7 +25,7 @@
             width: 210mm;
             height: 297mm;
             margin: 0 auto;
-            padding: 15mm 20mm;
+            padding: 10mm 20mm;
             box-sizing: border-box;
             background: #fff;
             display: flex;
@@ -82,7 +82,7 @@
         }
 
         .header-logo img {
-            height: 55px;
+            height: 65px;
             display: inline-block;
         }
 
@@ -97,7 +97,7 @@
             font-size: 24px;
             font-weight: 700;
             text-decoration: underline;
-            margin: 40px 0 30px 0;
+            margin: 10px 0 30px 0;
             text-transform: uppercase;
         }
 
@@ -179,20 +179,22 @@
         }
 
         .footer-line {
-            border-top: 1px solid #ddd;
+            border-top: 2pt solid #f39200; /* Orange Line */
+            /* border-top: 1px solid #ddd; */
             margin-bottom: 15px;
         }
 
         .footer-content {
-            font-size: 11px;
+            font-size: 14px;
             color: #666;
             line-height: 1.4;
+            font-weight: 700;
         }
 
         .footer-brand {
             font-weight: 700;
             color: #000;
-            font-size: 12px;
+            font-size: 15px;
         }
 
         .footer-link {
@@ -201,10 +203,11 @@
         }
 
         .system-remark {
-            font-size: 9px;
+            font-size: 10px;
             color: maroon;
             font-style: italic;
-            margin-top: 5px;
+            margin-top: 10px;
+            padding-top: 10px;
             display: block;
             text-align: right;
         }
@@ -236,7 +239,7 @@
 
         <div class="sig-container">
             <div class="sig-line"></div>
-            <div class="sig-name">Badal Jamod</div>
+            <div class="sig-name">Mr. Badal Jamod</div>
             <div class="sig-title">CEO/CTO - Techstrota</div>
         </div>
 
