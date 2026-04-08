@@ -8,12 +8,12 @@
                     
     @endphp
 
-    <div class="title">INTERNSHIP COMPLETION CERTIFICATE</div>
+    <div class="title">INTERNSHIP COMPLETION LETTER</div>
 
     <div class="meta-row">
         <div class="meta-left">
             <strong>From:</strong> TechStrota<br>
-            <strong>Issued on:</strong> {{ \Carbon\Carbon::parse($intern->completion_date)->format('d/m/Y') }}
+            <strong>Issued on:</strong> {{ \Carbon\Carbon::parse($intern->issuing_date)->format('d/m/Y') }}
         </div>
         <div class="meta-right">
             <strong>Certificate ID:</strong> {{ $intern->intern_code }}

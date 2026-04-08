@@ -82,7 +82,7 @@
         }
 
         .header-logo img {
-            height: 45px;
+            height: 55px;
             display: inline-block;
         }
 
@@ -196,7 +196,7 @@
         }
 
         .footer-link {
-            color: #444;
+            color: #2808f8;
             text-decoration: none;
         }
 
@@ -226,7 +226,7 @@
                 <div class="header-item header-logo">
                     <img src="{{ $logo }}" alt="TechStrota">
                 </div>
-                <div class="header-item header-tel">Tel: +91 81600 72383</div>
+                <div class="header-item header-tel">Tel: +91 81288 40055</div>
             </div>
         </div>
 
