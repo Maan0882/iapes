@@ -87,8 +87,6 @@
                     }
                 }
 
-                .cert-scale-wrapper {}
-
                 .cert {
                     position: relative;
                     width: 297mm;
@@ -336,8 +334,7 @@
                                             $rot = mt_rand(-30, 30);
                                             $iconUrl = "https://cdn.simpleicons.org/{$icon}/FF7043";
                                         @endphp
-                                        <img src="{{ $iconUrl }}"
-                                            style="position:absolute; top:{{ $top }}%; left:{{ $left }}%; width:{{ $size }}mm; opacity:0.18; transform:rotate({{ $rot }}deg);">
+                                        <img src="{{ $iconUrl }}"style="position:absolute; top:{{ $top }}%; left:{{ $left }}%; width:{{ $size }}mm; opacity:0.18; transform:rotate({{ $rot }}deg);">
                                     @endif
                                 @endforeach
                             </div>
