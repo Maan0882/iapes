@@ -223,7 +223,14 @@
                 $internName       = $intern->offer_letters->name ?? $intern->application->name   ?? 'Intern';
                 $internCollege    = $intern->offer_letters->college ?? $intern->application->college ?? '';
                 $internDegree     = $intern->offerLetter->degree ?? $intern->application->degree ?? '';
-                    
+                
+                $startDate = \Carbon\Carbon::parse($intern->offer_letters->joining_date);
+                $endDate   = \Carbon\Carbon::parse($intern->offer_letters->completion_date);
+                $totalDays = $startDate->diffInDays($endDate) + 1; 
+                
+                // Calculate hours
+                $workingHoursValue = $intern->offer_letters->working_hours ?: 5;
+                $totalHours = ($workingHoursValue > 40) ? $workingHoursValue : ($totalDays * $workingHoursValue);
             @endphp
         <div class="page-wrapper">
             <img src="{{ $logo }}" class="watermark" alt="Watermark">
@@ -231,7 +238,7 @@
                 <div class="header-top">
                     <div class="header-item header-email">Email: info@techstrota.com</div>
                     <div class="header-item header-logo">
-                        <img src="{{ $logo }}" alt="TechStrota">
+                        <img src="{{ $logo }}" alt="Techstrota">
                     </div>
                     <div class="header-item header-tel">Tel: +91 81600 72383</div>
                 </div>
@@ -242,7 +249,7 @@
 
                 <div class="meta-row">
                     <div class="meta-left">
-                        <strong>From:</strong> TechStrota<br>
+                        <strong>From:</strong> Techstrota<br>
                         <strong>Issued on:</strong> {{ \Carbon\Carbon::parse($intern->issuing_date)->format('d/m/Y') }}
                     </div>
                     <div class="meta-right">
@@ -250,17 +257,11 @@
                     </div>
                 </div>
 
-            <div class="content-p">
-                This is to certify that <strong>{{ $internName }}</strong>
-                @if($internCollege)
-                    studying at <strong>{{ $internCollege }}</strong>,
-                        @if($internDegree) 
-                            pursuing <strong>{{ $intern->offerLetter->degree ?? $intern->application->degree ?? 'N/A' }}</strong> degree 
-                        @endif
-                @endif
-                has completed internship successfully for the period of 
-                (<strong>{{ \Carbon\Carbon::parse($intern->offer_letters->joining_date)->format('d/m/Y') }} till {{ \Carbon\Carbon::parse($intern->offer_letters->completion_date)->format('d/m/Y') }}</strong>).
-            </div>
+                <div class="content-p">
+                    This is to certify that <strong>{{ $internName }}</strong>@if($internCollege), a student of <strong>{{ $internDegree }}</strong>,@endif has successfully completed the <strong>{{ $totalDays }} Days ({{ $totalHours }} Hours)</strong> with <strong>Grade {{ $intern->grade ?? 'A' }}</strong>. 
+                    The internship was carried out for the course titled <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by <strong>Techstrota</strong>@if($internCollege) and facilitated by <strong>{{ $internCollege }}@if($intern->offer_letters->university), {{ $intern->offer_letters->university }}@endif</strong>@endif. 
+                    The internship duration was from <strong>{{ $startDate->format('d/m/Y') }}</strong> to <strong>{{ $endDate->format('d/m/Y') }}</strong> at Techstrota. 156, K-10 Atlantis, Near Genda Circle, Vadodara, Gujarat – 390007
+                </div>
 
                 @if($intern->project_description)
                     <div class="skills-list">
