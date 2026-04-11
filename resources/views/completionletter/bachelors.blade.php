@@ -3,6 +3,7 @@
 @section('content')
     @php
         $internName = $intern->offer_letters->name ?? $intern->application->name ?? 'Intern';
+        $internUniversity = $intern->offer_letters->university ??  '';
         $internCollege = $intern->offer_letters->college ?? $intern->application->college ?? '';
         $internDegree = $intern->offerLetter->degree ?? $intern->application->degree ?? '';
 
@@ -41,14 +42,14 @@
     </div>
 
     <div class="content-p">
-        This is to certify that <strong>{{ $internName }}</strong>@if($internCollege), a student of
+        This is to certify that <strong>{{ $internName }}</strong>@if($internCollege || $internUniversity), a student of
         <strong>{{ $internDegree }}</strong>,@endif has successfully completed the <strong>{{ $workingDays }} Days
             @if($isShortTerm) ({{ $totalHours }} Hours) with Grade {{ $intern->grade ?? 'A' }}@endif</strong>.
         The internship was carried out for the course titled
         <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by
-        <strong>Techstrota</strong>@if($internCollege) and facilitated by
-            <strong>{{ $internCollege }}@if($intern->offer_letters->university),
-        {{ $intern->offer_letters->university }}@endif</strong>@endif.
+        <strong>Techstrota</strong>@if($internCollege || $internUniversity) and facilitated by
+            <strong>{{ $internCollege }}@if($internUniversity)
+        {{ $internUniversity }}@endif</strong>@endif.
         The internship duration was from <strong>{{ $startDate->format('d/m/Y') }}</strong> to
         <strong>{{ $endDate->format('d/m/Y') }}</strong> at Techstrota. 503, Sterling Centre, R C Dutt Road, Near Fairfield
         Hotel, Alkapuri, Vadodara, Gujarat - 390007
