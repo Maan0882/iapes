@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('intern_image')->nullable();
             $table->string('name');
             $table->string('email')->unique();
-            $table->date('joining_date');
+            $table->date('issuing_date')->nullable();
             $table->string('project_name')
                 ->nullable();
             $table->text('project_description')

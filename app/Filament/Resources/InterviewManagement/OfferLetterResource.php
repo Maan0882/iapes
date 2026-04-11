@@ -217,7 +217,6 @@ class OfferLetterResource extends Resource
 
                         TextInput::make('working_hours')
                             ->label('Working Hours')
-                            ->numeric()
                             ->placeholder('e.g. 40 hours per week')
                             ->required(),
                         
