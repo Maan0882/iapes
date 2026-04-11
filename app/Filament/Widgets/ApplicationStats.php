@@ -27,11 +27,12 @@ class ApplicationStats extends BaseWidget
             return Application::whereDate(
             'created_at',
             Carbon::today()->subDays($day)
-            )->count();
+            )
+            ->count();
         });
 
         return [
-            Stat::make('Total Applications', Application::count())
+            Stat::make('Total Applications', Application::whereNotIn('status', ['pending', 'verified'])->count())
             ->description('Total applications received')
             ->descriptionIcon('heroicon-m-document-text')
             ->color('primary')
