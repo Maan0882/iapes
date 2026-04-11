@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,12 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif;
             margin: 0;
             padding: 0;
             color: #000;
             line-height: 1.5;
-            background: #a4a4a4;
+            background: #fdfdfd;
         }
 
         .page-wrapper {
@@ -32,7 +33,12 @@
             flex-direction: column;
         }
 
-        header, main, footer { position: relative; z-index: 10; }
+        header,
+        main,
+        footer {
+            position: relative;
+            z-index: 10;
+        }
 
         .watermark {
             position: absolute;
@@ -50,7 +56,8 @@
             position: relative;
             margin-bottom: 30px;
             padding-bottom: 5px;
-            border-bottom: 2pt solid #f39200; /* Orange Line */
+            border-bottom: 2pt solid #f39200;
+            /* Orange Line */
         }
 
         .header-top {
@@ -121,7 +128,8 @@
             vertical-align: top;
         }
 
-        p, .content-p {
+        p,
+        .content-p {
             font-size: 15.5px;
             margin-bottom: 18px;
             text-align: justify;
@@ -179,7 +187,8 @@
         }
 
         .footer-line {
-            border-top: 2pt solid #f39200; /* Orange Line */
+            border-top: 2pt solid #f39200;
+            /* Orange Line */
             /* border-top: 1px solid #ddd; */
             margin-bottom: 15px;
         }
@@ -220,6 +229,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="page-wrapper">
         <img src="{{ $logo }}" class="watermark" alt="Watermark">
@@ -246,11 +256,13 @@
         <div class="footer">
             <div class="footer-line"></div>
             <div class="footer-content">
-                <span class="footer-brand">Techstrota</span> | <a href="https://www.techstrota.com" class="footer-link">www.techstrota.com</a><br>
+                <span class="footer-brand">Techstrota</span> | <a href="https://www.techstrota.com"
+                    class="footer-link">www.techstrota.com</a><br>
                 503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri, Vadodara, Gujarat - 390007
             </div>
             <span class="system-remark">This is a system-generated document.</span>
         </div>
     </div>
 </body>
+
 </html>
