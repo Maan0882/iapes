@@ -29,8 +29,7 @@ class EditIntern extends EditRecord
         // Get all data from the form fields
         $data = $this->form->getRawState();
         
-        // The current Intern model instance
-        $intern = $this->record;
+        $intern = $this->record->fresh(['application', 'offerletter']);
 
         // 1. Update Application table
         if ($intern->application) {
@@ -42,14 +41,15 @@ class EditIntern extends EditRecord
         }
 
         // 2. Update Offer Letter table
-        if ($intern->offer_letters) {
-            $intern->offer_letters->update([
-                'name'                => $data['intern_name'],
-                //'joining_date'        => $data['joining_date'],
-                'completion_date'     => $data['completion_date'],
-                'internship_role'     => $data['internship_role'],
-                'internship_position' => $data['internship_position'],
-                'university'          => $data['university'],
+        if ($intern->offerletter) {
+            $intern->offerletter->update([
+                'name'                => $data['intern_name']         ?? $intern->offerletter->name,
+                'completion_date'     => $data['completion_date']     ?? $intern->offerletter->completion_date,
+                'internship_role'     => $data['internship_role']     ?? $intern->offerletter->internship_role,
+                'internship_position' => $data['internship_position'] ?? $intern->offerletter->internship_position,
+                'university'          => $data['university']          ?? $intern->offerletter->university,
+                'college'             => $data['college']             ?? $intern->offerletter->college,
+                'degree'              => $data['degree']              ?? $intern->offerletter->degree,
             ]);
         }
 

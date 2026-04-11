@@ -126,40 +126,61 @@ class InternResource extends Resource
                     ]),
 
                 Section::make('Editable Fetched Information')
-                    ->description('Changes here will update the Application and Offer Letter records.')
+                    ->description('Changes here will update the Offer Letter and Application records.')
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('intern_name')
                                 ->label('Full Name')
                                 ->required()
+                                ->dehydrated(true) // Keep value on submit
                                 ->afterStateHydrated(function ($component, $record) {
-                                    // Prefer offer letter name over application name
                                     $component->state(
-                                        $record?->offerletter?->name 
+                                        $record?->offerletter?->name
                                         ?? $record?->application?->name
                                     );
                                 }),
+ 
                             TextInput::make('degree')
                                 ->label('Degree/Course')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->application?->degree)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->degree ?? $record?->application?->degree
+                                )),
+ 
                             TextInput::make('college')
                                 ->label('College')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->college ?? $record?->application?->college)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->college ?? $record?->application?->college
+                                )),
+ 
                             TextInput::make('university')
                                 ->label('University')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->university)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->university
+                                )),
+ 
                             TextInput::make('internship_role')
                                 ->label('Role')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->internship_role)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->internship_role
+                                )),
+ 
                             TextInput::make('internship_position')
                                 ->label('Position')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->internship_position)),
-                            // DatePicker::make('joining_date')
-                            //     ->label('Joining Date')
-                            //     ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->joining_date)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->internship_position
+                                )),
+ 
                             DatePicker::make('completion_date')
                                 ->label('Completion Date')
-                                ->afterStateHydrated(fn ($component, $record) => $component->state($record?->offer_letters?->completion_date)),
+                                ->dehydrated(true)
+                                ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                    $record?->offerletter?->completion_date
+                                )),
                         ]),
                     ]),
             ]);

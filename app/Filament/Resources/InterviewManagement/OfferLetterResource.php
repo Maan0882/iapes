@@ -51,11 +51,11 @@ class OfferLetterResource extends Resource
                                 'general'              => 'General Internship',
                             ])
                             ->required()
-                            ->live() // Re-renders form on change
+                            ->live()
                             ->placeholder('Select a template to continue…'),
                     ]),
-
-                // ─── SECTION A: Application-based (non-general templates) ──────
+ 
+                // ─── SECTION A: Application selector (non-general templates only) ──
                 Section::make('Intern Selection')
                     ->description('Select interns from the same college to generate letters in bulk.')
                     ->visible(fn (Get $get) => filled($get('template')) && $get('template') !== 'general')
@@ -65,8 +65,10 @@ class OfferLetterResource extends Resource
                             ->multiple()
                             ->options(function (Get $get, ?OfferLetter $record) {
                                 $query = Application::where('status', 'Shortlisted')
-                                    ->whereNotNull('name')      // ← MUST add these
-                                    ->whereNotNull('id'); 
+                                    ->whereNotNull('name')
+                                    ->where('name', '!=', '')
+                                    ->whereNotNull('id');
+ 
                                 $query->where(function ($q) use ($record) {
                                     $q->whereDoesntHave('offerLetter')
                                     ->orWhereHas('offerLetter', function ($subQ) use ($record) {
@@ -77,7 +79,7 @@ class OfferLetterResource extends Resource
                                         }
                                     });
                                 });
-
+ 
                                 if (!$record) {
                                     $selectedIds = $get('applications') ?? [];
                                     if (!empty($selectedIds)) {
@@ -87,30 +89,51 @@ class OfferLetterResource extends Resource
                                         }
                                     }
                                 }
-
-                                return $query->get()->mapWithKeys(function ($app) {
-                                    $name    = (string) ($app->name    ?? 'Unnamed Intern');
-                                    $college = (string) ($app->college ?? 'No College Listed');
-                                    $degree  = (string) ($app->degree  ?? 'No Degree Listed');
-                                    $id      = (int) $app->id;
-
-                                    return [$id => "{$name} - {$college} ({$degree})"];
-                                });
+ 
+                                return $query->get()
+                                    ->mapWithKeys(function ($app) {
+                                        $name    = trim((string) ($app->name    ?? '')) ?: 'Unnamed Intern';
+                                        $college = trim((string) ($app->college ?? '')) ?: 'No College Listed';
+                                        $degree  = trim((string) ($app->degree  ?? '')) ?: 'No Degree Listed';
+                                        $id      = (int) $app->id;
+ 
+                                        return [$id => "{$name} - {$college} ({$degree})"];
+                                    })
+                                    // Final safety: Filament throws TypeError if ANY label is null/empty
+                                    ->filter(fn ($label, $id) => is_string($label) && $label !== '');
+                            })
+                            // Safely resolve the label for already-selected values (e.g. on edit load)
+                            // without this, Filament passes null to isOptionDisabled for saved selections
+                            ->getOptionLabelsUsing(function (array $values): array {
+                                return Application::whereIn('id', $values)
+                                    ->get()
+                                    ->mapWithKeys(function ($app) {
+                                        $name    = trim((string) ($app->name    ?? '')) ?: 'Unnamed Intern';
+                                        $college = trim((string) ($app->college ?? '')) ?: 'No College Listed';
+                                        $degree  = trim((string) ($app->degree  ?? '')) ?: 'No Degree Listed';
+ 
+                                        return [(int) $app->id => "{$name} - {$college} ({$degree})"];
+                                    })
+                                    ->toArray();
                             })
                             ->live()
                             ->afterStateHydrated(function (Set $set, ?OfferLetter $record, $state) {
                                 if ($record) {
-                                    $set('intern_name', $record->name);
-                                    $set('university',  $record->university);
-                                    $set('college',     $record->college);
-                                    $set('degree',      $record->degree); // Add this
+                                    $set('name',       $record->name);
+                                    $set('university', $record->university);
+                                    $set('college',    $record->college);
+                                    $set('degree',     $record->degree);
+                                    $set('email',      $record->email);
+                                    $set('phone',      $record->phone);
                                 } elseif (!empty($state)) {
                                     $app = Application::find(is_array($state) ? $state[0] : $state);
                                     if ($app) {
-                                        $set('intern_name', $app->name);
-                                        $set('university',  $app->college);
-                                        $set('college',     $app->college);
-                                        $set('degree',      $app->degree); // Add this
+                                        $set('name',       $app->name);
+                                        $set('university', $app->college);
+                                        $set('college',    $app->college);
+                                        $set('degree',     $app->degree);
+                                        $set('email',      $app->email ?? null);
+                                        $set('phone',      $app->phone ?? null);
                                     }
                                 }
                             })
@@ -118,41 +141,24 @@ class OfferLetterResource extends Resource
                                 if (!empty($state) && count($state) === 1) {
                                     $app = Application::find($state[0]);
                                     if ($app) {
-                                        $set('intern_name', $app->name);
-                                        $set('university',  $app->college);
-                                        $set('college',     $app->college);
-                                        $set('degree',      $app->degree); // Add this
+                                        $set('name',       $app->name);
+                                        $set('university', $app->college);
+                                        $set('college',    $app->college);
+                                        $set('degree',     $app->degree);
+                                        $set('email',      $app->email ?? null);
+                                        $set('phone',      $app->phone ?? null);
                                     }
                                 }
                                 self::updateCompletionDate($set, $get);
                             }),
-
-                        Forms\Components\Grid::make(2)->schema([
-                            TextInput::make('name')
-                                ->label('Intern Name (Editable)')
-                                ->dehydrated(true)
-                                ->helperText('Pre-fills from first selected intern but can be changed.')
-                                ->required(),
-
-                            TextInput::make('university')
-                                ->label('University/College')
-                                ->dehydrated(true)
-                                ->placeholder('Enter University Name'),
-
-                            TextInput::make('college')
-                                ->label('College')
-                                ->dehydrated(true)
-                                ->placeholder('Enter College Name'),
-                            TextInput::make('degree')
-                                ->label('Degree')
-                                ->placeholder('e.g. B.C.A.'),
-                        ]),
                     ]),
-
-                // ─── SECTION B: Standalone / Quick-Generate (general only) ────
+ 
+                    // ─── SECTION B: Intern details (only for general template, otherwise pre-filled) ──
                 Section::make('Intern Details')
-                    ->description('Fill in the intern\'s details directly — no application required.')
-                    ->visible(fn (Get $get) => $get('template') === 'general')
+                    ->description(fn (Get $get) => $get('template') === 'general'
+                        ? 'Fill in the intern\'s details directly — no application required.'
+                        : 'Pre-filled from the selected application. All fields are editable.')
+                    ->visible(fn (Get $get) => filled($get('template')))
                     ->schema([
                         Forms\Components\Grid::make(2)->schema([
                             TextInput::make('name')
@@ -160,46 +166,48 @@ class OfferLetterResource extends Resource
                                 ->dehydrated(true)
                                 ->placeholder('e.g. Rahul Sharma')
                                 ->required()
-                                ->regex('/^(?=(?:.*?\s){1,5}(?![^\s]*\s))[a-zA-Z\s]+$/') // Validation: Only alphabets and spaces, with exactly 3 to 5 spaces total
+                                ->helperText('Pre-fills from the selected intern but can be changed.')
+                                ->regex('/^[a-zA-Z\s]+$/')
                                 ->validationMessages([
-                                    'regex' => 'The name must only contain letters and white spaces.',
+                                    'regex' => 'The name must only contain letters and spaces.',
                                 ]),
-
+ 
                             TextInput::make('college')
                                 ->label('College / Institution')
                                 ->dehydrated(true)
                                 ->placeholder('e.g. M B Patel College of Engineering'),
-                                
+ 
                             TextInput::make('university')
                                 ->label('University')
                                 ->dehydrated(true)
                                 ->placeholder('e.g. GTU'),
-
+ 
                             TextInput::make('degree')
                                 ->label('Degree')
                                 ->dehydrated(true)
-                                ->placeholder('e.g. B.Tech'),
-
+                                ->placeholder('e.g. B.Tech / B.C.A.'),
+ 
                             TextInput::make('email')
                                 ->label('Intern Email')
+                                ->dehydrated(true)
                                 ->email()
                                 ->placeholder('intern@example.com'),
-
+ 
                             TextInput::make('phone')
                                 ->label('Phone Number')
-                                ->tel() // Ensures numeric keyboard on mobile
-                                ->maxLength(15) // Sets the hard character limit
+                                ->dehydrated(true)
+                                ->tel()
+                                ->maxLength(15)
                                 ->placeholder('+91 XXXXX XXXXX')
-                               // This regex allows a leading + and then only digits
-                                ->regex('/^\+?[0-9]+$/') 
+                                ->regex('/^\+?[0-9]+$/')
                                 ->validationMessages([
                                     'regex' => 'The phone number must contain only digits and an optional leading +.',
-                                    'max' => 'The phone number cannot exceed 15 characters.',
+                                    'max'   => 'The phone number cannot exceed 15 characters.',
                                 ]),
                         ]),
                     ]),
-
-                // ─── INTERNSHIP DETAILS (shared by both flows) ────────────────
+ 
+                // ─── INTERNSHIP DETAILS (shared by all templates) ──────────────
                 Forms\Components\Section::make('Internship Details')
                     ->visible(fn (Get $get) => filled($get('template')))
                     ->columns(2)
@@ -209,34 +217,33 @@ class OfferLetterResource extends Resource
                             ->native(true)
                             ->live()
                             ->afterStateUpdated(fn (Set $set, Get $get) => self::updateCompletionDate($set, $get))
-                            ->minDate(now()->subYear())   // Restrict joining date to be within 1 year of today (past or future)
+                            ->minDate(now()->subYear())
                             ->maxDate(now()->addYears(2)),
-                            
-
+ 
                         DatePicker::make('completion_date')
                             ->required()
                             ->native(true)
-                            ->minDate(fn (Get $get) => $get('joining_date') ?? now())  // Constraint: Prevents picking a date before joining in the UI
-                            ->maxDate(now()->addYears(2)) // Prevent absurd years like 2620
+                            ->minDate(fn (Get $get) => $get('joining_date') ?? now())
+                            ->maxDate(now()->addYears(2))
                             ->validationMessages([
                                 'after' => 'The completion date must be a date after the joining date.',
                             ]),
-
+ 
                         TextInput::make('internship_role')
                             ->label('Internship Role')
                             ->placeholder('Web Developer')
                             ->required(),
-
+ 
                         TextInput::make('internship_position')
                             ->label('Internship Position')
                             ->placeholder('e.g. Junior Developer Intern')
                             ->required(),
-
+ 
                         TextInput::make('working_hours')
                             ->label('Working Hours')
                             ->placeholder('e.g. 40 hours per week')
                             ->required(),
-                        
+ 
                         Forms\Components\Section::make('Offer Letter Body')
                             ->visible(fn (Get $get) => filled($get('template')))
                             ->schema([
@@ -253,7 +260,7 @@ class OfferLetterResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ]),
-
+ 
                 Forms\Components\Placeholder::make('note')
                     ->content('The Offer Letter Code will be generated automatically upon saving.')
                     ->columnSpanFull()
