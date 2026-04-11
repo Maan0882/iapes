@@ -41,7 +41,7 @@
     </div>
 
     <div class="content-p">
-        This is to certify that <strong>{{ $internName }}</strong>@if($internCollege), a student of <strong>{{ $internDegree }}</strong>,@endif has successfully completed the <strong>{{ $workingDays }} Days @if($isShortTerm) ({{ $totalHours }} Hours) @endif</strong> with <strong>Grade {{ $intern->grade ?? 'A' }}</strong>. 
+        This is to certify that <strong>{{ $internName }}</strong>@if($internCollege), a student of <strong>{{ $internDegree }}</strong>,@endif has successfully completed the <strong>{{ $workingDays }} Days @if($isShortTerm) ({{ $totalHours }} Hours) with Grade {{ $intern->grade ?? 'A' }}@endif</strong>. 
         The internship was carried out for the course titled <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by <strong>Techstrota</strong>@if($internCollege) and facilitated by <strong>{{ $internCollege }}@if($intern->offer_letters->university), {{ $intern->offer_letters->university }}@endif</strong>@endif. 
         The internship duration was from <strong>{{ $startDate->format('d/m/Y') }}</strong> to <strong>{{ $endDate->format('d/m/Y') }}</strong> at Techstrota. 156, K-10 Atlantis, Near Genda Circle, Vadodara, Gujarat – 390007
     </div>
