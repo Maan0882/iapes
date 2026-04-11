@@ -49,7 +49,6 @@
         @else
         the internship.
         @endif
-            @if($isShortTerm) with Grade <strong>{{ $intern->grade ?? 'A' }}</strong>@endif.
         The internship was carried out for the course titled
         <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by
         <strong>Techstrota</strong>@if($internCollege || $internUniversity) and facilitated by
