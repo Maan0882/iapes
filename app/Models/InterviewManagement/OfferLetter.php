@@ -17,7 +17,8 @@ class OfferLetter extends Model
        // 'intern_id',
         'template',
         'description',
-        'college',   // ← add this too
+        'college',
+        'degree',   // ← add this too
         'name',
         'email',
         'phone',

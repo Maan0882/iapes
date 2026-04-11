@@ -64,7 +64,9 @@ class OfferLetterResource extends Resource
                             ->label('Select Interns')
                             ->multiple()
                             ->options(function (Get $get, ?OfferLetter $record) {
-                                $query = Application::where('status', 'Shortlisted');
+                                $query = Application::where('status', 'Shortlisted')
+                                    ->whereNotNull('name')      // ← MUST add these
+                                    ->whereNotNull('id'); 
                                 $query->where(function ($q) use ($record) {
                                     $q->whereDoesntHave('offerLetter')
                                     ->orWhereHas('offerLetter', function ($subQ) use ($record) {
@@ -86,9 +88,14 @@ class OfferLetterResource extends Resource
                                     }
                                 }
 
-                                return $query->get()->mapWithKeys(
-                                    fn ($app) => [$app->id => "{$app->name} - {$app->college}"]
-                                );
+                                return $query->get()->mapWithKeys(function ($app) {
+                                    $name    = (string) ($app->name    ?? 'Unnamed Intern');
+                                    $college = (string) ($app->college ?? 'No College Listed');
+                                    $degree  = (string) ($app->degree  ?? 'No Degree Listed');
+                                    $id      = (int) $app->id;
+
+                                    return [$id => "{$name} - {$college} ({$degree})"];
+                                });
                             })
                             ->live()
                             ->afterStateHydrated(function (Set $set, ?OfferLetter $record, $state) {
@@ -96,12 +103,14 @@ class OfferLetterResource extends Resource
                                     $set('intern_name', $record->name);
                                     $set('university',  $record->university);
                                     $set('college',     $record->college);
+                                    $set('degree',      $record->degree); // Add this
                                 } elseif (!empty($state)) {
                                     $app = Application::find(is_array($state) ? $state[0] : $state);
                                     if ($app) {
                                         $set('intern_name', $app->name);
                                         $set('university',  $app->college);
                                         $set('college',     $app->college);
+                                        $set('degree',      $app->degree); // Add this
                                     }
                                 }
                             })
@@ -112,6 +121,7 @@ class OfferLetterResource extends Resource
                                         $set('intern_name', $app->name);
                                         $set('university',  $app->college);
                                         $set('college',     $app->college);
+                                        $set('degree',      $app->degree); // Add this
                                     }
                                 }
                                 self::updateCompletionDate($set, $get);
@@ -133,6 +143,9 @@ class OfferLetterResource extends Resource
                                 ->label('College')
                                 ->dehydrated(true)
                                 ->placeholder('Enter College Name'),
+                            TextInput::make('degree')
+                                ->label('Degree')
+                                ->placeholder('e.g. B.C.A.'),
                         ]),
                     ]),
 
@@ -157,11 +170,15 @@ class OfferLetterResource extends Resource
                                 ->dehydrated(true)
                                 ->placeholder('e.g. M B Patel College of Engineering'),
                                 
-
                             TextInput::make('university')
                                 ->label('University')
                                 ->dehydrated(true)
                                 ->placeholder('e.g. GTU'),
+
+                            TextInput::make('degree')
+                                ->label('Degree')
+                                ->dehydrated(true)
+                                ->placeholder('e.g. B.Tech'),
 
                             TextInput::make('email')
                                 ->label('Intern Email')
