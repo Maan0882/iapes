@@ -6,7 +6,7 @@
         $internUniversity = $intern->offer_letters->university ??  '';
         $internCollege = $intern->offer_letters->college ?? $intern->application->college ?? '';
         $internDegree = $intern->offerLetter->degree ?? $intern->application->degree ?? '';
-
+        $uni = $internCollege ?: $internUniversity;
         $startDate = \Carbon\Carbon::parse($intern->offer_letters->joining_date);
         $endDate = \Carbon\Carbon::parse($intern->offer_letters->completion_date);
 
@@ -52,7 +52,7 @@
         The internship was carried out for the course titled
         <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by
         <strong>Techstrota</strong>@if($internCollege || $internUniversity) and facilitated by
-            <strong>{{ $internCollege ?? $internUniversity }}</strong>@endif.
+            <strong>{{ $uni }}</strong>@endif.
         The internship duration was from <strong>{{ $startDate->format('d/m/Y') }}</strong> to
         <strong>{{ $endDate->format('d/m/Y') }}</strong> at Techstrota. 503, Sterling Centre, R C Dutt Road, Near Fairfield
         Hotel, Alkapuri, Vadodara, Gujarat - 390007

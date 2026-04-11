@@ -6,7 +6,7 @@
         $internUniversity = $intern->offer_letters->university ??  '';
         $internCollege = $intern->offer_letters->college ?? $intern->application->college ?? '';
         $internDegree = $intern->offerLetter->degree ?? $intern->application->degree ?? '';
-        $uni = $internUniversity ?: $internCollege;
+        $uni = $internCollege ?: $internUniversity;
         $startDate = \Carbon\Carbon::parse($intern->offer_letters->joining_date);
         $endDate = \Carbon\Carbon::parse($intern->offer_letters->completion_date);
 
