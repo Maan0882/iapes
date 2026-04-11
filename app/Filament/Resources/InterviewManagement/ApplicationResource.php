@@ -289,7 +289,6 @@ class ApplicationResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('status', '!=', 'pending'); 
-            // Or 'applied', depending on what you specifically want to hide
+            ->whereNotIn('status', ['pending', 'verified']);
     }
 }

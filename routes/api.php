@@ -12,15 +12,9 @@ Route::get('/user', function (Request $request) {
 Route::post('/send-verification', [AuthController::class, 'sendVerification']);
 Route::get('/verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('/submit', [AuthController::class, 'submitApplication']);
-// Public Routes
 Route::post('/intern/apply', [AuthController::class, 'submitApplication']);
-// //Route::post('/intern/login', [AuthController::class, 'loginIntern']);
 
 
-// Public Routes
-// Route::post('/intern/apply', [AuthController::class, 'submitApplication']);
-//Route::post('/intern/login', [AuthController::class, 'loginIntern']);
-//Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
 
 
 
