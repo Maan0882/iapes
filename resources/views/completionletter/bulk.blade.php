@@ -283,9 +283,12 @@
 
                 <div class="content-p">
                     This is to certify that <strong>{{ $internName }}</strong>@if($internCollege || $internUniversity), a student of
-                    <strong>{{ $internDegree }}</strong>,@endif has successfully completed the <strong>{{ $workingDays }}
-                        Days @if($isShortTerm) ({{ $totalHours }} Hours) with Grade
-                        {{ $intern->grade ?? 'A' }}@endif</strong>.
+                    <strong>{{ $internDegree }}</strong>,@endif has successfully completed 
+                    @if($isShortTerm)
+                        the <strong>{{ $workingDays }} Days ({{ $totalHours }} Hours)</strong> internship with Grade <strong>{{ $intern->grade ?? 'A' }}</strong>.
+                    @else
+                        the internship
+                    @endif
                     The internship was carried out for the course titled
                     <strong>“{{ $intern->offer_letters->internship_role }}”</strong>, conducted by
                     <strong>Techstrota</strong>@if($internCollege || $internUniversity) and facilitated by
