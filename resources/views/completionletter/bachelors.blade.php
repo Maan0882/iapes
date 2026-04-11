@@ -47,7 +47,7 @@
         @if($isShortTerm)
             the <strong>{{ $workingDays }} Days ({{ $totalHours }} Hours)</strong> internship with Grade <strong>{{ $intern->grade ?? 'A' }}</strong>.
         @else
-        the internship
+        the internship.
         @endif
             @if($isShortTerm) with Grade <strong>{{ $intern->grade ?? 'A' }}</strong>@endif.
         The internship was carried out for the course titled
