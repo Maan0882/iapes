@@ -181,7 +181,7 @@
 
                 .main-title {
                     font-family: 'Cormorant Garamond', serif;
-                    font-size: 38pt;
+                    font-size: 34pt;
                     font-weight: 900;
                     color: #073c70ff;
                     /* -webkit-text-stroke: 1.2pt #1a1f60ff; */
@@ -193,13 +193,13 @@
                 .recipient {
                     /* Best Premium Options: 'Cinzel Decorative', 'Great Vibes', 'Playfair Display' */
                     font-family: 'Cinzel Decorative';
-                    font-size: 52pt;
-                    font-weight: 700;
+                    /* font-size: 52pt; */
+                    font-weight: 600;
                     color: #db4f03ff;
                     margin: -4mm 0 2mm;
                     text-transform: capitalize;
                     -webkit-text-stroke: 1pt #4d1d03ff;
-                    letter-spacing: 1pt;
+                    letter-spacing: 0.5pt;
                 }
 
                 .underline {
@@ -230,7 +230,8 @@
                 .sig-box {
                     width: 60mm;
                     text-align: center;
-                    margin-bottom: -2mm;
+                    margin-bottom: -5mm;
+                    /* margin-right: -15mm; */
                 }
 
                 .qr {
@@ -345,7 +346,13 @@
                                 <p
                                     style="font-size:22pt;color:black;margin:6mm 0;font-weight:900;font-family:'Cormorant Garamond',serif;">
                                     This is to certify that</p>
-                                <div class="recipient">{{ Str::title($offer->application?->name ?? $offer->name)}}</div>
+                                @php
+                                    $recipientName = Str::title($offer->application?->name ?? $offer->name);
+                                    $fontSize = strlen($recipientName) > 23 ? '45pt' : '52pt';
+                                @endphp
+                                <div class="recipient"style="font-size:{{ $fontSize }};">
+                                    {{ $recipientName }}
+                                </div>
                                 <div class="underline"></div>
                                 <div class="body-text">
                                     has successfully completed a <b>{{ $offer->internship_role ?? 'Software Development' }}</b>
@@ -354,7 +361,8 @@
                                     <b>{!! !empty($offer->joining_date) ? \Carbon\Carbon::parse($offer->joining_date)->format('dS F Y') : '01 Dec 2025' !!}</b>
                                     to
                                     <b>{!! !empty($offer->completion_date) ? \Carbon\Carbon::parse($offer->completion_date)->format('dS F Y') : '31 Dec 2025' !!}</b>.
-                                    During this tenure, the intern demonstrated exceptional professional conduct and technical
+                                    During this tenure, the intern demonstrated exceptional professional 
+                                    <br/>conduct and technical
                                     proficiency.
                                 </div>
                                 <div class="footer">
