@@ -362,8 +362,7 @@
                                     to
                                     <b>{!! !empty($offer->completion_date) ? \Carbon\Carbon::parse($offer->completion_date)->format('dS F Y') : '31 Dec 2025' !!}</b>.
                                     During this tenure, the intern demonstrated exceptional professional 
-                                    <br/>conduct and technical
-                                    proficiency.
+                                    conduct and technical proficiency.
                                 </div>
                                 <div class="footer">
                                     <div class="sig-box sig">
