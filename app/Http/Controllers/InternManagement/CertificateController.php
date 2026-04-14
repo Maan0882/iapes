@@ -143,11 +143,11 @@ class CertificateController extends Controller
         ])->render();
 
         $browsershot = Browsershot::html($html)
-            ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
-            ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
-            // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-            // ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
-            // ->setChromePath(env('CHROME_PATH'))
+            // ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+            // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+            ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+            ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
+            ->setChromePath(env('CHROME_PATH'))
             ->format('A4')
             ->landscape()
             ->showBackground()
