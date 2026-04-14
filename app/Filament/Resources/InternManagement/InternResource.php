@@ -298,9 +298,9 @@ class InternResource extends Resource
                     ->url(fn (Intern $record) => route('intern.completion_letter.view', ['id' => $record->id]))
                     ->openUrlInNewTab(),
 
-                Tables\Actions\Action::make('print_completion_letter')
-                    ->label('Completion Letter')
-                    ->icon('heroicon-o-document-check')
+                Tables\Actions\Action::make('download_completion_letter')
+                    ->label('Download Completion Letter')
+                    ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
                     ->visible(fn (Intern $record) => 
                         ($record->offerLetter?->is_accepted ?? false) && 
@@ -323,8 +323,8 @@ class InternResource extends Resource
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('print_certificate')
-                    ->label('Certificate')
-                    ->icon('heroicon-o-document-arrow-down')
+                    ->label('Download Certificate')
+                    ->icon('heroicon-o-arrow-down-tray')
                     ->color('info')
                     ->visible(fn (Intern $record) => 
                         ($record->offerLetter?->is_accepted ?? false) && 

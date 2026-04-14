@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', sans-serif;
             margin: 0;
             padding: 0;
             color: #000;
@@ -104,7 +104,7 @@
             font-size: 24px;
             font-weight: 700;
             text-decoration: underline;
-            margin: 40px 0 30px 0;
+            margin: 10px 0 30px 0;
             text-transform: uppercase;
         }
 
@@ -205,7 +205,7 @@
         }
 
         .footer-link {
-            color: #444;
+            color: #2808f8;
             text-decoration: none;
         }
 
@@ -264,7 +264,7 @@
                     <div class="header-item header-logo">
                         <img src="{{ $logo }}" alt="Techstrota">
                     </div>
-                    <div class="header-item header-tel">Tel: +91 81600 72383</div>
+                    <div class="header-item header-tel">Tel: +91 81288 40055</div>
                 </div>
             </div>
 
