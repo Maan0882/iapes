@@ -195,7 +195,7 @@
 
         .footer-content {
             font-size: 14px;
-            color: #666;
+            color: #000;
             line-height: 1.4;
             font-weight: 700;
         }
