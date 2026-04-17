@@ -43,20 +43,20 @@
     }
 
     .date-section {
-        margin-top: 30px;
+        margin-top: 20px;
         text-align: right;
         font-weight: bold;
     }
 
     /* Modern Subject block utilizing company colors */
     .subject {
-        margin: 40px 0;
+        margin: 20px 0;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 8px 0;
-        border-top: 1.5px solid #0e72b4; /* Techstrota Blue */
-        border-bottom: 1.5px solid #f39200; /* Techstrota Orange */
+       /* border-top: 1.5px solid #0e72b4; /* Techstrota Blue */
+       /* border-bottom: 1.5px solid #f39200; /* Techstrota Orange */
         background-color: #fdfdfd;
     }
 
@@ -128,13 +128,13 @@
     <header>
         <table style="width: 100%; border: none; border-collapse: collapse;">
             <tr>
-                <td style="text-align: left; font-size: 12px; width: 30%; vertical-align: middle;">
+                <td style="text-align: left; font-size: 12px; width: 30%; vertical-align: bottom;">
                     <strong>Email:</strong> info@techstrota.com 
                 </td>
                 <td style="text-align: center; width: 40%; vertical-align: middle;">
                     <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Techstrota">
                 </td>
-                <td style="text-align: right; font-size: 12px; width: 30%; vertical-align: middle;">
+                <td style="text-align: right; font-size: 12px; width: 30%; vertical-align: bottom;">
                     <strong>Tel:</strong> +91 81288 40055
                 </td>
             </tr>
@@ -155,6 +155,10 @@
                     $internUniversity = $offer->university ?? $offer->application?->college ?? '';
                 @endphp
 
+                <div class="date-section">
+                    Date: {{ \Carbon\Carbon::parse($offer->offer_issue_date ?? now())->format('d/m/Y') }} 
+                </div>
+
                 <div class="address-section">
                     <strong>{{ strtoupper($internName) }}</strong>, <br>
                     @if($internCollege)
@@ -164,10 +168,6 @@
                         {{ $internUniversity }} <br>
                     @endif
                    
-                </div>
-
-                <div class="date-section">
-                    Date: {{ \Carbon\Carbon::parse($offer->created_at ?? now())->format('d/m/Y') }} 
                 </div>
 
                 <div class="subject">
@@ -205,8 +205,10 @@
                     <div style="float: left; width: 60%;">
                         For, <strong>TECHSTROTA</strong><br>
                         Yours Sincerely, <br><br><br><br>
-                        <strong>Jamod Badal</strong><br>
-                        CEO 
+                        <div class="signature-line">
+                            <strong>Jamod Badal</strong><br>
+                            CEO 
+                        </div>
                     </div>
                     <div style="float: right; width: 30%; text-align: center;">
                         <div class="signature-line">

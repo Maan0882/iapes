@@ -178,7 +178,7 @@
                     $internUniversity = $offer->university ?? $offer->application?->college ?? '';
                 @endphp
                 <div class="date-section">
-                    Date: {{ \Carbon\Carbon::parse($offer->created_at ?? '2026-03-13')->format('d/m/Y') }}
+                    Date: {{ \Carbon\Carbon::parse($offer->offer_issue_date ?? '2026-03-13')->format('d/m/Y') }}
                 </div>
 
                 <div class="recipient-info">

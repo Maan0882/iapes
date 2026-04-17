@@ -24,6 +24,7 @@ class OfferLetter extends Model
         'phone',
         'university',
         'internship_position',
+        'offer_issue_date',
     ];
     protected $casts = [
         'joining_date' => 'date',

@@ -243,6 +243,23 @@ class OfferLetterResource extends Resource
                             ->label('Working Hours')
                             ->placeholder('e.g. 40 hours per week')
                             ->required(),
+                        
+                        DatePicker::make('offer_issue_date')
+                            ->label('Offer Letter Issue on:')
+                            ->required()
+                            ->native(true)
+                           // Sets the earliest possible date to 7 days before joining
+                            ->minDate(fn (Get $get) => $get('joining_date') 
+                                ? \Illuminate\Support\Carbon::parse($get('joining_date'))->subDays(7) 
+                                : null
+                            )
+                            ->maxDate(fn (Get $get) => $get('joining_date')
+                            ? \Illuminate\Support\Carbon::parse($get('joining_date'))->subDay() 
+                            : null)
+                            ->validationMessages([
+                                'before' => 'The offer issue date must be at least one day before the joining date.',
+                                'after_or_equal' => 'The offer must be issued within 7 days of the joining date.',
+                            ]),
  
                         Forms\Components\Section::make('Offer Letter Body')
                             ->visible(fn (Get $get) => filled($get('template')))
