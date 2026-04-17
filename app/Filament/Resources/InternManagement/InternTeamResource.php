@@ -51,7 +51,7 @@ class InternTeamResource extends Resource
                             ->maxItems(3) //
                             ->relationship(name: 'interns', 
                                 titleAttribute: 'name', 
-                                modifyQueryUsing: function (Builder $query, Get $get) {
+                                modifyQueryUsing: function (Builder $query, Get $get, $record) {
                                 $batchId = $get('internship_batch_id');
 
                                 // If no batch is selected, don't show any interns
@@ -59,9 +59,13 @@ class InternTeamResource extends Resource
                                         return $query->whereNull('id'); 
                                     }
                                 
-                                // Only show interns from the chosen batch who don't have a team yet
-                                return $query->where('internship_batch_id', $batchId)
-                                            ->whereNull('intern_team_id'); 
+                               return $query->where('internship_batch_id', $batchId)
+                ->where(function ($query) use ($record) {
+                    // Show interns who don't have a team...
+                    $query->whereNull('intern_team_id')
+                        // ...OR interns who are already in THIS team (so they show up during edit)
+                        ->when($record, fn ($q) => $q->orWhere('intern_team_id', $record->id));
+                });
                             })
                             ->preload() // This forces the options to load immediately without typing
                             ->required(),

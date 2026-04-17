@@ -56,14 +56,17 @@ class InterviewAssignmentResource extends Resource
                     ->options([
                         'present' => 'Present',
                         'absent' => 'Absent',
-                    ]),
+                    ])
+                    ->live(),
 
                 Forms\Components\TextInput::make('problem_solving')
                     ->label('Problem Solving (Max 25)')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(25)
-                    ->required()
+                    // Conditional requirement logic
+                    ->required(fn (Forms\Get $get) => $get('attendance') === 'present')
+                    ->live()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                         $set('overall_score', ($state ?? 0) + ($get('communication') ?? 0));
@@ -74,7 +77,9 @@ class InterviewAssignmentResource extends Resource
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(25)
-                    ->required()
+                    // Conditional requirement logic
+                    ->required(fn (Forms\Get $get) => $get('attendance') === 'present')
+                    ->live()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                         $set('overall_score', ($state ?? 0) + ($get('problem_solving') ?? 0));

@@ -98,7 +98,7 @@ trait HasInterviewActions
         }
 
         Notification::make()
-            ->title("{$scheduledCount} Applicants Scheduled Successfully")
+            ->title("{$scheduledCount} Applicant's Interview Scheduled Successfully")
             ->success()
             ->send();
     }
