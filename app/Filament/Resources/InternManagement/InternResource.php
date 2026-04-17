@@ -13,14 +13,15 @@ use Filament\Forms\Components\{TextInput, TextArea, FileUpload, Select, DatePick
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\{Action, BulkAction, DeleteBulkAction, EditAction, ActionGroup};
 use Filament\Tables\Columns\{TextColumn, ToggleColumn, BadgeColumn, IconColumn};
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\View;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Spatie\Browsershot\Browsershot;
+use ZipArchive;
 use Filament\Forms\Set;
 use Filament\Forms\Get;
 
@@ -340,29 +341,141 @@ class InternResource extends Resource
             ->label('Actions'),
             ])
             ->bulkActions([
-                    Tables\Actions\BulkAction::make('bulk_print_completion_letter')
-                        ->label('Bulk Completion Letters')
-                        ->icon('heroicon-o-document-duplicate')
-                        ->action(function ($records, $livewire) {
-                            // Only pluck IDs for interns who have a template selected
-                            $ids = $records->whereNotNull('completion_letter_template')->pluck('id')->implode(',');
-                            
-                            if (empty($ids)) {
-                                Notification::make()->title('No templates selected for these records.')->danger()->send();
-                                return;
-                            }
+                    // --- COMPLETION LETTERS ---
+                    BulkAction::make('bulk_download_completion_letters')
+                        ->label('Bulk Download Letters (ZIP)')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->action(function ($records) {
+                            $zipFileName = 'completion_letters_' . now()->timestamp . '.zip';
+                            $zipPath = storage_path($zipFileName);
+                            $zip = new ZipArchive;
 
-                            $url = route('intern.completion_letter.download', ['id' => $ids]);
-                            $livewire->js("window.open('" . addslashes($url) . "', '_blank')");
+                            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+                                $logoPath = public_path('images/TsLogo.png');
+                                $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+                                foreach ($records as $intern) {
+                                    $template = $intern->completion_letter_template ?? 'bachelors';
+                                    
+                                    $html = View::make("completionletter.{$template}", [
+                                        'intern' => $intern,
+                                        'isPdf'  => true,
+                                        'logo'   => $logoBase64,
+                                    ])->render();
+
+                                    $pdfContent = Browsershot::html($html)
+                                        // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                        // ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
+                                        ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                        ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+                                        ->format('A4')
+                                        ->showBackground()
+                                        ->noSandbox()
+                                        ->pdf();
+
+                                    $fileName = str_replace(['/', '\\'], '-', $intern->intern_code) . '.pdf';
+                                    $zip->addFromString($fileName, $pdfContent);
+                                }
+                                $zip->close();
+                            }
+                            return response()->download($zipPath)->deleteFileAfterSend(true);
                         }),
-                    Tables\Actions\BulkAction::make('bulk_print_certificate')
-                        ->label('Bulk Certificate')
-                        ->icon('heroicon-o-document-arrow-down')
+
+                    BulkAction::make('bulk_print_completion_letters')
+                        ->label('Bulk Print Letters')
+                        ->icon('heroicon-o-printer')
+                        ->color('success')
+                        ->action(function ($records) {
+                            $logoPath = public_path('images/TsLogo.png');
+                            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+                            $html = View::make('completionletter.bulk', [
+                                'interns' => $records,
+                                'isPdf'   => true,
+                                'logo'    => $logoBase64,
+                            ])->render();
+
+                            $pdf = Browsershot::html($html)
+                                // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+                                ->format('A4')
+                                ->showBackground()
+                                ->noSandbox()
+                                ->pdf();
+
+                            return response()->streamDownload(fn () => print($pdf), 'completion_letters_bulk.pdf');
+                        }),
+                    // --- CERTIFICATES ---
+                    BulkAction::make('bulk_download_certificates')
+                        ->label('Bulk Download Certs (ZIP)')
+                        ->icon('heroicon-o-academic-cap')
                         ->color('info')
-                        ->action(function ($records, $livewire) {
-                            $ids = $records->pluck('id')->implode(',');
-                            $url = route('intern.certificate.download', ['id' => $ids]);
-                            $livewire->js("window.open('" . addslashes($url) . "', '_blank')");
+                        ->action(function ($records) {
+                            $zipFileName = 'certificates_' . now()->timestamp . '.zip';
+                            $zipPath = storage_path($zipFileName);
+                            $zip = new ZipArchive;
+
+                            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+                                $logoPath = public_path('images/TsLogo.png');
+                                $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+                                foreach ($records as $intern) {
+                                    $offer = $intern->offerletter;
+                                    if (!$offer) continue;
+
+                                    $html = View::make('certificate.certificate', [
+                                        'offers' => collect([$offer]),
+                                        'isPdf'  => true,
+                                        'logo'   => $logoBase64,
+                                        // If your view requires QR codes, you must generate them here or update the view 
+                                        // to handle logic as seen in CertificateController@prepareViewData
+                                    ])->render();
+
+                                    $pdfContent = Browsershot::html($html)
+                                        // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                        ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                        ->format('A4')
+                                        ->landscape() // Certificates are usually landscape
+                                        ->showBackground()
+                                        ->noSandbox()
+                                        ->pdf();
+
+                                    $fileName = 'certificate_' . str_replace(['/', '\\'], '-', $intern->intern_code) . '.pdf';
+                                    $zip->addFromString($fileName, $pdfContent);
+                                }
+                                $zip->close();
+                            }
+                            return response()->download($zipPath)->deleteFileAfterSend(true);
+                        }),
+
+                    BulkAction::make('bulk_print_certificates')
+                        ->label('Bulk Print Certs')
+                        ->icon('heroicon-o-printer')
+                        ->color('info')
+                        ->action(function ($records) {
+                            $offers = $records->map(fn($i) => $i->offerletter)->filter();
+                            $logoPath = public_path('images/TsLogo.png');
+                            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+                            $html = View::make('certificate.certificate', [
+                                'offers' => $offers,
+                                'isPdf'  => true,
+                                'logo'   => $logoBase64,
+                            ])->render();
+
+                            $pdf = Browsershot::html($html)
+                                // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+                                ->format('A4')
+                                ->landscape()
+                                ->showBackground()
+                                ->noSandbox()
+                                ->pdf();
+
+                            return response()->streamDownload(fn () => print($pdf), 'certificates_bulk.pdf');
                         }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]);
