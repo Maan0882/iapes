@@ -38,7 +38,7 @@
     }
 
     .address-section {
-        margin-top: 40px;
+        margin-top: 20px;
         line-height: 1.4;
     }
 
@@ -60,6 +60,10 @@
         background-color: #fdfdfd;
     }
 
+    .content {
+        margin-top: -20px;
+    }
+    
     /* List styling for modern readability */
     ul {
         margin-left: 20px;
@@ -128,13 +132,13 @@
     <header>
         <table style="width: 100%; border: none; border-collapse: collapse;">
             <tr>
-                <td style="text-align: left; font-size: 12px; width: 30%; vertical-align: bottom;">
+                <td style="text-align: left; font-size: 13px; width: 30%; vertical-align: bottom;">
                     <strong>Email:</strong> info@techstrota.com 
                 </td>
                 <td style="text-align: center; width: 40%; vertical-align: middle;">
                     <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo" alt="Techstrota">
                 </td>
-                <td style="text-align: right; font-size: 12px; width: 30%; vertical-align: bottom;">
+                <td style="text-align: right; font-size: 13px; width: 30%; vertical-align: bottom;">
                     <strong>Tel:</strong> +91 81288 40055
                 </td>
             </tr>
@@ -174,6 +178,7 @@
                     <strong>Subject: Intern Offer / Appointment Letter</strong> 
                 </div>
 
+                <div class="content">
                 <p>Dear <strong>{{ strtoupper($internName) }}</strong>,</p>
 
                 <p>
@@ -190,6 +195,7 @@
                     <li>Learning new skills and technologies and applying them to your projects. </li>
                     <li>Contributing to the improvement and innovation of the software development process and culture. </li>
                 </ul>
+                </div>
 
                 <div class="page-break"></div>
 
@@ -227,7 +233,7 @@
 
     <footer>
         <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">TECHSTROTA</div>
-        <div style="text-decoration: underline; margin-bottom: 5px;">www.techstrota.com</div>
+        <div style="text-decoration: underline; margin-bottom: 5px; color:blue;">www.techstrota.com</div>
         <div>503, Sterling Centre, R C Dutt Road, Near Fairfield Hotel, Alkapuri,</div>
         <div>Vadodara, Gujarat - 390007 | Tel: +91 81288 40055 | CIN: GJ240114897</div>
     </footer>

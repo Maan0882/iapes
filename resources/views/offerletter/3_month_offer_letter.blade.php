@@ -60,6 +60,10 @@
         background-color: #fdfdfd;
     }
 
+    .content {
+        margin-top: -20px;
+    }
+    
     /* List styling for modern readability */
     ul {
         margin-left: 20px;
@@ -174,6 +178,7 @@
                     <strong>Subject: Intern Offer / Appointment Letter</strong> 
                 </div>
 
+                <div class="content">
                 <p>Dear <strong>{{ strtoupper($internName) }}</strong>,</p>
 
                 <p>
@@ -190,6 +195,7 @@
                     <li>Learning new skills and technologies and applying them to your projects. </li>
                     <li>Contributing to the improvement and innovation of the software development process and culture. </li>
                 </ul>
+                </div>
 
                 <div class="page-break"></div>
 
