@@ -6,10 +6,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InternManagement\Intern;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\InternManagement\CertificateController;
-use App\Http\Controllers\ReportController;
 
 use App\Filament\Resources\InternManagement\ManualCertificateResource;
 use App\Models\InternManagement\ManualCertificate;
+use App\Filament\Resources\EventManagement\EventRegistrationResource;
+use App\Models\Event;
+use App\Models\EventRegistration;
+use App\Http\Controllers\ReportController;
 
 Route::get('/view-offer-pdf/{id}', function ($id) {
     // Find by ID - this is much more reliable
@@ -117,6 +120,15 @@ Route::get('/certificates/print/{record}', function (ManualCertificate $record) 
 })->name('certificate.print')->middleware(['auth']); // Ensure only logged-in users can print
 
 //--------------------------------------------------------------------------------------------------------------
+
+//------------------ Event Certificate -------------------------
+// Changed URI to /certificates/event/print/{record}
+Route::get('/certificates/event/print/{record}', function (Event $record) {
+    return EventRegistrationResource::downloadSinglePdf($record, $isStream = true);
+})->name('certificate.print')->middleware(['auth']);
+
+//--------------------------------------------------------------------------------------------------------------
+
 
 // ─── Report Download ─────────────────────────────────────────────────────────
 Route::get('/reports/download', [ReportController::class, 'download'])

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\EventResource\Pages;
+namespace App\Filament\Resources\EventManagement\EventResource\Pages;
 
-use App\Filament\Resources\EventResource;
+use App\Filament\Resources\EventManagement\EventResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 

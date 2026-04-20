@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,6 +14,11 @@ Route::post('/send-verification', [AuthController::class, 'sendVerification']);
 Route::get('/verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('/submit', [AuthController::class, 'submitApplication']);
 Route::post('/intern/apply', [AuthController::class, 'submitApplication']);
+
+// This will be accessible at: http://your-ip:8000/api/latest-event
+Route::get('/latest-event', [EventController::class, 'getLatestEvent']);
+// Registration endpoint
+Route::post('/event/register', [EventController::class, 'register']);
 
 
 

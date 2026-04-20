@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\EventResource\Pages;
+namespace App\Filament\Resources\EventManagement\EventResource\Pages;
 
-use App\Filament\Resources\EventResource;
+use App\Filament\Resources\EventManagement\EventResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ListRecords;
 
-class EditEvent extends EditRecord
+class ListEvents extends ListRecords
 {
     protected static string $resource = EventResource::class;
 
@@ -15,11 +15,10 @@ class EditEvent extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }
