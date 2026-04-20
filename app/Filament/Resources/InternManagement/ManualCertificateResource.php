@@ -22,7 +22,7 @@ class ManualCertificateResource extends Resource
 {
     protected static ?string $model = ManualCertificate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-academic-cap';
 
     public static function form(Form $form): Form
     {
