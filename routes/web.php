@@ -6,6 +6,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InternManagement\Intern;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\InternManagement\CertificateController;
+use App\Http\Controllers\ReportController;
 
 use App\Filament\Resources\InternManagement\ManualCertificateResource;
 use App\Models\InternManagement\ManualCertificate;
@@ -116,3 +117,8 @@ Route::get('/certificates/print/{record}', function (ManualCertificate $record) 
 })->name('certificate.print')->middleware(['auth']); // Ensure only logged-in users can print
 
 //--------------------------------------------------------------------------------------------------------------
+
+// ─── Report Download ─────────────────────────────────────────────────────────
+Route::get('/reports/download', [ReportController::class, 'download'])
+    ->name('report.download')
+    ->middleware(['auth:web']);
