@@ -34,14 +34,10 @@ class ManualCertificateResource extends Resource
                         TextInput::make('intern_name')->required(),
                         TextInput::make('intern_code')->required(),
                         TextInput::make('internship_role')->required(),
-                        Select::make('certificate_template')
-                            ->options(['bachelors' => 'Bachelors', 'masters' => 'Masters'])
-                            ->required(),
+                        
                     ]),
                 ]),
-                Section::make('Project & Dates')->schema([
-                    TextInput::make('project_name')->required(),
-                    RichEditor::make('project_description')->columnSpanFull(),
+                Section::make('Dates')->schema([
                     Grid::make(3)->schema([
                         DatePicker::make('joining_date')->required(),
                         DatePicker::make('completion_date')->required(),
