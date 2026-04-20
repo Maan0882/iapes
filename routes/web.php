@@ -7,6 +7,9 @@ use App\Models\InternManagement\Intern;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\InternManagement\CertificateController;
 
+use App\Filament\Resources\InternManagement\ManualCertificateResource;
+use App\Models\InternManagement\ManualCertificate;
+
 Route::get('/view-offer-pdf/{id}', function ($id) {
     // Find by ID - this is much more reliable
     $record = OfferLetter::findOrFail($id);
@@ -105,3 +108,11 @@ if ($intern->intern_image && Storage::disk('public')->exists($intern->intern_ima
 // The route that the QR code will point to
 Route::get('/verify-certificate/{token}', [CertificateController::class, 'verifyQR'])
      ->name('certificate.verify');
+
+//------------------ Manual Certificate -------------------------
+Route::get('/certificates/print/{record}', function (ManualCertificate $record) {
+    // This calls the helper method we added to your Resource earlier
+    return ManualCertificateResource::downloadSinglePdf($record, $isStream = true);
+})->name('certificate.print')->middleware(['auth']); // Ensure only logged-in users can print
+
+//--------------------------------------------------------------------------------------------------------------

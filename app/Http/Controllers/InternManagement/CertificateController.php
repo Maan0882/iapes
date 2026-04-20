@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Storage; // To store files
 use Spatie\Browsershot\Browsershot;
 use SimpleSoftwareIO\QrCode\Generator;
 
+use App\Filament\Resources\InternManagement\ManualCertificateResource;
+use App\Models\InternManagement\ManualCertificate;
+
 class CertificateController extends Controller
 {
     // ------------------------------
@@ -164,10 +167,21 @@ class CertificateController extends Controller
             abort(404, 'Invalid verification link.');
         }
 
-        // Handle the case where slashes were replaced by hyphens in the URL
-        $intern = Intern::where('cert_token', $token)->firstOrFail();
-        
-        return $this->downloadCertificate(request(), $intern->id);
+        // 1. Try to find the token in the Intern model first
+        $intern = \App\Models\InternManagement\Intern::where('cert_token', $token)->first();
+
+        if ($intern) {
+            // If found in Interns, use your existing certificate download logic
+            return $this->downloadCertificate(request(), $intern->id);
+        }
+
+        // 2. Fallback: Try to find the token in the ManualCertificate model
+        $manualCert = \App\Models\InternManagement\ManualCertificate::where('cert_token', $token)->first();
+
+        if ($manualCert) {
+            // If found in ManualCertificates, use the Manual Resource logic
+            return ManualCertificateResource::downloadSinglePdf($manualCert, false);
+        }
     }
 
     public function saveCertificateToServer(string $id)

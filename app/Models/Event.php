@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Event extends Model
+{
+    //
+    protected $fillable = [
+        'event_title',
+        'event_description',
+        'event_type',
+        'event_date',
+        'type',
+        'meeting_link',
+        'location',
+        'event_certificate_template',
+        'event_status',
+      //  'created_by'
+    ];
+
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+}
