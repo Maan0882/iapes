@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('type', ['online', 'offline']);
             $table->string('location')->nullable();
             $table->string('meeting_link')->nullable();
-            $table->string('event_certificate_template')->nullable();
+            //$table->string('event_certificate_template')->nullable();
             $table->enum('event_status', ['upcoming', 'completed'])->default('upcoming');
             $table->timestamps();
         });

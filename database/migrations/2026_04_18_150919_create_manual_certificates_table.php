@@ -16,12 +16,9 @@ return new class extends Migration
             $table->string('intern_name');
             $table->string('intern_code')->unique();
             $table->string('internship_role');
-            $table->string('project_name');
-            $table->text('project_description')->nullable();
             $table->date('joining_date');
             $table->date('completion_date');
             $table->date('issuing_date');
-            $table->string('certificate_template')->default('bachelors');
             $table->string('cert_token')->unique();
             $table->timestamps();
         });
