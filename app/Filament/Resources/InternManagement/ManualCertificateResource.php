@@ -3,17 +3,15 @@
 namespace App\Filament\Resources\InternManagement;
 
 use App\Filament\Resources\InternManagement\ManualCertificateResource\Pages;
-use App\Filament\Resources\InternManagement\ManualCertificateResource\RelationManagers;
 use App\Models\InternManagement\ManualCertificate;
-use Filament\Forms;
+
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\{TextInput, DatePicker, Select, RichEditor, Section, Grid};
+use Filament\Forms\Components\{TextInput, DatePicker, Section, Grid};
 use Filament\Tables\Actions\{Action, ActionGroup, BulkAction};
+
 use Spatie\Browsershot\Browsershot;
 use Illuminate\Support\Facades\View;
 use ZipArchive;
