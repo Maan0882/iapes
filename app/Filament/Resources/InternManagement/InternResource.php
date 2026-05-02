@@ -402,7 +402,7 @@ class InternResource extends Resource
                                     $pdfContent = Browsershot::html($html)
                                         ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
                                         ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
-                                        //->setChromePath(env('CHROME_PATH'))
+                                        ->setChromePath(env('CHROME_PATH'))
                                         ->format('A4')
                                         ->showBackground()
                                         ->noSandbox()
@@ -445,7 +445,7 @@ class InternResource extends Resource
 
                             $pdf = Browsershot::html($html)
                                 ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                //->setChromePath(env('CHROME_PATH'))
+                                ->setChromePath(env('CHROME_PATH'))
                                 ->format('A4')
                                 ->showBackground()
                                 ->noSandbox()
@@ -483,7 +483,7 @@ class InternResource extends Resource
                                     $pdfContent = Browsershot::html($html)
                                         ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
                                         ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
-                                        //->setChromePath(env('CHROME_PATH')) 
+                                        ->setChromePath(env('CHROME_PATH')) 
                                         ->format('A4')
                                         ->landscape() // Certificates are usually landscape
                                         ->showBackground()
@@ -515,7 +515,7 @@ class InternResource extends Resource
 
                             $pdf = Browsershot::html($html)
                                 ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                //->setChromePath(env('CHROME_PATH'))
+                                ->setChromePath(env('CHROME_PATH'))
                                 // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
                                 ->format('A4')
                                 ->landscape()
