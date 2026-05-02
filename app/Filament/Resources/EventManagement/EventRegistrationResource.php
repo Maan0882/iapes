@@ -94,7 +94,7 @@ class EventRegistrationResource extends Resource
                         ->modalSubmitAction(false) // Hide the "Submit" button
                         ->modalCancelActionLabel('Close')
                         ->modalContent(fn (EventRegistration $record) => view(
-                            'event.certificate', 
+                            'event.premium-certificate', 
                             [
                                 'registration' => $record,
                                 'isPdf' => false // This ensures asset() is used for logos instead of public_path()
@@ -163,8 +163,9 @@ class EventRegistrationResource extends Resource
     protected static function getBrowsershotInstance(string $html): Browsershot
     {
         return Browsershot::html($html)
-            ->setNodeBinary('C:\Program Files\nodejs\node.exe')
-            ->setNpmBinary('C:\Program Files\nodejs\npm.cmd')
+            ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+            ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+            ->setChromePath(env('CHROME_PATH'))
             ->noSandbox()
             ->landscape() // Certificate orientation
             ->format('A4')
@@ -180,7 +181,7 @@ class EventRegistrationResource extends Resource
         }
 
         // Passes 'registration' variable to the blade
-        $html = view("event.certificate", ['registration' => $record])->render();
+        $html = view("event.premium-certificate", ['registration' => $record])->render();
         $pdf = static::getBrowsershotInstance($html)->pdf();
 
         return response()->streamDownload(
@@ -199,7 +200,7 @@ class EventRegistrationResource extends Resource
         }
 
         // Passes 'registrations' (plural) to the blade
-        $html = View::make("event.certificate", ['registrations' => $records])->render();
+        $html = View::make("event.premium-certificate", ['registrations' => $records])->render();
         $pdf = static::getBrowsershotInstance($html)->pdf();
 
         return response()->streamDownload(
@@ -220,7 +221,7 @@ class EventRegistrationResource extends Resource
                     $record->update(['certificate_number' => $record->generateCertificateNumber()]);
                 }
 
-                $html = View::make("event.certificate", ['registration' => $record])->render();
+                $html = View::make("event.premium-certificate", ['registration' => $record])->render();
                 $pdf = static::getBrowsershotInstance($html)->pdf();
                 
                 $zip->addFromString("Certificate_{$record->certificate_number}.pdf", $pdf);

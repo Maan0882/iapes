@@ -1,6 +1,6 @@
 @php 
-        $isPdf = $isPdf ?? true;
-
+    $isPdf = $isPdf ?? true; 
+    
     if (isset($registration)) {
         $registrations = collect([$registration]);
     } else {
@@ -291,7 +291,7 @@
                         <div class="cert">
                             <div class="b-outer"></div>
                             <div class="b-inner"></div>
-
+                            
                             <!-- Dynamic Wave Patterns -->
                             <svg class="corner-svg tr" viewBox="0 0 600 500" fill="none" style="width: 600px; height: 500px;">
                                 <path d="M600 0 Q600 480 0 480 L600 480 Z" fill="#0e72b4" opacity="1" />
@@ -301,10 +301,9 @@
                             <svg class="corner-svg bl" viewBox="0 0 600 500" fill="none" style="width: 600px; height: 500px;">
                                 <path d="M0 0 Q0 480 600 480 L0 480 Z" fill="#FF7043" opacity="1" />
                                 <path d="M0 100 Q0 480 400 480 L0 480 Z" fill="#0e72b4" opacity="1" />
-                                <path d="M0 160 Q40 360 300 480" stroke="#FFCA28" stroke-width="5" stroke-linecap="round"
-                                    fill="none" />
+                                <path d="M0 160 Q40 360 300 480" stroke="#FFCA28" stroke-width="5" stroke-linecap="round" fill="none" />
                             </svg>
-
+                            
                             @php
                                 $icons = ['php', 'laravel', 'mysql', 'python', 'nodedotjs', 'react', 'git', 'tailwindcss', 'typescript', 'javascript', 'docker', 'html5'];
                                 $slots = [];
@@ -326,23 +325,20 @@
                                             $rot = mt_rand(-30, 30);
                                             $iconUrl = "https://cdn.simpleicons.org/{$icon}/FF7043";
                                         @endphp
-                                        <img src="{{ $iconUrl }}"
-                                            style="position:absolute; top:{{ $top }}%; left:{{ $left }}%; width:{{ $size }}mm; opacity:0.18; transform:rotate({{ $rot }}deg);">
+                                        <img src="{{ $iconUrl }}" style="position:absolute; top:{{ $top }}%; left:{{ $left }}%; width:{{ $size }}mm; opacity:0.18; transform:rotate({{ $rot }}deg);">
                                     @endif
                                 @endforeach
                             </div>
-
+                            
                             <div class="content-wrapper">
-                                <img src="{{ $logoPath }}" alt="TechStrota"
-                                    style="height:75px;margin-bottom:6mm;margin-top:-7mm;">
-
+                                <img src="{{ $logoPath }}" alt="TechStrota" style="height:75px;margin-bottom:6mm;margin-top:-7mm;">
+                                
                                 <div class="main-title">Certificate of Participation</div>
-
-                                <p
-                                    style="font-size:22pt;color:black;margin:6mm 0;font-weight:900;font-family:'Cormorant Garamond',serif;">
+                                
+                                <p style="font-size:22pt;color:black;margin:6mm 0;font-weight:900;font-family:'Cormorant Garamond',serif;">
                                     This is to certify that
                                 </p>
-
+                                
                                 @php
                                     $recipientName = Str::title($reg->name);
                                     $fontSize = strlen($recipientName) > 23 ? '45pt' : '52pt';
@@ -350,44 +346,39 @@
                                 <div class="recipient" style="font-size:{{ $fontSize }};">
                                     {{ $recipientName }}
                                 </div>
-
+                                
                                 <div class="underline"></div>
-
+                                
                                 <div class="body-text">
-                                    has successfully participated in the <b>{{ $reg->event->event_title }}</b>.
-                                    This event was conducted by <b>TechStrota</b> on
-                                    <b>{{ \Carbon\Carbon::parse($reg->event->event_date)->format('dS F Y') }}</b>.
+                                    has successfully participated in the <b>{{ $reg->event->event_title }}</b>. 
+                                    This event was conducted by <b>TechStrota</b> on 
+                                    <b>{{ \Carbon\Carbon::parse($reg->event->event_date)->format('dS F Y') }}</b>. 
                                     We appreciate the dedication and active involvement shown during the event.
                                 </div>
-
+                                
                                 <div class="footer">
                                     <div class="sig-box sig">
                                         <div class="sig-line-top"></div>
-                                        <b
-                                            style="color:#000000;font-size:12.5pt;font-weight:800;letter-spacing:1pt;margin-left:10mm;">JAMOD
-                                            BADAL</b><br>
-                                        <span style="font-size:11.5pt;color:#000000;font-weight:600;margin-left:10mm;">Founder &
-                                            CEO</span>
+                                        <b style="color:#000000;font-size:12.5pt;font-weight:800;letter-spacing:1pt;margin-left:10mm;">JAMOD BADAL</b><br>
+                                        <span style="font-size:11.5pt;color:#000000;font-weight:600;margin-left:10mm;">Founder & CEO</span>
                                     </div>
                                     <div class="sig-box" style="display:flex;flex-direction:column;align-items:center;">
                                         <div class="qr">
                                             @php $certNum = $reg->certificate_number ?? $reg->generateCertificateNumber(); @endphp
                                             {!! QrCode::size(200)
-                    ->color(0, 0, 0)
-                    ->margin(1)
-                    ->generate(url('/verify-certificate/' . $certNum)) !!}
+                                                ->color(0, 0, 0)
+                                                ->margin(1)
+                                                ->generate(url('/verify-certificate/' . $certNum)) !!}
                                         </div>
-                                        <span
-                                            style="font-size:12pt;color:#000000;margin-top:1.5mm;margin-right:-15mm;font-family:monospace;font-weight:700;">
+                                        <span style="font-size:12pt;color:#000000;margin-top:1.5mm;margin-right:-15mm;font-family:monospace;font-weight:700;">
                                             ID:{{ $certNum }}
                                         </span>
                                     </div>
                                 </div>
-
+                                
                                 <div class="outer-footer">
                                     <div class="website">
-                                        <a href="https://techstrota.com"
-                                            style="color:inherit;text-decoration:none;">WWW.TECHSTROTA.COM</a>
+                                        <a href="https://techstrota.com" style="color:inherit;text-decoration:none;">WWW.TECHSTROTA.COM</a>
                                     </div>
                                     <div class="system-gen">This is a system generated certificate</div>
                                 </div>

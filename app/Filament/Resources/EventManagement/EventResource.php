@@ -20,9 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Tables\Actions\{Action, ActionGroup, BulkAction};
-use Spatie\Browsershot\Browsershot;
-use Illuminate\Support\Facades\View;
-use ZipArchive;
+
 
 
 class EventResource extends Resource
@@ -159,24 +157,7 @@ class EventResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    // NEW: Print All Certificates for this Event
-                    Action::make('printAllCertificates')
-                        ->label('Print All Certificates')
-                        ->icon('heroicon-o-printer')
-                        ->color('success')
-                        ->action(function (Event $record) {
-                            $registrations = $record->registrations()->get();
-                            
-                            if ($registrations->isEmpty()) {
-                                \Filament\Notifications\Notification::make()
-                                    ->title('No participants found for this event')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            }
 
-                            return static::downloadBulkPdf($registrations);
-                        }),
 
                     Action::make('view_registrations')
                         ->label('View Registrations')
@@ -191,17 +172,7 @@ class EventResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 
-                 // YOUR EXISTING ZIP DOWNLOAD
-                    BulkAction::make('bulk_download_zip')
-                        ->label('Download ZIP (Bulk)')
-                        ->icon('heroicon-o-archive-box')
-                        ->action(fn ($records) => static::downloadBulkZip($records)),
 
-                    // BULK PRINT (Combined PDF)
-                    BulkAction::make('bulk_print')
-                        ->label('Print Selected')
-                        ->icon('heroicon-o-printer')
-                        ->action(fn ($records) => static::downloadBulkPdf($records)),
 
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
@@ -224,37 +195,7 @@ class EventResource extends Resource
         ];
     }
 
-    // --- PDF Logic (Optimized for Event -> Participants) ---
 
-    protected static function getBrowsershotInstance(string $html): Browsershot
-    {
-        return Browsershot::html($html)
-            ->setNodeBinary('C:\Program Files\nodejs\node.exe')
-            ->setNpmBinary('C:\Program Files\nodejs\npm.cmd')
-            ->noSandbox()
-            ->landscape()
-            ->format('A4')
-            ->showBackground()
-            ->timeout(200)
-            ->waitUntilNetworkIdle();
-    }
-
-    protected static function downloadBulkPdf($registrations)
-    {
-        foreach ($registrations as $reg) {
-            if (!$reg->certificate_number) {
-                $reg->update(['certificate_number' => $reg->generateCertificateNumber()]);
-            }
-        }
-
-        $html = View::make("event.certificate", ['registrations' => $registrations])->render();
-        $pdf = static::getBrowsershotInstance($html)->pdf();
-
-        return response()->streamDownload(
-            fn () => print($pdf), 
-            "Certificates_" . now()->format('Y-m-d') . ".pdf"
-        );
-    }
 
     
 }
