@@ -65,6 +65,29 @@ class Intern extends Authenticatable implements FilamentUser
                 $intern->application_id = $intern->getOriginal('application_id');
             }
         });
+
+        // For intern status 
+        // static::retrieved(function ($intern) {
+        //     if ($intern->is_active && $intern->offerletter?->completion_date?->isPast()) {
+        //         $intern->is_active = false;
+        //         $intern->save();
+        //     }
+        // });
+
+        static::retrieved(function ($intern) {
+            $completionDate = $intern->offerletter?->completion_date;
+
+            if ($completionDate) {
+                // Ensure we are working with a Carbon instance
+                $date = \Carbon\Carbon::parse($completionDate);
+
+                if ($intern->is_active && $date->isPast()) {
+                    // Silently update the database status
+                    $intern->is_active = false;
+                    $intern->save();
+                }
+            }
+        });
     }
 
     public function canAccessPanel(Panel $panel): bool

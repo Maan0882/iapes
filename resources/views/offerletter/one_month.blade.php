@@ -137,6 +137,13 @@
         width: 100%;
     }
 
+    .signature-line {
+        border-top: 1px solid #000;
+        margin-top: 60px;
+        padding-top: 5px;
+        width: 180px;
+    }
+
     .signature-row td {
         width: 50%;
         vertical-align: top;
@@ -184,7 +191,7 @@
                 <div class="recipient-info">
                     To,<br>
                     <strong>{{ strtoupper($internName) }}</strong><br>
-                    @if($internCollege)
+                    @if($internCollege && $internCollege !== $internUniversity)
                         {{ $internCollege }} <br>
                     @endif
                     @if($internUniversity)
@@ -244,8 +251,10 @@
                     <tr class="signature-row">
                         <td>
                             Sincerely,<br><br><br>
-                            <strong>{{ $offer->sender_name ?? 'Badal Jamod' }}</strong><br>
-                            CEO/CTO, Techstrota
+                            <div class="signature-line">
+                                <strong>{{ $offer->sender_name ?? 'Badal Jamod' }}</strong><br>
+                                CEO/CTO, Techstrota
+                            </div>
                         </td>
                         <td style="text-align: right; vertical-align: bottom;">
                             __________________________<br>

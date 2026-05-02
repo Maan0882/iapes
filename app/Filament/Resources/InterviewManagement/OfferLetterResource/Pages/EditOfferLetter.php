@@ -54,7 +54,7 @@ class EditOfferLetter extends EditRecord
             // Update the intern record with the new data from the offer letter
             $intern->update([
                 'name' => $record->name,
-                'email' => $record->email
+               // 'email' => $record->email
                 // You can add other fields here like phone or college if needed
             ]);
         }

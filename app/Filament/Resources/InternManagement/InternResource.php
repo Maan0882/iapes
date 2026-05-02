@@ -210,12 +210,7 @@ class InternResource extends Resource
                     })
                     ->searchable(['name']) // Allows searching if 'name' is a column in 'interns' table
                     ->sortable(),
-
-                // TextColumn::make('application.degree ?? ')
-                //     ->label('Intern Course')
-                //     ->searchable()
-                //     ->sortable(),
-                
+                    
                 TextColumn::make('offerletter.internship_role')
                     ->label('Intern Role')
                     ->searchable()
@@ -254,25 +249,49 @@ class InternResource extends Resource
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->sortable(),
 
-                TextColumn::make('completion_date')
+                TextColumn::make('offer_letters.completion_date')
                     ->label('Completion Date')
                     ->date('d/m/Y')
                     ->sortable()
                     ->placeholder('Not Completed'),
 
+                TextColumn::make('project_name')
+                    ->label('Project Name')
+                    ->sortable()
+                    ->toggleable()
+                    ->placeholder('Not Allocated'),
 
-               ToggleColumn::make('is_active')
-                    ->label('Intern Status'),
-                // BadgeColumn::make('is_active')
-                //     ->colors([
-                //         'primary' => 'active',
-                //         //'warning' => 'active',
-                //         'success' => 'completed',
-                //         'danger' => 'dropped',
-                //     ])
-                    //->formatStateUsing(fn ($state) => ucfirst($state)),
+                ToggleColumn::make('is_active')
+                    ->label('Intern Status')
+                    ->disabled(fn ($record) => 
+                    // Deactivate/Disable toggle if completion date has passed
+                    $record->offerletter?->completion_date && 
+                    \Carbon\Carbon::parse($record->offerletter->completion_date)->isPast()
+                )
+                ->afterStateUpdated(function ($record, $state) {
+                    // Optional: Send a notification when manually toggled
+                    Notification::make()
+                        ->title($state ? 'Intern Activated' : 'Intern Deactivated')
+                        ->success()
+                        ->send();
+                }),
+
+                // Adding a status badge next to it makes it even clearer for HR
+                TextColumn::make('status_label')
+                    ->label('Intenrnship ')
+                    ->badge()
+                    ->getStateUsing(fn ($record) => 
+                        \Carbon\Carbon::parse($record->offerletter?->completion_date)->isPast() 
+                            ? 'Completed' 
+                            : 'On-going'
+                    )
+                    ->colors([
+                        'danger' => 'Completed',
+                        'success' => 'On-going',
+                    ]),
 
             ])
+        
             ->filters([
                 //
             ])
@@ -341,12 +360,26 @@ class InternResource extends Resource
             ->label('Actions'),
             ])
             ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
                     // --- COMPLETION LETTERS ---
                     BulkAction::make('bulk_download_completion_letters')
                         ->label('Bulk Download Letters (ZIP)')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
                         ->action(function ($records) {
+                            // Filter records to only include those with templates and project names
+                            $validRecords = $records->filter(fn ($intern) => 
+                                filled($intern->completion_letter_template) && filled($intern->project_name)
+                            );
+
+                            if ($validRecords->isEmpty()) {
+                                Notification::make()
+                                    ->title('No valid templates selected')
+                                    ->warning()
+                                    ->send();
+                                return;
+                            }
+
                             $zipFileName = 'completion_letters_' . now()->timestamp . '.zip';
                             $zipPath = storage_path($zipFileName);
                             $zip = new ZipArchive;
@@ -355,8 +388,8 @@ class InternResource extends Resource
                                 $logoPath = public_path('images/TsLogo.png');
                                 $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
 
-                                foreach ($records as $intern) {
-                                    $template = $intern->completion_letter_template ?? 'bachelors';
+                                foreach ($validRecords as $intern) {
+                                    $template = $intern->completion_letter_template; // Removed the default 'bachelors'
                                     
                                     $html = View::make("completionletter.{$template}", [
                                         'intern' => $intern,
@@ -365,8 +398,6 @@ class InternResource extends Resource
                                     ])->render();
 
                                     $pdfContent = Browsershot::html($html)
-                                        // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                        // ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
                                         ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
                                         ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
                                         ->format('A4')
@@ -387,19 +418,30 @@ class InternResource extends Resource
                         ->icon('heroicon-o-printer')
                         ->color('success')
                         ->action(function ($records) {
+                            // Filter records logic
+                            $validRecords = $records->filter(fn ($intern) => 
+                                filled($intern->completion_letter_template) && filled($intern->project_name)
+                            );
+
+                            if ($validRecords->isEmpty()) {
+                                Notification::make()
+                                    ->title('No valid templates selected')
+                                    ->warning()
+                                    ->send();
+                                return;
+                            }
+
                             $logoPath = public_path('images/TsLogo.png');
                             $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
 
                             $html = View::make('completionletter.bulk', [
-                                'interns' => $records,
+                                'interns' => $validRecords, // Use filtered records
                                 'isPdf'   => true,
                                 'logo'    => $logoBase64,
                             ])->render();
 
                             $pdf = Browsershot::html($html)
-                                // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
                                 ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
-                                // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
                                 ->format('A4')
                                 ->showBackground()
                                 ->noSandbox()
@@ -407,6 +449,7 @@ class InternResource extends Resource
 
                             return response()->streamDownload(fn () => print($pdf), 'completion_letters_bulk.pdf');
                         }),
+
                     // --- CERTIFICATES ---
                     BulkAction::make('bulk_download_certificates')
                         ->label('Bulk Download Certs (ZIP)')
@@ -478,6 +521,9 @@ class InternResource extends Resource
                             return response()->streamDownload(fn () => print($pdf), 'certificates_bulk.pdf');
                         }),
                     Tables\Actions\DeleteBulkAction::make(),
+                ])
+                ->label('Bulk Operations')
+                ->icon('heroicon-o-cog-6-tooth'),
                 ]);
     }
 

@@ -28,6 +28,7 @@ class OfferLetter extends Model
     ];
     protected $casts = [
         'joining_date' => 'date',
+        'completion_date' => 'date', // or 'datetime'
     ];
     protected static function boot()
     {

@@ -55,19 +55,19 @@ class EventRegistrationResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label('Participant')
+                    ->label('Participant Name')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('certificate_number')
-                    ->label('Cert No.')
+                    ->label('Certificate Number')
                     ->placeholder('Not Issued')
                     ->badge()
                     ->color('info')
                     ->searchable(),
 
                 SelectColumn::make('attendance_status')
-                    ->label('Status')
+                    ->label('Participation Status')
                     ->options([
                         'registered' => 'Registered',
                         'attended' => 'Attended',
@@ -108,6 +108,7 @@ class EventRegistrationResource extends Resource
                         ->hidden(fn ($record) => $record->certificate_number !== null)
                         ->action(function ($record) {
                             $record->update([
+                                'attendance_status' => 'attended',
                                 'certificate_number' => $record->generateCertificateNumber(),
                                 'certificate_issued' => true,
                             ]);

@@ -165,13 +165,12 @@
 
                 <div class="address-section">
                     <strong>{{ strtoupper($internName) }}</strong>, <br>
-                    @if($internCollege)
+                    @if($internCollege && $internCollege !== $internUniversity)
                         {{ $internCollege }} <br>
                     @endif
                     @if($internUniversity)
                         {{ $internUniversity }} <br>
-                    @endif
-                   
+                    @endif                   
                 </div>
 
                 <div class="subject">

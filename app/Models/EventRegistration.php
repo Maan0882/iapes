@@ -37,6 +37,6 @@ class EventRegistration extends Model
             ->count() + 1;
 
         // TS-WKSH-26-0001
-        return sprintf("%s-%s-%s-%04d", $prefix, $type, $year, $sequence);
+        return sprintf("%s-%s-%s-%03d", $prefix, $type, $year, $sequence);
     }
 }
