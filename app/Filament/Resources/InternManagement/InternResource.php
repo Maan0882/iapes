@@ -398,8 +398,8 @@ class InternResource extends Resource
                                     ])->render();
 
                                     $pdfContent = Browsershot::html($html)
-                                        ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
-                                        ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
+                                        ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                        ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
                                         ->format('A4')
                                         ->showBackground()
                                         ->noSandbox()
@@ -441,7 +441,7 @@ class InternResource extends Resource
                             ])->render();
 
                             $pdf = Browsershot::html($html)
-                                ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
                                 ->format('A4')
                                 ->showBackground()
                                 ->noSandbox()
@@ -477,8 +477,8 @@ class InternResource extends Resource
                                     ])->render();
 
                                     $pdfContent = Browsershot::html($html)
-                                        // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                        ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                        ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
+                                        ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
                                         ->format('A4')
                                         ->landscape() // Certificates are usually landscape
                                         ->showBackground()
@@ -509,8 +509,7 @@ class InternResource extends Resource
                             ])->render();
 
                             $pdf = Browsershot::html($html)
-                                // ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                ->setNodeBinary(env('NODE_PATH', 'C:\Program Files\nodejs\node.exe'))
+                                ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
                                 // ->setNpmBinary(env('NPM_PATH', 'C:\Program Files\nodejs\npm.cmd'))
                                 ->format('A4')
                                 ->landscape()
