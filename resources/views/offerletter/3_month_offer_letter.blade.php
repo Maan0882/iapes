@@ -61,7 +61,7 @@
         right: 0;
         text-align: center;
         font-size: 11px;
-        border-top: 1px solid #ddd;
+        border-top: 2px solid #f39200;
         padding-top: 8px;
         color: #000;
         background: white;

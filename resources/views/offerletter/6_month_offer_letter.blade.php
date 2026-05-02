@@ -97,7 +97,7 @@
         height: 100px;
         text-align: center;
         font-size: 11px;
-        border-top: 1px solid #808080ff;
+        border-top: 2px solid #f39200;
         padding-top: 15px;
     }
 
