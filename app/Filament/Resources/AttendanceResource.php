@@ -28,7 +28,7 @@ class AttendanceResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('intern_id')
-                    ->relationship('intern', 'name')
+                    ->relationship('intern', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('is_active', true))
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -127,6 +127,13 @@ class AttendanceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('intern', function (Builder $query) {
+            $query->where('is_active', true);
+        });
     }
 
     public static function getRelations(): array

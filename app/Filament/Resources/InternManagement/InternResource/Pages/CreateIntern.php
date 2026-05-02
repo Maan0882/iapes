@@ -21,6 +21,10 @@ class CreateIntern extends CreateRecord
         $data = $this->form->getRawState();
         $intern = $this->record;
 
+        if (isset($data['intern_name'])) {
+            $intern->update(['name' => $data['intern_name']]);
+        }
+
         // 1. Sync data back to the Application model
         if ($intern->application) {
             $intern->application->update([

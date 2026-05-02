@@ -31,6 +31,10 @@ class EditIntern extends EditRecord
         
         $intern = $this->record->fresh(['application', 'offerletter']);
 
+        if (isset($data['intern_name'])) {
+            $intern->update(['name' => $data['intern_name']]);
+        }
+
         // 1. Update Application table
         if ($intern->application) {
             $intern->application->update([
