@@ -7,140 +7,168 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: DejaVu Sans, Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 9.5px;
-            color: #1a1a2e;
+            color: #1e293b;
             background: #ffffff;
             line-height: 1.6;
         }
 
         /* ─────────────────────────────────────────
+           COLORS & VARIABLES (Hardcoded for dompdf)
+           Primary (Petrol Blue): #0c4a6e
+           Secondary (Sky Cyan): #0ea5e9
+           Accent (Amber): #f59e0b
+           Success (Green): #10b981
+           Danger (Red): #ef4444
+        ───────────────────────────────────────── */
+
+        /* ─────────────────────────────────────────
            HEADER
         ───────────────────────────────────────── */
         .header {
-            background: #1a1a2e;
+            background: #0c4a6e;
             color: #fff;
             padding: 24px 32px 20px;
+            border-bottom: 4px solid #0ea5e9;
         }
         .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            display: table;
+            width: 100%;
+        }
+        .header-top-left {
+            display: table-cell;
+            vertical-align: top;
+        }
+        .header-top-right {
+            display: table-cell;
+            text-align: right;
+            vertical-align: top;
         }
         .header-org {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
             color: #ffffff;
+            text-transform: uppercase;
         }
         .header-sub {
             font-size: 9px;
-            color: #94a3b8;
-            margin-top: 3px;
+            color: #bae6fd;
+            margin-top: 4px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
         .header-badge {
-            background: #f7a93b;
-            color: #1a1a2e;
-            font-size: 8px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 3px;
+            background: #0ea5e9;
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: inline-block;
         }
         .header-divider {
             border: none;
-            border-top: 1px solid #2d2d4e;
-            margin: 14px 0 12px;
+            border-top: 1px solid #0284c7;
+            margin: 16px 0 12px;
         }
         .header-meta {
-            display: flex;
-            gap: 28px;
             font-size: 8px;
-            color: #64748b;
+            color: #e0f2fe;
+            display: table;
+            width: 100%;
         }
-        .header-meta strong { color: #cbd5e1; }
+        .header-meta td {
+            padding-right: 30px;
+        }
+        .header-meta strong { color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* ─────────────────────────────────────────
            SECTION
         ───────────────────────────────────────── */
         .section {
-            margin: 20px 28px;
+            margin: 24px 32px;
             page-break-inside: avoid;
         }
         .section-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: #1a1a2e;
+            font-size: 11px;
+            font-weight: 800;
+            color: #0c4a6e;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding-bottom: 7px;
-            border-bottom: 2px solid #1a1a2e;
-            margin-bottom: 14px;
+            letter-spacing: 1px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 16px;
         }
         .section-title .dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 2px;
+            width: 8px;
+            height: 8px;
             display: inline-block;
-            margin-right: 6px;
+            margin-right: 8px;
             vertical-align: middle;
+            background: #0ea5e9;
         }
-        .dot-blue   { background: #3b82f6; }
-        .dot-green  { background: #10b981; }
-        .dot-yellow { background: #f59e0b; }
 
         /* ─────────────────────────────────────────
-           KPI CARDS — table-based for dompdf
+           KPI CARDS
         ───────────────────────────────────────── */
         .kpi-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 8px 0;
-            margin-bottom: 16px;
+            border-spacing: 10px 0;
+            margin-bottom: 20px;
+            margin-left: -5px;
+            margin-right: -5px;
         }
         .kpi-table td {
             background: #f8fafc;
-            border: 1px solid #e9eef5;
-            border-radius: 6px;
-            padding: 10px 8px;
+            border: 1px solid #cbd5e1;
+            border-top: 3px solid #0ea5e9;
+            padding: 12px 10px;
             text-align: center;
             vertical-align: middle;
+            width: 16.66%;
         }
         .kpi-value {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             line-height: 1;
             display: block;
+            color: #0c4a6e;
         }
         .kpi-label {
             font-size: 7px;
             color: #64748b;
-            margin-top: 4px;
-            font-weight: 600;
+            margin-top: 6px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
             display: block;
         }
 
         /* ─────────────────────────────────────────
-           TWO / THREE COLUMN — table-based
+           LAYOUT TABLES
         ───────────────────────────────────────── */
         .two-col-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 14px 0;
-            margin-bottom: 14px;
+            border-spacing: 20px 0;
+            margin-bottom: 16px;
+            margin-left: -10px;
+            margin-right: -10px;
         }
         .two-col-table > tr > td { vertical-align: top; width: 50%; }
 
         .three-col-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 10px 0;
-            margin-bottom: 14px;
+            border-spacing: 16px 0;
+            margin-bottom: 16px;
+            margin-left: -8px;
+            margin-right: -8px;
         }
         .three-col-table > tr > td { vertical-align: top; width: 33.3%; }
 
@@ -148,64 +176,81 @@
            SUBSECTION LABEL
         ───────────────────────────────────────── */
         .sub-label {
-            font-size: 7.5px;
-            font-weight: 700;
-            color: #374151;
+            font-size: 8px;
+            font-weight: 800;
+            color: #334155;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             padding-bottom: 4px;
-            border-bottom: 1px solid #e9eef5;
+            border-bottom: 1px dashed #cbd5e1;
         }
 
         /* ─────────────────────────────────────────
-           BAR ROWS
+           BAR ROWS (Table Based for Safety)
         ───────────────────────────────────────── */
-        .bar-item { margin-bottom: 7px; }
-        .bar-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 3px;
+        .bar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
         }
-        .bar-name { font-size: 8px; color: #374151; }
-        .bar-num  { font-size: 8px; font-weight: 700; color: #1a1a2e; }
+        .bar-table td {
+            padding: 4px 0;
+            vertical-align: middle;
+        }
+        .bar-name-cell {
+            width: 40%;
+            font-size: 8px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .bar-track-cell {
+            width: 50%;
+            padding: 0 10px;
+        }
+        .bar-num-cell {
+            width: 10%;
+            text-align: right;
+            font-size: 8px;
+            font-weight: 800;
+            color: #0c4a6e;
+        }
         .bar-track {
             width: 100%;
-            height: 7px;
-            background: #f1f5f9;
-            border-radius: 99px;
+            height: 8px;
+            background: #e2e8f0;
             overflow: hidden;
         }
-        .bar-fill { height: 100%; border-radius: 99px; }
+        .bar-fill { height: 100%; }
 
         /* ─────────────────────────────────────────
-           TREND BARS — table-based (dompdf safe)
+           TREND BARS
         ───────────────────────────────────────── */
-        .trend-wrap { margin-top: 4px; }
+        .trend-wrap { margin-top: 6px; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
         .trend-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .trend-table td { text-align: center; padding: 0 3px; }
+        .trend-table td { text-align: center; padding: 0 4px; }
         .trend-num-cell {
-            font-size: 7px;
-            font-weight: 700;
-            color: #374151;
-            padding-bottom: 2px;
+            font-size: 8px;
+            font-weight: 800;
+            color: #0c4a6e;
+            padding-bottom: 4px;
             vertical-align: bottom;
         }
-        .trend-bar-cell { vertical-align: bottom; }
+        .trend-bar-cell { vertical-align: bottom; height: 50px; }
         .trend-bar-inner {
             margin: 0 auto;
-            width: 65%;
-            border-radius: 3px 3px 0 0;
+            width: 70%;
             min-height: 4px;
         }
         .trend-lbl-cell {
-            font-size: 6.5px;
-            color: #94a3b8;
-            padding-top: 4px;
-            border-top: 1px solid #e9eef5;
+            font-size: 7px;
+            color: #64748b;
+            padding-top: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
             vertical-align: top;
         }
 
@@ -216,25 +261,27 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 8.5px;
+            border: 1px solid #cbd5e1;
         }
         .data-table th {
             background: #f1f5f9;
-            padding: 5px 9px;
+            padding: 8px 10px;
             text-align: left;
-            font-weight: 700;
-            color: #374151;
-            border-bottom: 2px solid #e2e8f0;
+            font-weight: 800;
+            color: #334155;
+            border-bottom: 1px solid #cbd5e1;
             font-size: 7.5px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
         }
         .data-table td {
-            padding: 5px 9px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #374151;
+            padding: 7px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-weight: 600;
         }
         .data-table tr:last-child td { border-bottom: none; }
-        .data-table tr:nth-child(even) td { background: #fafbfc; }
+        .data-table tr:nth-child(even) td { background: #f8fafc; }
 
         /* ─────────────────────────────────────────
            INLINE STAT BOXES
@@ -243,61 +290,67 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 8px 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            margin-left: -4px;
+            margin-right: -4px;
         }
         .stat-box {
-            background: #f8fafc;
-            border: 1px solid #e9eef5;
-            border-radius: 5px;
-            padding: 8px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
             text-align: center;
         }
-        .stat-box-val { font-size: 17px; font-weight: 900; line-height: 1; display: block; }
-        .stat-box-lbl { font-size: 7px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-top: 3px; display: block; }
+        .stat-box-val { font-size: 18px; font-weight: 900; line-height: 1; display: block; }
+        .stat-box-lbl { font-size: 7px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-top: 5px; display: block; letter-spacing: 0.5px; }
 
         /* ─────────────────────────────────────────
            COLORS
         ───────────────────────────────────────── */
-        .c-blue   { color: #2563eb; }
-        .c-green  { color: #16a34a; }
-        .c-amber  { color: #d97706; }
-        .c-red    { color: #dc2626; }
-        .c-purple { color: #7c3aed; }
-        .c-indigo { color: #4f46e5; }
-        .c-teal   { color: #0d9488; }
-        .c-orange { color: #ea580c; }
+        .c-primary { color: #0c4a6e; }
+        .c-cyan   { color: #0ea5e9; }
+        .c-green  { color: #10b981; }
+        .c-amber  { color: #f59e0b; }
+        .c-red    { color: #ef4444; }
         .c-slate  { color: #475569; }
+
+        .bg-primary { background: #0c4a6e; }
+        .bg-cyan   { background: #0ea5e9; }
+        .bg-green  { background: #10b981; }
+        .bg-amber  { background: #f59e0b; }
+        .bg-red    { background: #ef4444; }
 
         /* ─────────────────────────────────────────
            MISC
         ───────────────────────────────────────── */
         .divider {
             border: none;
-            border-top: 1px solid #e9eef5;
-            margin: 12px 0;
+            border-top: 1px solid #e2e8f0;
+            margin: 16px 0;
         }
         .avg-box {
-            margin-top: 10px;
-            padding: 7px 9px;
-            background: #f8fafc;
-            border: 1px solid #e9eef5;
-            border-radius: 5px;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0ea5e9;
         }
-        .avg-box-lbl { font-size: 7.5px; color: #64748b; text-transform: uppercase; font-weight: 700; display: block; }
-        .avg-box-val { font-size: 16px; font-weight: 900; }
+        .avg-box-lbl { font-size: 8px; color: #0369a1; text-transform: uppercase; font-weight: 800; display: block; letter-spacing: 0.5px; }
+        .avg-box-val { font-size: 18px; font-weight: 900; color: #0c4a6e; margin-top: 4px; display: block; }
 
         /* ─────────────────────────────────────────
            FOOTER
         ───────────────────────────────────────── */
         .footer {
-            margin: 24px 28px 16px;
-            padding-top: 10px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 7.5px;
-            color: #94a3b8;
+            margin: 30px 32px 20px;
+            padding-top: 12px;
+            border-top: 1px solid #cbd5e1;
+            font-size: 8px;
+            color: #64748b;
+            font-weight: 600;
         }
+        .footer-table { width: 100%; }
+        .footer-table td { vertical-align: top; }
+        .footer-table .right { text-align: right; }
 
         .page-break { page-break-after: always; }
     </style>
@@ -309,24 +362,28 @@
 ══════════════════════════ --}}
 <div class="header">
     <div class="header-top">
-        <div>
-            <div class="header-org">IAPES</div>
+        <div class="header-top-left">
+            <div class="header-org">IAPES Analytical Report</div>
             <div class="header-sub">Internship Administration &amp; Performance Evaluation System</div>
         </div>
-        <div class="header-badge">
-            @if($type === 'full') Full Report
-            @elseif($type === 'application') Application Report
-            @elseif($type === 'intern') Intern Report
-            @elseif($type === 'task') Task Report
-            @endif
+        <div class="header-top-right">
+            <div class="header-badge">
+                @if($type === 'full') Comprehensive Report
+                @elseif($type === 'application') Application Report
+                @elseif($type === 'intern') Intern Report
+                @elseif($type === 'task') Task Report
+                @endif
+            </div>
         </div>
     </div>
     <hr class="header-divider">
-    <div class="header-meta">
-        <div><strong>Generated</strong>&nbsp;&nbsp;{{ $generatedAt }}</div>
-        <div><strong>Classification</strong>&nbsp;&nbsp;Confidential — Internal Use Only</div>
-        <div><strong>System</strong>&nbsp;&nbsp;IAPES Admin Panel</div>
-    </div>
+    <table class="header-meta">
+        <tr>
+            <td><strong>Generated On:</strong> {{ $generatedAt }}</td>
+            <td><strong>Classification:</strong> Internal Use Only</td>
+            <td><strong>System:</strong> IAPES Analytics Engine</td>
+        </tr>
+    </table>
 </div>
 
 
@@ -338,17 +395,17 @@
 
 <div class="section">
     <div class="section-title">
-        <span class="dot dot-blue"></span>Application &amp; Interview
+        <span class="dot"></span>Application &amp; Interview Analytics
     </div>
 
     <table class="kpi-table">
         <tr>
-            <td><span class="kpi-value c-blue">{{ $a['total'] }}</span><span class="kpi-label">Total Applications</span></td>
-            <td><span class="kpi-value c-amber">{{ $a['shortlisted'] }}</span><span class="kpi-label">Shortlisted</span></td>
-            <td><span class="kpi-value c-green">{{ $a['selected'] }}</span><span class="kpi-label">Selected</span></td>
-            <td><span class="kpi-value c-red">{{ $a['rejected'] }}</span><span class="kpi-label">Rejected</span></td>
-            <td><span class="kpi-value c-indigo">{{ $a['conversion_rate'] }}%</span><span class="kpi-label">Conversion Rate</span></td>
-            <td><span class="kpi-value c-slate">{{ $a['avg_cgpa'] }}</span><span class="kpi-label">Avg CGPA</span></td>
+            <td style="border-top-color: #0c4a6e;"><span class="kpi-value c-primary">{{ $a['total'] }}</span><span class="kpi-label">Total Applications</span></td>
+            <td style="border-top-color: #f59e0b;"><span class="kpi-value c-amber">{{ $a['shortlisted'] }}</span><span class="kpi-label">Shortlisted</span></td>
+            <td style="border-top-color: #10b981;"><span class="kpi-value c-green">{{ $a['selected'] }}</span><span class="kpi-label">Selected</span></td>
+            <td style="border-top-color: #ef4444;"><span class="kpi-value c-red">{{ $a['rejected'] }}</span><span class="kpi-label">Rejected</span></td>
+            <td style="border-top-color: #0ea5e9;"><span class="kpi-value c-cyan">{{ $a['conversion_rate'] }}%</span><span class="kpi-label">Conversion Rate</span></td>
+            <td style="border-top-color: #64748b;"><span class="kpi-value c-slate">{{ $a['avg_cgpa'] }}</span><span class="kpi-label">Avg CGPA</span></td>
         </tr>
     </table>
 
@@ -358,25 +415,28 @@
                 <div class="sub-label">Application Status Breakdown</div>
                 @php
                     $statuses = [
-                        ['label' => 'Applied',             'color' => '#3b82f6', 'count' => $a['applied']],
-                        ['label' => 'Interview Scheduled', 'color' => '#8b5cf6', 'count' => $a['interview_scheduled']],
+                        ['label' => 'Applied',             'color' => '#0c4a6e', 'count' => $a['applied']],
+                        ['label' => 'Interview Scheduled', 'color' => '#0ea5e9', 'count' => $a['interview_scheduled']],
                         ['label' => 'Interviewed',         'color' => '#f59e0b', 'count' => $a['interviewed']],
                         ['label' => 'Shortlisted',         'color' => '#10b981', 'count' => $a['shortlisted']],
                         ['label' => 'Rejected',            'color' => '#ef4444', 'count' => $a['rejected']],
                     ];
                     $maxS = max(array_column($statuses, 'count') ?: [1]);
                 @endphp
-                @foreach($statuses as $s)
-                <div class="bar-item">
-                    <div class="bar-meta">
-                        <span class="bar-name">{{ $s['label'] }}</span>
-                        <span class="bar-num">{{ $s['count'] }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill"style="background:{{ $s['color'] }};width:{{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
-                    </div>
-                </div>
-                @endforeach
+                
+                <table class="bar-table">
+                    @foreach($statuses as $s)
+                    <tr>
+                        <td class="bar-name-cell">{{ $s['label'] }}</td>
+                        <td class="bar-track-cell">
+                            <div class="bar-track">
+                                <div class="bar-fill" style="background:{{ $s['color'] }};width:{{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
+                            </div>
+                        </td>
+                        <td class="bar-num-cell">{{ $s['count'] }}</td>
+                    </tr>
+                    @endforeach
+                </table>
             </td>
 
             <td>
@@ -391,19 +451,21 @@
                 </table>
 
                 @if(!empty($a['duration_breakdown']))
-                <div class="sub-label" style="margin-top:12px;">Top Applied Durations</div>
+                <div class="sub-label" style="margin-top:16px;">Top Applied Durations</div>
                 @php $maxDur = max(array_column($a['duration_breakdown'], 'total') ?: [1]); @endphp
-                @foreach(array_slice($a['duration_breakdown'], 0, 4) as $d)
-                <div class="bar-item">
-                    <div class="bar-meta">
-                        <span class="bar-name">{{ $d['duration'] }} {{ ucfirst($d['duration_unit']) }}</span>
-                        <span class="bar-num">{{ $d['total'] }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill"style="background:#6366f1;width:{{ $maxDur > 0 ? ($d['total']/$maxDur*100) : 0 }}%"></div>
-                    </div>
-                </div>
-                @endforeach
+                <table class="bar-table">
+                    @foreach(array_slice($a['duration_breakdown'], 0, 4) as $d)
+                    <tr>
+                        <td class="bar-name-cell">{{ $d['duration'] }} {{ ucfirst($d['duration_unit']) }}</td>
+                        <td class="bar-track-cell">
+                            <div class="bar-track">
+                                <div class="bar-fill bg-cyan" style="width:{{ $maxDur > 0 ? ($d['total']/$maxDur*100) : 0 }}%"></div>
+                            </div>
+                        </td>
+                        <td class="bar-num-cell">{{ $d['total'] }}</td>
+                    </tr>
+                    @endforeach
+                </table>
                 @endif
             </td>
         </tr>
@@ -413,17 +475,19 @@
     <hr class="divider">
     <div class="sub-label">Top Internship Domains</div>
     @php $maxD = max(array_column($a['domain_breakdown'], 'total') ?: [1]); @endphp
-    @foreach($a['domain_breakdown'] as $d)
-    <div class="bar-item">
-        <div class="bar-meta">
-            <span class="bar-name">{{ $d['domain'] }}</span>
-            <span class="bar-num">{{ $d['total'] }}</span>
-        </div>
-        <div class="bar-track">
-            <div class="bar-fill"style="background:#6366f1;width:{{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
-        </div>
-    </div>
-    @endforeach
+    <table class="bar-table">
+        @foreach(array_slice($a['domain_breakdown'], 0, 6) as $d)
+        <tr>
+            <td class="bar-name-cell" style="width: 25%;">{{ $d['domain'] }}</td>
+            <td class="bar-track-cell" style="width: 65%;">
+                <div class="bar-track">
+                    <div class="bar-fill bg-primary" style="width:{{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
+                </div>
+            </td>
+            <td class="bar-num-cell" style="width: 10%;">{{ $d['total'] }}</td>
+        </tr>
+        @endforeach
+    </table>
     @endif
 
     <hr class="divider">
@@ -437,8 +501,8 @@
             <tr>@foreach($mTrend as $m)<td class="trend-num-cell">{{ $m['count'] }}</td>@endforeach</tr>
             <tr>
                 @foreach($mTrend as $m)
-                @php $h = $maxM > 0 ? max(4, intval($m['count']/$maxM*44)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner"style="height:{{ $h }}px;background:#3b82f6;"></div></td>
+                @php $h = $maxM > 0 ? max(4, intval($m['count']/$maxM*50)) : 4; @endphp
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-cyan" style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($mTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
@@ -458,18 +522,18 @@
 
 <div class="section">
     <div class="section-title">
-        <span class="dot dot-green"></span>Intern Management
+        <span class="dot" style="background:#10b981;"></span>Intern Management Analytics
     </div>
 
     @php $activeRate = $i['total'] > 0 ? round($i['active'] / $i['total'] * 100) : 0; @endphp
     <table class="kpi-table">
         <tr>
-            <td><span class="kpi-value c-teal">{{ $i['total'] }}</span><span class="kpi-label">Total Interns</span></td>
-            <td><span class="kpi-value c-green">{{ $i['active'] }}</span><span class="kpi-label">Active</span></td>
-            <td><span class="kpi-value c-slate">{{ $i['inactive'] }}</span><span class="kpi-label">Inactive</span></td>
-            <td><span class="kpi-value c-blue">{{ $i['with_project'] }}</span><span class="kpi-label">With Project</span></td>
-            <td><span class="kpi-value c-amber">{{ $i['without_project'] }}</span><span class="kpi-label">Without Project</span></td>
-            <td><span class="kpi-value c-green">{{ $activeRate }}%</span><span class="kpi-label">Active Rate</span></td>
+            <td style="border-top-color: #0c4a6e;"><span class="kpi-value c-primary">{{ $i['total'] }}</span><span class="kpi-label">Total Interns</span></td>
+            <td style="border-top-color: #10b981;"><span class="kpi-value c-green">{{ $i['active'] }}</span><span class="kpi-label">Active</span></td>
+            <td style="border-top-color: #64748b;"><span class="kpi-value c-slate">{{ $i['inactive'] }}</span><span class="kpi-label">Inactive</span></td>
+            <td style="border-top-color: #0ea5e9;"><span class="kpi-value c-cyan">{{ $i['with_project'] }}</span><span class="kpi-label">With Project</span></td>
+            <td style="border-top-color: #f59e0b;"><span class="kpi-value c-amber">{{ $i['without_project'] }}</span><span class="kpi-label">Without Project</span></td>
+            <td style="border-top-color: #10b981;"><span class="kpi-value c-green">{{ $activeRate }}%</span><span class="kpi-label">Active Rate</span></td>
         </tr>
     </table>
 
@@ -484,13 +548,13 @@
                         @foreach($i['batch_breakdown'] as $b)
                         <tr>
                             <td>{{ $b['name'] ?? 'N/A' }}</td>
-                            <td style="text-align:right;font-weight:700;" class="c-green">{{ $b['count'] }}</td>
+                            <td style="text-align:right;font-weight:800;" class="c-primary">{{ $b['count'] }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @else
-                <p style="font-size:8px;color:#94a3b8;margin-top:4px;">No batch data available.</p>
+                <p style="font-size:8px;color:#94a3b8;margin-top:6px;font-weight:600;">No batch data available.</p>
                 @endif
             </td>
             <td>
@@ -502,13 +566,13 @@
                         @foreach($i['team_breakdown'] as $tm)
                         <tr>
                             <td>{{ $tm['name'] ?? 'N/A' }}</td>
-                            <td style="text-align:right;font-weight:700;" class="c-blue">{{ $tm['count'] }}</td>
+                            <td style="text-align:right;font-weight:800;" class="c-cyan">{{ $tm['count'] }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @else
-                <p style="font-size:8px;color:#94a3b8;margin-top:4px;">No team data available.</p>
+                <p style="font-size:8px;color:#94a3b8;margin-top:6px;font-weight:600;">No team data available.</p>
                 @endif
             </td>
         </tr>
@@ -525,8 +589,8 @@
             <tr>@foreach($jTrend as $m)<td class="trend-num-cell">{{ $m['count'] }}</td>@endforeach</tr>
             <tr>
                 @foreach($jTrend as $m)
-                @php $h = $maxJ > 0 ? max(4, intval($m['count']/$maxJ*44)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner"style="height:{{ $h }}px;background:#10b981;"></div></td>
+                @php $h = $maxJ > 0 ? max(4, intval($m['count']/$maxJ*50)) : 4; @endphp
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-green" style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($jTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
@@ -546,17 +610,17 @@
 
 <div class="section">
     <div class="section-title">
-        <span class="dot dot-yellow"></span>Task Management
+        <span class="dot" style="background:#f59e0b;"></span>Task Management Analytics
     </div>
 
     <table class="kpi-table">
         <tr>
-            <td><span class="kpi-value c-orange">{{ $t['total'] }}</span><span class="kpi-label">Total Tasks</span></td>
-            <td><span class="kpi-value c-blue">{{ $t['total_assignments'] }}</span><span class="kpi-label">Assignments</span></td>
-            <td><span class="kpi-value c-green">{{ $t['total_submissions'] }}</span><span class="kpi-label">Submissions</span></td>
-            <td><span class="kpi-value c-indigo">{{ $t['submission_rate'] }}%</span><span class="kpi-label">Submission Rate</span></td>
-            <td><span class="kpi-value c-red">{{ $t['overdue'] }}</span><span class="kpi-label">Overdue</span></td>
-            <td><span class="kpi-value c-amber">{{ $t['due_soon'] }}</span><span class="kpi-label">Due in 7 Days</span></td>
+            <td style="border-top-color: #0c4a6e; width: 16.66%;"><span class="kpi-value c-primary">{{ $t['total'] }}</span><span class="kpi-label">Total Tasks</span></td>
+            <td style="border-top-color: #0ea5e9; width: 16.66%;"><span class="kpi-value c-cyan">{{ $t['total_assignments'] }}</span><span class="kpi-label">Assignments</span></td>
+            <td style="border-top-color: #10b981; width: 16.66%;"><span class="kpi-value c-green">{{ $t['total_submissions'] }}</span><span class="kpi-label">Submissions</span></td>
+            <td style="border-top-color: #0c4a6e; width: 16.66%;"><span class="kpi-value c-primary">{{ $t['submission_rate'] }}%</span><span class="kpi-label">Submission Rate</span></td>
+            <td style="border-top-color: #ef4444; width: 16.66%;"><span class="kpi-value c-red">{{ $t['overdue'] }}</span><span class="kpi-label">Overdue</span></td>
+            <td style="border-top-color: #f59e0b; width: 16.66%;"><span class="kpi-value c-amber">{{ $t['due_soon'] }}</span><span class="kpi-label">Due < 7 Days</span></td>
         </tr>
     </table>
 
@@ -565,34 +629,43 @@
             <td>
                 <div class="sub-label">Priority Breakdown</div>
                 @php $maxP = max($t['priority_high'], $t['priority_medium'], $t['priority_low'], 1); @endphp
-                <div class="bar-item">
-                    <div class="bar-meta"><span class="bar-name">High</span><span class="bar-num c-red">{{ $t['priority_high'] }}</span></div>
-                    <div class="bar-track"><div class="bar-fill"style="background:#ef4444;width:{{ $maxP > 0 ? ($t['priority_high']/$maxP*100) : 0 }}%"></div></div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-meta"><span class="bar-name">Medium</span><span class="bar-num c-amber">{{ $t['priority_medium'] }}</span></div>
-                    <div class="bar-track"><div class="bar-fill"style="background:#f59e0b;width:{{ $maxP > 0 ? ($t['priority_medium']/$maxP*100) : 0 }}%"></div></div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-meta"><span class="bar-name">Low</span><span class="bar-num c-green">{{ $t['priority_low'] }}</span></div>
-                    <div class="bar-track"><div class="bar-fill"style="background:#22c55e;width:{{ $maxP > 0 ? ($t['priority_low']/$maxP*100) : 0 }}%"></div></div>
-                </div>
+                <table class="bar-table">
+                    <tr>
+                        <td class="bar-name-cell">High</td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-red" style="width:{{ $maxP > 0 ? ($t['priority_high']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-num-cell">{{ $t['priority_high'] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="bar-name-cell">Medium</td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber" style="width:{{ $maxP > 0 ? ($t['priority_medium']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-num-cell">{{ $t['priority_medium'] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="bar-name-cell">Low</td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green" style="width:{{ $maxP > 0 ? ($t['priority_low']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-num-cell">{{ $t['priority_low'] }}</td>
+                    </tr>
+                </table>
             </td>
 
             <td>
                 <div class="sub-label">Evaluation Status</div>
                 @php $maxEv = max($t['evaluated'], $t['pending_evaluation'], 1); @endphp
-                <div class="bar-item">
-                    <div class="bar-meta"><span class="bar-name">Evaluated</span><span class="bar-num c-green">{{ $t['evaluated'] }}</span></div>
-                    <div class="bar-track"><div class="bar-fill"style="background:#22c55e;width:{{ $maxEv > 0 ? ($t['evaluated']/$maxEv*100) : 0 }}%"></div></div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-meta"><span class="bar-name">Pending</span><span class="bar-num c-amber">{{ $t['pending_evaluation'] }}</span></div>
-                    <div class="bar-track"><div class="bar-fill"style="background:#f59e0b;width:{{ $maxEv > 0 ? ($t['pending_evaluation']/$maxEv*100) : 0 }}%"></div></div>
-                </div>
+                <table class="bar-table">
+                    <tr>
+                        <td class="bar-name-cell">Evaluated</td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green" style="width:{{ $maxEv > 0 ? ($t['evaluated']/$maxEv*100) : 0 }}%"></div></div></td>
+                        <td class="bar-num-cell">{{ $t['evaluated'] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="bar-name-cell">Pending</td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber" style="width:{{ $maxEv > 0 ? ($t['pending_evaluation']/$maxEv*100) : 0 }}%"></div></div></td>
+                        <td class="bar-num-cell">{{ $t['pending_evaluation'] }}</td>
+                    </tr>
+                </table>
                 <div class="avg-box">
                     <span class="avg-box-lbl">Average Marks</span>
-                    <span class="avg-box-val c-indigo">{{ $t['avg_marks'] }}</span>
+                    <span class="avg-box-val">{{ $t['avg_marks'] }}</span>
                 </div>
             </td>
 
@@ -604,14 +677,14 @@
                     <tbody>
                         @foreach($t['grade_distribution'] as $grade => $cnt)
                         <tr>
-                            <td style="font-weight:700;">{{ $grade }}</td>
-                            <td style="text-align:right;font-weight:700;" class="c-purple">{{ $cnt }}</td>
+                            <td style="font-weight:800;" class="c-primary">{{ $grade }}</td>
+                            <td style="text-align:right;font-weight:800;">{{ $cnt }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @else
-                <p style="font-size:8px;color:#94a3b8;margin-top:4px;">No grade data available yet.</p>
+                <p style="font-size:8px;color:#94a3b8;margin-top:6px;font-weight:600;">No grade data available yet.</p>
                 @endif
             </td>
         </tr>
@@ -621,21 +694,23 @@
     <hr class="divider">
     <div class="sub-label">Submission Status Breakdown</div>
     @php $maxSub = max(array_values($t['submission_status']) ?: [1]); @endphp
-    @foreach($t['submission_status'] as $status => $cnt)
-    @php
-        $sColors = ['submitted' => '#22c55e', 'pending' => '#f59e0b', 'late' => '#ef4444', 'reviewed' => '#3b82f6'];
-        $sColor  = $sColors[$status] ?? '#6366f1';
-    @endphp
-    <div class="bar-item">
-        <div class="bar-meta">
-            <span class="bar-name">{{ ucfirst(str_replace('_', ' ', $status)) }}</span>
-            <span class="bar-num">{{ $cnt }}</span>
-        </div>
-        <div class="bar-track">
-            <div class="bar-fill"style="background:{{ $sColor }};width:{{ $maxSub > 0 ? ($cnt/$maxSub*100) : 0 }}%"></div>
-        </div>
-    </div>
-    @endforeach
+    <table class="bar-table">
+        @foreach($t['submission_status'] as $status => $cnt)
+        @php
+            $sColors = ['submitted' => '#10b981', 'pending' => '#f59e0b', 'late' => '#ef4444', 'reviewed' => '#0ea5e9'];
+            $sColor  = $sColors[$status] ?? '#0c4a6e';
+        @endphp
+        <tr>
+            <td class="bar-name-cell" style="width:25%;">{{ ucfirst(str_replace('_', ' ', $status)) }}</td>
+            <td class="bar-track-cell" style="width:65%;">
+                <div class="bar-track">
+                    <div class="bar-fill" style="background:{{ $sColor }};width:{{ $maxSub > 0 ? ($cnt/$maxSub*100) : 0 }}%"></div>
+                </div>
+            </td>
+            <td class="bar-num-cell" style="width:10%;">{{ $cnt }}</td>
+        </tr>
+        @endforeach
+    </table>
     @endif
 
     <hr class="divider">
@@ -649,8 +724,8 @@
             <tr>@foreach($tTrend as $m)<td class="trend-num-cell">{{ $m['count'] }}</td>@endforeach</tr>
             <tr>
                 @foreach($tTrend as $m)
-                @php $h = $maxT > 0 ? max(4, intval($m['count']/$maxT*44)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner"style="height:{{ $h }}px;background:#f59e0b;"></div></td>
+                @php $h = $maxT > 0 ? max(4, intval($m['count']/$maxT*50)) : 4; @endphp
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-amber" style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($tTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
@@ -662,8 +737,12 @@
 
 {{-- ── FOOTER ── --}}
 <div class="footer">
-    <span>IAPES &mdash; Internship Administration &amp; Performance Evaluation System</span>
-    <span>Generated: {{ $generatedAt }}</span>
+    <table class="footer-table">
+        <tr>
+            <td>IAPES &mdash; Internship Administration &amp; Performance Evaluation System</td>
+            <td class="right">Generated on: {{ $generatedAt }}</td>
+        </tr>
+    </table>
 </div>
 
 </body>
