@@ -478,7 +478,7 @@ class InternResource extends Resource
 
                                     $pdfContent = Browsershot::html($html)
                                         ->setNodeBinary(env('NODE_PATH', '/usr/bin/node'))
-                                        ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm'))
+                                        ->setNpmBinary(env('NPM_PATH', '/usr/bin/npm')) 
                                         ->format('A4')
                                         ->landscape() // Certificates are usually landscape
                                         ->showBackground()
