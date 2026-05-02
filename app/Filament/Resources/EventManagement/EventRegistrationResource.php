@@ -24,6 +24,7 @@ class EventRegistrationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     
     protected static ?string $navigationGroup = 'Event Management';
+    protected static ?int $navigationSort = 13;
 
     public static function form(Form $form): Form
     {

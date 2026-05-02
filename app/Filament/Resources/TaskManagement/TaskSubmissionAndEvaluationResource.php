@@ -20,7 +20,7 @@ class TaskSubmissionAndEvaluationResource extends Resource
     protected static ?string $navigationGroup = 'Task And Evaluation Management';
     protected static ?string $navigationLabel = 'Submission And Evaluation';
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {

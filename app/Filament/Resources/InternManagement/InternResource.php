@@ -208,13 +208,15 @@ class InternResource extends Resource
                             ?? $record->application?->name 
                             ?? '';
                     })
+                    ->description(fn ($record): string => $record->offerletter->internship_role ?? 'Not Allocated')
                     ->searchable(['name']) // Allows searching if 'name' is a column in 'interns' table
                     ->sortable(),
                     
                 TextColumn::make('offerletter.internship_role')
                     ->label('Intern Role')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('internship_duration')
                     ->label('Internship Duration')
