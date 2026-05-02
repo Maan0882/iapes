@@ -292,7 +292,7 @@
                         <div class="bar-row">
                             <span class="bar-label">{{ $s['label'] }}</span>
                             <div class="bar-track">
-                                <div class="bar-fill" style="background: {{ $s['gradient'] }}; width: {{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
+                                <div class="bar-fill"style="background: {{ $s['gradient'] }}; width: {{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
                             </div>
                             <span class="bar-count">{{ $s['count'] }}</span>
                         </div>
@@ -338,7 +338,7 @@
                     <div class="bar-row">
                         <span class="bar-label">{{ $d['domain'] }}</span>
                         <div class="bar-track">
-                            <div class="bar-fill" style="background: linear-gradient(90deg, #818cf8, #4f46e5); width: {{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
+                            <div class="bar-fill"style="background: linear-gradient(90deg, #818cf8, #4f46e5); width: {{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
                         </div>
                         <span class="bar-count">{{ $d['total'] }}</span>
                     </div>
@@ -356,7 +356,7 @@
                     @php $h = $maxM > 0 ? max(4, intval($month['count']/$maxM*60)) : 4; @endphp
                     <div class="trend-col">
                         <span class="trend-val">{{ $month['count'] }}</span>
-                        <div class="trend-bar" style="height: {{ $h }}px; background: linear-gradient(0deg, #2563eb, #60a5fa);"></div>
+                        <div class="trend-bar"style="height: {{ $h }}px; background: linear-gradient(0deg, #2563eb, #60a5fa);"></div>
                         <span class="trend-lbl">{{ $month['month'] }}</span>
                     </div>
                     @endforeach
@@ -445,7 +445,7 @@
                     @php $h = $maxJ > 0 ? max(4, intval($month['count']/$maxJ*60)) : 4; @endphp
                     <div class="trend-col">
                         <span class="trend-val">{{ $month['count'] }}</span>
-                        <div class="trend-bar" style="height: {{ $h }}px; background: linear-gradient(0deg, #059669, #34d399);"></div>
+                        <div class="trend-bar"style="height: {{ $h }}px; background: linear-gradient(0deg, #059669, #34d399);"></div>
                         <span class="trend-lbl">{{ $month['month'] }}</span>
                     </div>
                     @endforeach
@@ -499,26 +499,26 @@
                         @endphp
                         <div class="bar-row">
                             <span class="bar-label">High</span>
-                            <div class="bar-track"><div class="bar-fill" style="background: linear-gradient(90deg, #f87171, #dc2626); width: {{ $maxP>0?($t['priority_high']/$maxP*100):0 }}%"></div></div>
+                            <div class="bar-track"><div class="bar-fill"style="background: linear-gradient(90deg, #f87171, #dc2626); width: {{ $maxP>0?($t['priority_high']/$maxP*100):0 }}%"></div></div>
                             <span class="bar-count">{{ $t['priority_high'] }}</span>
                         </div>
                         <div class="bar-row">
                             <span class="bar-label">Medium</span>
-                            <div class="bar-track"><div class="bar-fill" style="background: linear-gradient(90deg, #fbbf24, #d97706); width: {{ $maxP>0?($t['priority_medium']/$maxP*100):0 }}%"></div></div>
+                            <div class="bar-track"><div class="bar-fill"style="background: linear-gradient(90deg, #fbbf24, #d97706); width: {{ $maxP>0?($t['priority_medium']/$maxP*100):0 }}%"></div></div>
                             <span class="bar-count">{{ $t['priority_medium'] }}</span>
                         </div>
                         <div class="bar-row">
                             <span class="bar-label">Low</span>
-                            <div class="bar-track"><div class="bar-fill" style="background: linear-gradient(90deg, #4ade80, #16a34a); width: {{ $maxP>0?($t['priority_low']/$maxP*100):0 }}%"></div></div>
+                            <div class="bar-track"><div class="bar-fill"style="background: linear-gradient(90deg, #4ade80, #16a34a); width: {{ $maxP>0?($t['priority_low']/$maxP*100):0 }}%"></div></div>
                             <span class="bar-count">{{ $t['priority_low'] }}</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Submission rate --}}
-                <div class="stat-card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.75rem;">
-                    <div class="section-subtitle subtitle-orange" style="margin-bottom:0;">Submission Rate</div>
-                    <div class="stat-value text-indigo" style="font-size:3.5rem;">{{ $t['submission_rate'] }}%</div>
+                <div class="stat-card"style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.75rem;">
+                    <div class="section-subtitle subtitle-orange"style="margin-bottom:0;">Submission Rate</div>
+                    <div class="stat-value text-indigo"style="font-size:3.5rem;">{{ $t['submission_rate'] }}%</div>
                     <div style="text-align: center;">
                         <p style="font-size:0.85rem;color:var(--text-muted); font-weight: 600;">{{ $t['total_submissions'] }} / {{ $t['total_assignments'] }} assignments submitted</p>
                         <div style="margin-top: 10px; background: var(--track-bg); padding: 6px 12px; border-radius: 99px; display: inline-block;">
@@ -534,12 +534,12 @@
                         @php $maxEv = max($t['evaluated'], $t['pending_evaluation'], 1); @endphp
                         <div class="bar-row">
                             <span class="bar-label">Evaluated</span>
-                            <div class="bar-track"><div class="bar-fill" style="background: linear-gradient(90deg, #4ade80, #16a34a); width: {{ $maxEv>0?($t['evaluated']/$maxEv*100):0 }}%"></div></div>
+                            <div class="bar-track"><div class="bar-fill"style="background: linear-gradient(90deg, #4ade80, #16a34a); width: {{ $maxEv>0?($t['evaluated']/$maxEv*100):0 }}%"></div></div>
                             <span class="bar-count">{{ $t['evaluated'] }}</span>
                         </div>
                         <div class="bar-row">
                             <span class="bar-label">Pending</span>
-                            <div class="bar-track"><div class="bar-fill" style="background: linear-gradient(90deg, #fbbf24, #d97706); width: {{ $maxEv>0?($t['pending_evaluation']/$maxEv*100):0 }}%"></div></div>
+                            <div class="bar-track"><div class="bar-fill"style="background: linear-gradient(90deg, #fbbf24, #d97706); width: {{ $maxEv>0?($t['pending_evaluation']/$maxEv*100):0 }}%"></div></div>
                             <span class="bar-count">{{ $t['pending_evaluation'] }}</span>
                         </div>
                     </div>
@@ -566,7 +566,7 @@
                     @php $h = $maxT > 0 ? max(4, intval($month['count']/$maxT*60)) : 4; @endphp
                     <div class="trend-col">
                         <span class="trend-val">{{ $month['count'] }}</span>
-                        <div class="trend-bar" style="height: {{ $h }}px; background: linear-gradient(0deg, #d97706, #fbbf24);"></div>
+                        <div class="trend-bar"style="height: {{ $h }}px; background: linear-gradient(0deg, #d97706, #fbbf24);"></div>
                         <span class="trend-lbl">{{ $month['month'] }}</span>
                     </div>
                     @endforeach

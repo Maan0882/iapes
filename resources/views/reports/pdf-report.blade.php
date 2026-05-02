@@ -430,7 +430,7 @@
                         <td class="bar-name-cell">{{ $s['label'] }}</td>
                         <td class="bar-track-cell">
                             <div class="bar-track">
-                                <div class="bar-fill" style="background:{{ $s['color'] }};width:{{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
+                                <div class="bar-fill"style="background:{{ $s['color'] }};width:{{ $maxS > 0 ? ($s['count']/$maxS*100) : 0 }}%"></div>
                             </div>
                         </td>
                         <td class="bar-num-cell">{{ $s['count'] }}</td>
@@ -459,7 +459,7 @@
                         <td class="bar-name-cell">{{ $d['duration'] }} {{ ucfirst($d['duration_unit']) }}</td>
                         <td class="bar-track-cell">
                             <div class="bar-track">
-                                <div class="bar-fill bg-cyan" style="width:{{ $maxDur > 0 ? ($d['total']/$maxDur*100) : 0 }}%"></div>
+                                <div class="bar-fill bg-cyan"style="width:{{ $maxDur > 0 ? ($d['total']/$maxDur*100) : 0 }}%"></div>
                             </div>
                         </td>
                         <td class="bar-num-cell">{{ $d['total'] }}</td>
@@ -481,7 +481,7 @@
             <td class="bar-name-cell" style="width: 25%;">{{ $d['domain'] }}</td>
             <td class="bar-track-cell" style="width: 65%;">
                 <div class="bar-track">
-                    <div class="bar-fill bg-primary" style="width:{{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
+                    <div class="bar-fill bg-primary"style="width:{{ $maxD > 0 ? ($d['total']/$maxD*100) : 0 }}%"></div>
                 </div>
             </td>
             <td class="bar-num-cell" style="width: 10%;">{{ $d['total'] }}</td>
@@ -502,7 +502,7 @@
             <tr>
                 @foreach($mTrend as $m)
                 @php $h = $maxM > 0 ? max(4, intval($m['count']/$maxM*50)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner bg-cyan" style="height:{{ $h }}px;"></div></td>
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-cyan"style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($mTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
@@ -590,7 +590,7 @@
             <tr>
                 @foreach($jTrend as $m)
                 @php $h = $maxJ > 0 ? max(4, intval($m['count']/$maxJ*50)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner bg-green" style="height:{{ $h }}px;"></div></td>
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-green"style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($jTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
@@ -632,17 +632,17 @@
                 <table class="bar-table">
                     <tr>
                         <td class="bar-name-cell">High</td>
-                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-red" style="width:{{ $maxP > 0 ? ($t['priority_high']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-red"style="width:{{ $maxP > 0 ? ($t['priority_high']/$maxP*100) : 0 }}%"></div></div></td>
                         <td class="bar-num-cell">{{ $t['priority_high'] }}</td>
                     </tr>
                     <tr>
                         <td class="bar-name-cell">Medium</td>
-                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber" style="width:{{ $maxP > 0 ? ($t['priority_medium']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber"style="width:{{ $maxP > 0 ? ($t['priority_medium']/$maxP*100) : 0 }}%"></div></div></td>
                         <td class="bar-num-cell">{{ $t['priority_medium'] }}</td>
                     </tr>
                     <tr>
                         <td class="bar-name-cell">Low</td>
-                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green" style="width:{{ $maxP > 0 ? ($t['priority_low']/$maxP*100) : 0 }}%"></div></div></td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green"style="width:{{ $maxP > 0 ? ($t['priority_low']/$maxP*100) : 0 }}%"></div></div></td>
                         <td class="bar-num-cell">{{ $t['priority_low'] }}</td>
                     </tr>
                 </table>
@@ -654,12 +654,12 @@
                 <table class="bar-table">
                     <tr>
                         <td class="bar-name-cell">Evaluated</td>
-                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green" style="width:{{ $maxEv > 0 ? ($t['evaluated']/$maxEv*100) : 0 }}%"></div></div></td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-green"style="width:{{ $maxEv > 0 ? ($t['evaluated']/$maxEv*100) : 0 }}%"></div></div></td>
                         <td class="bar-num-cell">{{ $t['evaluated'] }}</td>
                     </tr>
                     <tr>
                         <td class="bar-name-cell">Pending</td>
-                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber" style="width:{{ $maxEv > 0 ? ($t['pending_evaluation']/$maxEv*100) : 0 }}%"></div></div></td>
+                        <td class="bar-track-cell"><div class="bar-track"><div class="bar-fill bg-amber"style="width:{{ $maxEv > 0 ? ($t['pending_evaluation']/$maxEv*100) : 0 }}%"></div></div></td>
                         <td class="bar-num-cell">{{ $t['pending_evaluation'] }}</td>
                     </tr>
                 </table>
@@ -704,7 +704,7 @@
             <td class="bar-name-cell" style="width:25%;">{{ ucfirst(str_replace('_', ' ', $status)) }}</td>
             <td class="bar-track-cell" style="width:65%;">
                 <div class="bar-track">
-                    <div class="bar-fill" style="background:{{ $sColor }};width:{{ $maxSub > 0 ? ($cnt/$maxSub*100) : 0 }}%"></div>
+                    <div class="bar-fill"style="background:{{ $sColor }};width:{{ $maxSub > 0 ? ($cnt/$maxSub*100) : 0 }}%"></div>
                 </div>
             </td>
             <td class="bar-num-cell" style="width:10%;">{{ $cnt }}</td>
@@ -725,7 +725,7 @@
             <tr>
                 @foreach($tTrend as $m)
                 @php $h = $maxT > 0 ? max(4, intval($m['count']/$maxT*50)) : 4; @endphp
-                <td class="trend-bar-cell"><div class="trend-bar-inner bg-amber" style="height:{{ $h }}px;"></div></td>
+                <td class="trend-bar-cell"><div class="trend-bar-inner bg-amber"style="height:{{ $h }}px;"></div></td>
                 @endforeach
             </tr>
             <tr>@foreach($tTrend as $m)<td class="trend-lbl-cell">{{ $m['month'] }}</td>@endforeach</tr>
