@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <style>
     @page {
-        margin: 10mm 15mm 10mm 15mm;
+        margin: 80px 15mm 10mm 15mm;
     }
 
     body {
@@ -35,9 +35,12 @@
     }
 
     header {
+        position: fixed;
+        top: -65px;
+        left: 0;
+        right: 0;
         border-bottom: 2px solid #f39200;
         padding-bottom: 10px;
-        margin-bottom: 15px;
     }
 
     .header-table {
