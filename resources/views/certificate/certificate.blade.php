@@ -196,7 +196,7 @@
                     /* font-size: 52pt; */
                     font-weight: 600;
                     color: #db4f03ff;
-                    margin: -4mm 0 2mm;
+                    margin: -3mm 0 2mm;
                     text-transform: capitalize;
                     -webkit-text-stroke: 1pt #4d1d03ff;
                     letter-spacing: 0.5pt;
@@ -348,7 +348,7 @@
                                     This is to certify that</p>
                                 @php
                                     $recipientName = Str::title($offer->application?->name ?? $offer->name);
-                                    $fontSize = strlen($recipientName) > 23 ? '45pt' : '52pt';
+                                    $fontSize = strlen($recipientName) > 23 ? '43pt' : '52pt';
                                 @endphp
                                 <div class="recipient"style="font-size:{{ $fontSize }};">
                                     {{ $recipientName }}
