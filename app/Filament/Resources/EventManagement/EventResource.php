@@ -94,7 +94,7 @@ class EventResource extends Resource
                     ->placeholder('https://meet.google.com/')
                     ->visible(fn (Get $get) => $get('type') === 'online'),
 
-                TextInput::make('location')
+                TextInput::make('event_venue')
                     ->label('Event Location')
                     ->placeholder('123 Business St, New York')
                     ->required()
@@ -142,13 +142,13 @@ class EventResource extends Resource
                     ->placeholder('Single Day Event')
                     ->sortable(),
 
-                TextColumn::make('location')
+                TextColumn::make('event_venue')
                     ->label('Location / Link')
                     ->state(function ($record): string {
                         // Logic to show either the physical location or the online link
                         return $record->type === 'online' 
                             ? ($record->meeting_link ?? 'No Link Provided') 
-                            : ($record->location ?? 'No Location');
+                            : ($record->event_venue ?? 'No Location');
                     })
                     ->icon(fn ($record): string => $record->type === 'online' ? 'heroicon-m-computer-desktop' : 'heroicon-m-map-pin')
                     ->description(fn ($record): string => $record->type === 'online' ? 'Online Event' : 'Physical Venue')

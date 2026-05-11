@@ -25,10 +25,13 @@
 
             {{-- logic based on 'type' column (online/offline) --}}
             <p style="margin: 5px 0; font-size: 13px;">
-                <strong>📍 {{ strtolower($event->type) === 'online' ? 'Meeting Platform' : 'Venue' }}:</strong> 
-                {{ $event->event_venue ?? 'To Be Announced' }}
+                <strong> {{ strtolower($event->type) === 'online' ? 'Meeting Platform' : 'Venue' }}:</strong> 
+                @if(strtolower($event->type) === 'online')
+                    💻{{ $event->meeting_platform ?? 'Online Meeting' }}
+                @else
+                    📍{{ $event->event_venue ?? 'To Be Announced' }}
+                @endif
             </p>
-
             @if($event->meeting_link)
                 <p style="margin: 10px 0 0 0;">
                     <a href="{{ $event->meeting_link }}" style="display: inline-block; padding: 8px 16px; background-color: #28a745; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 12px;">

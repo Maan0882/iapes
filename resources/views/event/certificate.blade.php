@@ -138,7 +138,7 @@
 
                 .left-content {
                     position: absolute;
-                    top: 15mm;
+                    top: 20mm;
                     left: 20mm;
                     width: 185mm;
                     z-index: 5;
@@ -314,10 +314,10 @@
                 .footer-text {
                     position: absolute;
                     bottom: 10mm;
-                    right: 40mm;
+                    left: 20mm;
                     font-size: 9pt;
                     color: #888;
-                    text-align: center;
+                    text-align: left;
                 }
             </style>
             @if(isset($registrations) && $registrations->isNotEmpty())
@@ -409,7 +409,7 @@
                             
                             <div class="footer-text">
                                 
-                                <br> <a href="https://techstrota.com/" style="color:inherit; text-decoration:none;">WWW.TECHSTROTA.COM</a> | This is a system generated certificate
+                                <br> <a href="https://techstrota.com/" style="color:inherit; text-decoration:none;">WWW.TECHSTROTA.COM</a> | <span style="color:#c3c3c3ff">This is a system generated certificate</span>
                             </div>
                             
                         </div>{{-- /.cert --}}
