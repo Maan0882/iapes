@@ -8,7 +8,7 @@ use App\Models\Event;
 use App\Models\EventRegistration;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\{TextInput, Select, DatePicker, FileUpload, TextArea, RichEditor};
+use Filament\Forms\Components\{TextInput, Select, DatePicker, FileUpload, Textarea, RichEditor};
 use Filament\Forms\Get; // <--- MAKE SURE THIS IS PRESENT
 use Filament\Forms\Set; // (Optional, if you use Set)
 use Filament\Resources\Resource;
@@ -38,7 +38,7 @@ class EventResource extends Resource
                 //
                 TextInput::make('event_title')->required(),
 
-                TextArea::make('event_description')
+                Textarea::make('event_description')
                     ->required(),
                     
                 TextInput::make('event_type')
