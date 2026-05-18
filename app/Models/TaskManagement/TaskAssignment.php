@@ -9,9 +9,12 @@ use App\Models\InternManagement\Intern;
 use App\Models\InternManagement\InternshipBatch;
 use App\Models\InternManagement\InternTeam;
 
+use App\Traits\LogsActivity;
+
 class TaskAssignment extends Model
 {
-    //
+    use LogsActivity;
+
     protected $primaryKey = 'task_assignment_id';
 
     protected $fillable = [

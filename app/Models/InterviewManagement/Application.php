@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\InterviewManagement\OfferLetter;
 use Carbon\Carbon;
 
+use App\Traits\LogsActivity;
+
 class Application extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'application_code',

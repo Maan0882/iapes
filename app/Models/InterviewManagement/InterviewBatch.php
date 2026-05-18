@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\InterviewManagement\InterviewAssignment;
 
+use App\Traits\LogsActivity;
+
 class InterviewBatch extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'interview_batch_code',
         'interview_batch_name',
@@ -49,6 +53,7 @@ class InterviewBatch extends Model
     {
         return $this->hasMany(InterviewAssignment::class);
     }
+
 
     public function updateCapacityStatus()
     {

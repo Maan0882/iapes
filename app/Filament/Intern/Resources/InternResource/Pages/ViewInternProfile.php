@@ -99,7 +99,7 @@ class ViewInternProfile extends ViewRecord
                                 ->password()
                                 ->revealable()
                                 ->required() // Required in this specific modal
-                                ->minLength(8)
+                                ->minLength(7)
                                 ->same('password_confirmation')
                                 ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
 
@@ -188,6 +188,7 @@ class ViewInternProfile extends ViewRecord
 
                         TextEntry::make('is_active')
                             ->label('Current Status')
+                            ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Inactive')
                             ->badge()
                             ->color(fn(string $state): string => match ($state) {
                                 'Active'     => 'success',
@@ -216,10 +217,22 @@ class ViewInternProfile extends ViewRecord
                             ->icon('heroicon-m-building-office-2')
                             ->default('Not assigned'),
 
-                        TextEntry::make('joining_date')
-                            ->label('Joining Date')
-                            ->date('d M Y')
-                            ->icon('heroicon-m-calendar'),
+                        TextEntry::make('internship_period')
+                            ->label('Internship Period')
+                            ->icon('heroicon-m-calendar')
+                            ->getStateUsing(function ($record) {
+                                $joining = $record->offerletter?->joining_date;
+                                $completion = $record->offerletter?->completion_date;
+
+                                if (!$joining && !$completion) {
+                                    return 'Not scheduled';
+                                }
+
+                                $start = $joining ? \Carbon\Carbon::parse($joining)->format('d M Y') : '...';
+                                $end = $completion ? \Carbon\Carbon::parse($completion)->format('d M Y') : '...';
+
+                                return "{$start} - {$end}";
+                            }),
 
                         TextEntry::make('is_active') // Using your boolean field
                             ->label('Account Status')

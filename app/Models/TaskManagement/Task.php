@@ -10,9 +10,11 @@ use App\Models\TaskManagement\TaskSubmission;
 use App\Models\TaskManagement\TaskAssignment;
 
 
+use App\Traits\LogsActivity;
+
 class Task extends Model
 {
-    //
+    use LogsActivity;
 
     protected $primaryKey = 'task_id';
 

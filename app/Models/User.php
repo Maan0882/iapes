@@ -12,10 +12,12 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
+use App\Traits\LogsActivity;
+
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, LogsActivity;
 
     public function canAccessPanel(Panel $panel): bool
     {

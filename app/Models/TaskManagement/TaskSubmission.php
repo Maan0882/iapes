@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\TaskManagement\Task;
 use App\Models\InternManagement\Intern;
 
+use App\Traits\LogsActivity;
+
 class TaskSubmission extends Model
 {
-    //
+    use LogsActivity;
+
      protected $primaryKey = 'submission_id';
 
     protected $fillable = [

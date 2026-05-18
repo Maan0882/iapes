@@ -27,5 +27,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Explicitly register the policy here
         Gate::policy(Attendance::class, AttendancePolicy::class);
+
+        // Authentication Activity Logging
+        \Illuminate\Support\Facades\Event::listen(
+            [\Illuminate\Auth\Events\Login::class, \Illuminate\Auth\Events\Logout::class, \Illuminate\Auth\Events\Failed::class],
+            [\App\Listeners\LogAuthenticationActivity::class, 'handle']
+        );
     }
 }
