@@ -137,7 +137,7 @@
     }
 
     .signature-section {
-        margin-top: 70px;
+        margin-top: 0px;
         width: 100%;
         padding-bottom: 20px;
         margin-bottom: 20px;
