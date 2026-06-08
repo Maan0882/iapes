@@ -36,7 +36,7 @@
 
     header {
         position: fixed;
-        top: -65px;
+        top: -45px;
         left: 0;
         right: 0;
         border-bottom: 2px solid #f39200;
@@ -84,6 +84,7 @@
     }
 
     .date-section {
+        margin-top: 50px;
         text-align: right;
         font-weight: bold;
         margin-bottom: 10px;
@@ -136,8 +137,10 @@
     }
 
     .signature-section {
-        margin-top: 25px;
+        margin-top: 70px;
         width: 100%;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
     }
 
     .signature-line {
@@ -166,11 +169,11 @@
     <header>
         <table class="header-table">
             <tr>
-                <td class="header-contact" style="text-align: left; font-size: 14px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
+                <td class="header-contact" style="text-align: left; font-size: 13px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
                 <td style="text-align: center;">
                     <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo">
                 </td>
-                <td class="header-contact" style="text-align: right; font-size: 14px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
+                <td class="header-contact" style="text-align: right; font-size: 13px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
             </tr>
         </table>
     </header>
@@ -250,7 +253,7 @@
 
                 <p>
                     We are pleased to inform you that you have been selected for a 
-                    <strong>{{ $offer->duration_text ?? 'General' }} {{ $offer->internship_role ?? 'Full Stack' }} Developer Internship Program (Open-source Technology)</strong> at Techstrota.
+                    <strong>{{ $offer->duration_text ?? 'General' }} {{ $offer->internship_role ?? 'Full Stack Developer' }} Internship Program (Open-source Technology)</strong> at Techstrota.
                 </p>
 
                 <div class="details-container">
