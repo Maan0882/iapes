@@ -36,7 +36,7 @@
 
     header {
         position: fixed;
-        top: -65px;
+        top: -45px;
         left: 0;
         right: 0;
         border-bottom: 2px solid #f39200;
@@ -84,6 +84,7 @@
     }
 
     .date-section {
+        margin-top: 50px;
         text-align: right;
         font-weight: bold;
         margin-bottom: 10px;
@@ -136,13 +137,14 @@
     }
 
     .signature-section {
-        margin-top: 25px;
+        position: fixed;
+        bottom: 22%;
         width: 100%;
     }
 
     .signature-line {
         border-top: 1px solid #000;
-        margin-top: 60px;
+        margin-top: 50px;
         padding-top: 5px;
         width: 180px;
     }
@@ -210,7 +212,7 @@
 
                 <p>
                     We are pleased to inform you that you have been selected for a 
-                    <strong>{{ $offer->duration_text ?? 'one-month' }} {{ $offer->internship_role ?? 'Full Stack' }} Developer Internship Program (Open-source Technology)</strong> at Techstrota.
+                    <strong>{{ $offer->duration_text ?? 'one-month' }} {{ $offer->internship_role ?? 'Full Stack Developer' }} Internship Program (Open-source Technology)</strong> at Techstrota.
                 </p>
 
                 <div class="details-container">
@@ -222,7 +224,7 @@
                         </tr>
                         <tr>
                             <td class="label">2) Duration:</td>
-                            <td>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }} (1 Month)</td>
+                            <td>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }} <strong>(1 Month)</strong></td>
                         </tr>
                         <tr>
                             <td class="label">3) Working Hours:</td>

@@ -36,7 +36,7 @@
 
     header {
         position: fixed;
-        top: -65px;
+        top: -45px;
         left: 0;
         right: 0;
         border-bottom: 2px solid #f39200;
@@ -84,14 +84,14 @@
     }
 
     .date-section {
-        margin-top: 30px;
+        margin-top: 50px;
         text-align: right;
         font-weight: bold;
         margin-bottom: 10px;
     }
 
     .recipient-info {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         line-height: 1.3;
     }
 
@@ -137,14 +137,14 @@
     }
 
     .signature-section {
-        margin-top: 25px;
+        position: fixed;
+        bottom: 22%;
         width: 100%;
-        margin-bottom: 20px;
     }
 
     .signature-line {
         border-top: 1px solid #000;
-        margin-top: 60px;
+        margin-top: 50px;
         padding-top: 5px;
         width: 180px;
     }
@@ -168,11 +168,11 @@
     <header>
         <table class="header-table">
             <tr>
-                <td class="header-contact" style="text-align: left; font-size: 13px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
+                <td class="header-contact" style="text-align: left; font-size: 14px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
                 <td style="text-align: center;">
                     <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo">
                 </td>
-                <td class="header-contact" style="text-align: right; font-size: 13px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
+                <td class="header-contact" style="text-align: right; font-size: 14px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
             </tr>
         </table>
     </header>
@@ -212,7 +212,7 @@
 
                 <p>
                     We are pleased to inform you that you have been selected for a 
-                    <strong>{{ $offer->duration_text ?? 'three-month' }} {{ $offer->internship_role ?? 'Full Stack' }} Developer Internship Program (Open-source Technology)</strong> at Techstrota.
+                    <strong>{{ $offer->duration_text ?? 'three-month' }} {{ $offer->internship_role ?? 'Full Stack Developer' }} Internship Program (Open-source Technology)</strong> at Techstrota.
                 </p>
 
                 <div class="details-container">
@@ -224,7 +224,7 @@
                         </tr>
                         <tr>
                             <td class="label">2) Duration:</td>
-                            <td>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }} </td>
+                            <td>{{ \Carbon\Carbon::parse($offer->joining_date)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($offer->completion_date)->format('d/m/Y') }} <strong>(3 Months)</strong></td>
                         </tr>
                         <tr>
                             <td class="label">3) Working Hours:</td>

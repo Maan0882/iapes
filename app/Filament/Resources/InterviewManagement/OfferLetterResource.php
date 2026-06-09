@@ -55,10 +55,10 @@ class OfferLetterResource extends Resource
                             ->placeholder('Select a template to continue…'),
                     ]),
  
-                // ─── SECTION A: Application selector (non-general templates only) ──
+                // ─── SECTION A: Application selector ──
                 Section::make('Intern Selection')
                     ->description('Select interns from the same college to generate letters in bulk.')
-                    ->visible(fn (Get $get) => filled($get('template')) && $get('template') !== 'general')
+                    ->visible(fn (Get $get) => filled($get('template')))
                     ->schema([
                         Select::make('applications')
                             ->label('Select Interns')
@@ -148,6 +148,13 @@ class OfferLetterResource extends Resource
                                         $set('email',      $app->email ?? null);
                                         $set('phone',      $app->phone ?? null);
                                     }
+                                } else {
+                                    $set('name',       null);
+                                    $set('university', null);
+                                    $set('college',    null);
+                                    $set('degree',     null);
+                                    $set('email',      null);
+                                    $set('phone',      null);
                                 }
                                 self::updateCompletionDate($set, $get);
                             }),

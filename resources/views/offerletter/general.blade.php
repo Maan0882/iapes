@@ -137,15 +137,14 @@
     }
 
     .signature-section {
-        margin-top: 50px;
+        position: fixed;
+        bottom: 22%;
         width: 100%;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
     }
 
     .signature-line {
         border-top: 1px solid #000;
-        margin-top: 60px;
+        margin-top: 50px;
         padding-top: 5px;
         width: 180px;
     }
@@ -169,11 +168,11 @@
     <header>
         <table class="header-table">
             <tr>
-                <td class="header-contact" style="text-align: left; font-size: 13px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
+                <td class="header-contact" style="text-align: left; font-size: 14px; font-weight: bold; vertical-align:bottom;">Email: info@techstrota.com</td>
                 <td style="text-align: center;">
                     <img src="{{ public_path('images/TsLogo.png') }}" class="header-logo">
                 </td>
-                <td class="header-contact" style="text-align: right; font-size: 13px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
+                <td class="header-contact" style="text-align: right; font-size: 14px; font-weight: bold; vertical-align:bottom;">Tel: +91 81288 40055</td>
             </tr>
         </table>
     </header>
