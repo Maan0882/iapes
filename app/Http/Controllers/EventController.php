@@ -15,6 +15,7 @@ class EventController extends Controller
     {
         $events = Event::select('id', 'event_title as title', 'event_description as description', 'event_start_date as start_date', 'event_end_date as end_date','type as type')
                         ->where('event_status', 'upcoming')
+                        ->where('event_start_date', '>', now())
                         ->orderBy('event_start_date', 'asc')
                         ->get();
 
