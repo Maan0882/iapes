@@ -23,8 +23,8 @@
         $calendarDays = $startDate->diffInDays($endDate) + 1;
         $isShortTerm = ($calendarDays <= 31);
 
-        //$workingHoursPerDay = $intern->offer_letters->working_hours /6 ?: 5;
         // Total hours calculation: Working Days * Hours per day
+        //$workingHoursPerDay = $intern->offer_letters->working_hours /6 ?: 5;
         //$totalHours = round(($workingHoursPerDay > 40) ? $workingHoursPerDay : ($workingDays * $workingHoursPerDay));
         $workingHoursPerDay = $intern->offer_letters->working_hours ?? 5;
         $totalHours = $workingDays * $workingHoursPerDay;
