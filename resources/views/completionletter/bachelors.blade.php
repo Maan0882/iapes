@@ -10,7 +10,7 @@
         $startDate = \Carbon\Carbon::parse($intern->offer_letters->joining_date);
         $endDate = \Carbon\Carbon::parse($intern->offer_letters->completion_date);
 
-        // Count working days (excluding Sundays)
+        // Count working days
         $workingDays = 0;
         $tempDate = $startDate->copy();
 
