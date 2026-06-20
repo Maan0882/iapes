@@ -348,7 +348,7 @@
                                     This is to certify that</p>
                                 @php
                                     $recipientName = Str::title($offer->application?->name ?? $offer->name);
-                                    $fontSize = strlen($recipientName) > 23 ? '43pt' : '52pt';
+                                    $fontSize = strlen($recipientName) > 23 ? '40pt' : '52pt';
                                 @endphp
                                 <div class="recipient"style="font-size:{{ $fontSize }};">
                                     {{ $recipientName }}
