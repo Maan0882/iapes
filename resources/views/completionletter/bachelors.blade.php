@@ -13,10 +13,9 @@
         // Count working days (excluding Sundays)
         $workingDays = 0;
         $tempDate = $startDate->copy();
+
         while ($tempDate <= $endDate) {
-            if ($tempDate->dayOfWeek !== \Carbon\Carbon::SUNDAY) {
-                $workingDays++;
-            }
+            $workingDays++;
             $tempDate->addDay();
         }
 
@@ -24,9 +23,11 @@
         $calendarDays = $startDate->diffInDays($endDate) + 1;
         $isShortTerm = ($calendarDays <= 31);
 
-        $workingHoursPerDay = $intern->offer_letters->working_hours /6 ?: 5;
+        //$workingHoursPerDay = $intern->offer_letters->working_hours /6 ?: 5;
         // Total hours calculation: Working Days * Hours per day
-        $totalHours = round(($workingHoursPerDay > 40) ? $workingHoursPerDay : ($workingDays * $workingHoursPerDay));
+        //$totalHours = round(($workingHoursPerDay > 40) ? $workingHoursPerDay : ($workingDays * $workingHoursPerDay));
+        $workingHoursPerDay = $intern->offer_letters->working_hours ?? 5;
+        $totalHours = $workingDays * $workingHoursPerDay;
     @endphp
 
     <div class="title">INTERNSHIP COMPLETION LETTER</div>
@@ -54,7 +55,7 @@
         <strong>Techstrota</strong>@if($internCollege || $internUniversity) and facilitated by
             <strong>{{ $uni }}</strong>@endif.
         The internship duration was from <strong>{{ $startDate->format('d/m/Y') }}</strong> to
-        <strong>{{ $endDate->format('d/m/Y') }}</strong> at: <strong>Techstrota</strong><br>
+        <strong>{{ $endDate->format('d/m/Y') }}</strong> at: <strong>Techstrota</strong>
         503, Sterling Centre, R C Dutt Road, Near Fairfield
         Hotel, Alkapuri, Vadodara, Gujarat - 390007.
     </div>

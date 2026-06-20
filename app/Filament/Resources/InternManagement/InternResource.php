@@ -184,6 +184,8 @@ class InternResource extends Resource
 
                             DatePicker::make('joining_date')
                                 ->label('Joining Date')
+                                ->native(false)
+                                ->displayFormat('d-m-Y')
                                 ->dehydrated(true)
                                 ->afterStateHydrated(function ($component, $record) {
                                     $date = $record?->offerletter?->joining_date;
@@ -194,6 +196,7 @@ class InternResource extends Resource
  
                             DatePicker::make('completion_date')
                                 ->label('Completion Date')
+                                ->native(false)
                                 ->dehydrated(true)
                                 ->afterStateHydrated(function ($component, $record) {
                                     $date = $record?->offerletter?->completion_date;
